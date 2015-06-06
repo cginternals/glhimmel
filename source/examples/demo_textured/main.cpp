@@ -1,13 +1,13 @@
 
-#include "osgHimmel/polarmappedhimmel.h"
-#include "osgHimmel/cubemappedhimmel.h"
-#include "osgHimmel/paraboloidmappedhimmel.h"
-#include "osgHimmel/spheremappedhimmel.h"
-#include "osgHimmel/horizonband.h"
-#include "osgHimmel/himmelenvmap.h"
-#include "osgHimmel/osgposter.h"
+#include <glhimmel-texturebased/polarmappedhimmel.h>
+#include <glhimmel-texturebased/cubemappedhimmel.h>
+#include <glhimmel-texturebased/paraboloidmappedhimmel.h>
+#include <glhimmel-texturebased/spheremappedhimmel.h>
+#include <glhimmel-texturebased/horizonband.h>
+#include <glhimmel-texturebased/himmelenvmap.h>
+#include <glhimmel-texturebased/osgposter.h>
 
-#include "osgHimmel/timef.h"
+#include <glhimmel-texturebased/timef.h>
 
 
 #include <osg/TextureCubeMap>
@@ -18,7 +18,7 @@
 #include <osgDB/WriteFile>
 
 
-using namespace osgHimmel;
+using namespace glhimmel_texturebased;
 
 
 // utils

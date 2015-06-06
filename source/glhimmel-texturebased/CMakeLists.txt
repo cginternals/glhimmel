@@ -47,11 +47,43 @@ set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
 set(api_includes
     ${include_path}/glhimmel-texturebased_api.h
-    #${include_path}/Fibonacci.h
+    ${include_path}/abstracthimmel.h
+    ${include_path}/abstractmappedhimmel.h
+    ${include_path}/atime.h
+    ${include_path}/coords.h
+    ${include_path}/cubemappedhimmel.h
+    ${include_path}/himmelenvmap.h
+    ${include_path}/himmelquad.h
+    ${include_path}/horizonband.h
+    ${include_path}/interpolate.h
+    ${include_path}/julianday.h
+    ${include_path}/mathmacros.h
+    ${include_path}/osgposter.h
+    ${include_path}/paraboloidmappedhimmel.h
+    ${include_path}/polarmappedhimmel.h
+    ${include_path}/pragmanote.h
+    ${include_path}/spheremappedhimmel.h
+    ${include_path}/timef.h
+    ${include_path}/twounitschanger.h
+    ${include_path}/typedefs.h
 )
 
 set(sources
-    #${source_path}/Fibonacci.cpp
+    ${source_path}/abstracthimmel.cpp
+    ${source_path}/abstractmappedhimmel.cpp
+    ${source_path}/atime.cpp
+    ${source_path}/coords.cpp
+    ${source_path}/cubemappedhimmel.cpp
+    ${source_path}/himmelenvmap.cpp
+    ${source_path}/himmelquad.cpp
+    ${source_path}/horizonband.cpp
+    ${source_path}/julianday.cpp
+    ${source_path}/osgposter.cpp
+    ${source_path}/paraboloidmappedhimmel.cpp
+    ${source_path}/polarmappedhimmel.cpp
+    ${source_path}/spheremappedhimmel.cpp
+    ${source_path}/timef.cpp
+    ${source_path}/twounitschanger.cpp
 )
 
 # Group source files
