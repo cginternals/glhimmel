@@ -1,19 +1,34 @@
 
-# Generate meta-header
-configure_file(glhimmel-version.h.in ${CMAKE_CURRENT_BINARY_DIR}/glhimmel-version.h)
+#
+# Configuration for all sub-projects
+#
 
-# We do NOT want to deploy this header (at least not for binary packages)
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glhimmel/glhimmel-version.h DESTINATION ${INSTALL_INCLUDE}/glhimmel)
+# Generate version-header
+string(TOUPPER ${META_PROJECT_NAME} META_PROJECT_NAME_UPPER)
+configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/${META_PROJECT_NAME}/${META_PROJECT_NAME}-version.h)
+message(STATUS ${CMAKE_CURRENT_BINARY_DIR}/include/${META_PROJECT_NAME}/${META_PROJECT_NAME}-version.h)
 
-# Include directories
-include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}
-)
+
+#
+# Sub-projects
+#
 
 # Libraries
 set(IDE_FOLDER "")
-add_subdirectory(glhimmel-texturebased)
+add_subdirectory(texturebased)
 
-# Applications
-set(IDE_FOLDER "Applications")
+# Examples
+set(IDE_FOLDER "Examples")
 add_subdirectory(examples)
+
+# Tests
+set(IDE_FOLDER "Tests")
+add_subdirectory(tests)
+
+
+#
+# Deployment
+#
+
+# Deploy generated headers
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/${META_PROJECT_NAME} DESTINATION include COMPONENT dev)
