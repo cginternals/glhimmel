@@ -5,6 +5,7 @@
 
 find_package(glbinding REQUIRED)
 find_package(globjects REQUIRED)
+find_package(glm REQUIRED)
 
 
 #
@@ -32,11 +33,17 @@ set(include_path "${CMAKE_CURRENT_SOURCE_DIR}/include/${target}")
 set(source_path  "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
 set(headers
-    ${include_path}/polarmapped.h
+    ${include_path}/PolarMappedHimmel.h
+    ${include_path}/AbstractMappedHimmel.h
+    ${include_path}/AbstractHimmel.h
+    ${include_path}/ScreenAlignedQuad.h
 )
 
 set(sources
-    ${source_path}/polarmapped.cpp
+    ${source_path}/PolarMappedHimmel.cpp
+    ${source_path}/AbstractMappedHimmel.cpp
+    ${source_path}/AbstractHimmel.cpp
+    ${source_path}/ScreenAlignedQuad.cpp
 )
 
 # Group source files
