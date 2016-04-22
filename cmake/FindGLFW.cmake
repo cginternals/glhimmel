@@ -36,7 +36,7 @@ find_library(GLFW_LIBRARY_RELEASE NAMES glfw3 glfw glfw3dll glfwdll
     /sw
     /opt/local
 
-    # authors prefered choice for development
+    # authors preferred choice for development
     /build
     /build-release
     $ENV{GLFW_DIR}/build
@@ -60,7 +60,7 @@ find_library(GLFW_LIBRARY_DEBUG NAMES glfw3d glfwd glfw3ddll glfwddll
     /sw
     /opt/local
 
-    # authors prefered choice for development
+    # authors preferred choice for development
     /build
     /build-debug
     $ENV{GLFW_DIR}/build
@@ -75,7 +75,7 @@ find_library(GLFW_LIBRARY_DEBUG NAMES glfw3d glfwd glfw3ddll glfwddll
 
 set(GLFW_LIBRARIES "")
 if(GLFW_LIBRARY_RELEASE AND GLFW_LIBRARY_DEBUG)
-    set(GLFW_LIBRARIES 
+    set(GLFW_LIBRARIES
         optimized   ${GLFW_LIBRARY_RELEASE}
         debug       ${GLFW_LIBRARY_DEBUG})
 elseif(GLFW_LIBRARY_RELEASE)
