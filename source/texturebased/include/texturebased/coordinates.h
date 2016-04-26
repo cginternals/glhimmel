@@ -11,28 +11,28 @@ namespace glHimmel
 // Explained in "Astronomical Algorithms" and http://en.wikipedia.org/wiki/Celestial_coordinate_system
 
 template<typename T>
-struct s_EquatorialCoords;
+struct EquatorialCoords;
 
 template<typename T>
-struct s_EclipticalCoords;
+struct EclipticalCoords;
 
 template<typename T>
-struct s_HorizontalCoords;
+struct HorizontalCoords;
 
 template<typename T>
-struct s_GalacticCoords;
+struct GalacticCoords;
 
 
 // http://en.wikipedia.org/wiki/Equatorial_coordinate_system
 
 template<typename T>
-struct s_EquatorialCoords 
+struct EquatorialCoords 
 {    
-    s_EquatorialCoords();
+    EquatorialCoords();
 
-    const s_EclipticalCoords<T> toEcliptical(const T obliquity) const;
+    const EclipticalCoords<T> toEcliptical(const T obliquity) const;
 
-    const s_HorizontalCoords<T> toHorizontal(
+    const HorizontalCoords<T> toHorizontal(
         const t_julianDay siderealTime /* θ_0 */
     ,   const T observersLatitude      /* Φ   */
     ,   const T observersLongitude     /* L   */) const;
@@ -54,18 +54,15 @@ struct s_EquatorialCoords
     T r;
 };
 
-typedef s_EquatorialCoords<long double> t_equd;
-typedef s_EquatorialCoords<float> t_equf;
-
 
 // http://en.wikipedia.org/wiki/Ecliptic_coordinate_system
 
 template<typename T>
-struct s_EclipticalCoords 
+struct EclipticalCoords 
 {    
-    s_EclipticalCoords();
+    EclipticalCoords();
 
-    const s_EquatorialCoords<T> toEquatorial(const T obliquity) const;
+    const EquatorialCoords<T> toEquatorial(const T obliquity) const;
 
 
     // Ecliptical longitude. Measured from the vernal equinox along the ecliptic.
@@ -75,19 +72,15 @@ struct s_EclipticalCoords
     T latitude;  // β
 };
 
-typedef s_EclipticalCoords<long double> t_ecld;
-typedef s_EclipticalCoords<float> t_eclf;
-
-
 
 // http://en.wikipedia.org/wiki/Horizontal_coordinate_system
 
 template<typename T>
-struct s_HorizontalCoords 
+struct HorizontalCoords 
 {    
-    s_HorizontalCoords();
+    HorizontalCoords();
 
-    const s_EquatorialCoords<T> toEquatorial(
+    const EquatorialCoords<T> toEquatorial(
         const t_julianDay siderealTime /* θ_0 */
     ,   const T observersLatitude      /* Φ   */
     ,   const T observersLongitude     /* L   */) const;
@@ -100,9 +93,6 @@ struct s_HorizontalCoords
     // Positive above, negative below horizon. (latitudinal) 
     T altitude; // A
 };
-
-typedef s_HorizontalCoords<long double> t_hord;
-typedef s_HorizontalCoords<float> t_horf;
 
 
 // Not required for now...
@@ -121,3 +111,5 @@ typedef s_HorizontalCoords<float> t_horf;
 //} t_galCoords;
 
 } // namespace glHimmel
+
+#include <texturebased/coordinates.hpp>

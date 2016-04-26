@@ -1,8 +1,8 @@
 
-#include <texturebased/abstractmappedhimmel.h>
+#include <texturebased/AbstractMappedHimmel.h>
 
-#include <texturebased/timef.h>
-#include <texturebased/screenalignedquad.h>
+#include <texturebased/Timef.h>
+#include <texturebased/ScreenAlignedQuad.h>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <texturebased/coordinates.h>
@@ -76,22 +76,18 @@ namespace glHimmel
         const float razd(m_razDirection == RD_NorthWestSouthEast ? 1.f : -1.f);
         m_razTransform = glm::rotate<float>(glm::mat4(), razd * m_razTimef->getf(true) * glm::pi<float>() * 2.f, glm::vec3(0.f, 0.f, 1.f));
 
-        if (u_razInverse)
-            u_razInverse->set(glm::inverse(m_razTransform));
-
-
 #pragma NOTE("interface for FakeSun required")
 
         const float t(timef());
 
-        if (u_sun)
+        if (m_fakeSun)
         {
-            t_equd equ;
+            EquatorialCoords<long double> equ;
             // TODO: fix this
-            equ.declination = _deg(t * glm::pi<float>() / 2.f);
-            equ.right_ascension = _deg((2.f * t - 1) * glm::pi<float>());
+            equ.declination = glm::degrees(t * glm::pi<float>() / 2.f);
+            equ.right_ascension = glm::degrees((2.f * t - 1) * glm::pi<float>());
 
-            u_sun->set(equ.toEuclidean());
+            m_sunCoordinates = equ.toEuclidean();
         }
 
         // Update two texture status for arbitrary blending (e.g. normal).
@@ -163,13 +159,13 @@ namespace glHimmel
         {
             u_razInverse = new osg::Uniform("razInverse", osg::Matrixf());
 
-            u_sun = new osg::Uniform("sun", osg::Vec3f(1.0, 0.0, 1.0));
+            m_sunCoordinates = new osg::Uniform("sun", osg::Vec3f(1.0, 0.0, 1.0));
             u_sunCoeffs = new osg::Uniform("sunCoeffs", defaultSunCoeffs());
             u_sunScale = new osg::Uniform("sunScale", 1.f);
 
             stateSet->addUniform(u_razInverse);
 
-            stateSet->addUniform(u_sun);
+            stateSet->addUniform(m_sunCoordinates);
             stateSet->addUniform(u_sunCoeffs);
             stateSet->addUniform(u_sunScale);
         }

@@ -3,9 +3,8 @@
 #include <memory>
 
 #include <texturebased/texturebased_api.h>
-#include <texturebased/abstracthimmel.h>
+#include <texturebased/AbstractHimmel.h>
 //#include "twounitschanger.h"
-//#include "pragmanote.h"
 #include <texturebased/ScreenAlignedQuad.h>
 
 #include <glbinding/gl/gl.h>
@@ -21,7 +20,6 @@ namespace glHimmel
 {
 
     class TimeF;
-
 
     class TEXTUREBASED_API AbstractMappedHimmel : public AbstractHimmel
     {
@@ -135,17 +133,16 @@ namespace glHimmel
         globjects::ref_ptr<globjects::Program> m_program;
 
         // uniforms
-        /*
+        
         osg::ref_ptr<osg::Uniform> u_back; // type depends on subclasses
         osg::ref_ptr<osg::Uniform> u_src;  // type depends on subclasses
 
-        osg::ref_ptr<osg::Uniform> u_razInverse; // inverse of the m_razTransform
-        osg::ref_ptr<osg::Uniform> u_sun;
+        glm::vec3 m_sunCoordinates;
         osg::ref_ptr<osg::Uniform> u_sunCoeffs;
         osg::ref_ptr<osg::Uniform> u_sunScale;
 
         osg::ref_ptr<osg::Uniform> u_srcAlpha; // float
-        */
+        
 
         GLint m_activeBackUnit;
         GLint m_activeSrcUnit;

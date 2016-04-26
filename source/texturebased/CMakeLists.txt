@@ -39,8 +39,10 @@ set(headers
     ${include_path}/ScreenAlignedQuad.h
     ${include_path}/Timef.h
     ${include_path}/coordinates.h
+    ${include_path}/coordinates.hpp
     ${include_path}/julianday.h
     ${include_path}/AstronomicalTime.h
+    ${include_path}/TwoUnitsChanger.h
 )
 
 set(sources
@@ -49,9 +51,9 @@ set(sources
     ${source_path}/AbstractHimmel.cpp
     ${source_path}/ScreenAlignedQuad.cpp
     ${source_path}/Timef.cpp
-    ${source_path}/coordinates.cpp
     ${source_path}/julianday.cpp
     ${source_path}/AstronomicalTime.cpp
+    ${source_path}/TwoUnitsChanger.cpp
 )
 
 # Group source files

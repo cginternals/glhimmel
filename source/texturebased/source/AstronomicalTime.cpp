@@ -1,5 +1,5 @@
 
-#include <texturebased/astronomicaltime.h>
+#include <texturebased/AstronomicalTime.h>
 
 #include <texturebased/timef.h>
 #include <glm/common.hpp>

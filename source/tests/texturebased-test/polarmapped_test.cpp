@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 
-#include <texturebased/polarmapped.h>
+#include <texturebased/PolarMappedHimmel.h>
 
 class polarmapped_test: public testing::Test
 {

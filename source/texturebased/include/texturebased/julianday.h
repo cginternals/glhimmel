@@ -3,7 +3,7 @@
 
 #include <texturebased/texturebased_api.h>
 
-#include <texturebased/astronomicaltime.h>
+#include <texturebased/AstronomicalTime.h>
 
 
 namespace glHimmel

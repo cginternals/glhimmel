@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <texturebased/texturebased_api.h>
-#include <texturebased/abstractmappedhimmel.h>
+#include <texturebased/AbstractMappedHimmel.h>
 
 #include <map>
 

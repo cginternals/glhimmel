@@ -1,4 +1,4 @@
-#include <texturebased/screenalignedquad.h>
+#include <texturebased/ScreenAlignedQuad.h>
 
 #include <cassert>
 #include <array>
