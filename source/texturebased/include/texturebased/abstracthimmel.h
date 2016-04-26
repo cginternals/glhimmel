@@ -10,10 +10,12 @@ class TimeF;
 
 class TEXTUREBASED_API AbstractHimmel
 {
+public:
     AbstractHimmel();
-    ~AbstractHimmel();
+    virtual ~AbstractHimmel();
 
     void assignTime(TimeF);
+    void update();
 
 };
 

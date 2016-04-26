@@ -96,8 +96,8 @@ namespace glHimmel
 
                                             // Shader
 
-        void setupProgram(/*osg::StateSet *stateSet*/);
-        void setupUniforms(/*osg::StateSet *stateSet*/);
+        virtual void setupProgram();
+        virtual void setupUniforms();
 
         void makeVertexShader();
         void unmakeVertexShader();
@@ -132,12 +132,8 @@ namespace glHimmel
 
         // shader
 
-        std::unique_ptr<globjects::Program> m_program;
+        globjects::ref_ptr<globjects::Program> m_program;
 
-        /*
-        osg::Shader *m_vShader;
-        osg::Shader *m_fShader;
-        */
         // uniforms
         /*
         osg::ref_ptr<osg::Uniform> u_back; // type depends on subclasses
@@ -154,7 +150,7 @@ namespace glHimmel
         GLint m_activeBackUnit;
         GLint m_activeSrcUnit;
 
-        std::unique_ptr<glm::mat4> m_razTransform;
+        glm::mat4 m_razTransform;
         e_RazDirection m_razDirection;
 
         TimeF *m_razTimef;

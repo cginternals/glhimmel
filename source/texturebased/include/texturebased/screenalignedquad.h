@@ -1,18 +1,24 @@
-
 #pragma once
 
-#include <texturebased/texturebased_api.h>
+#include <globjects/base/ref_ptr.h>
 
-
-namespace glHimmel
+namespace globjects
 {
-class TimeF;
+    class VertexArray;
+}
 
-class TEXTUREBASED_API ScreenAlignedQuad
+
+class ScreenAlignedQuad 
 {
+public:
     ScreenAlignedQuad();
     ~ScreenAlignedQuad();
+    
+    void draw();
 
+protected:
+    void initialize();
+
+protected:
+    globjects::ref_ptr<globjects::VertexArray> m_vao;
 };
-
-} // namespace osgHimmel

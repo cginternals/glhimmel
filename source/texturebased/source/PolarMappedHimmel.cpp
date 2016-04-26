@@ -4,7 +4,7 @@
 
 #include <glhimmel/glhimmel-version.h>
 
-#include <texturebased/polarmapped.h>
+#include <texturebased/PolarMappedHimmel.h>
 
 
 namespace glhimmel

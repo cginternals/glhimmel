@@ -1,7 +1,7 @@
 
 #include <iostream>
 
-#include <texturebased/polarmapped.h>
+#include <texturebased/PolarMappedHimmel.h>
 
 
 int main(int /*argc*/, char* /*argv*/[])
