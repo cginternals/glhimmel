@@ -1,8 +1,7 @@
 
 #include <texturebased/TwoUnitsChanger.h>
-
-#include <osg/Notify>
-
+#include <iostream>
+#include <cmath>
 
 namespace glHimmel
 {
@@ -16,7 +15,7 @@ TwoUnitsChanger::TwoUnitsChanger()
 ,   m_src(0)
 ,   m_srcAlpha(0.f)
 
-,   m_interpolationMethod(IM_Linear)
+,   m_interpolationMethod(InterpolationMethod::Linear)
 {
 }
 
@@ -26,8 +25,22 @@ TwoUnitsChanger::~TwoUnitsChanger()
 
 }
 
+float TwoUnitsChanger::getTransitionDuration() const
+{
+    return m_transitionDuration;
+}
 
-const float TwoUnitsChanger::setTransitionDuration(const float duration)
+void TwoUnitsChanger::setInterpolationMethod(const InterpolationMethod method)
+{
+    m_interpolationMethod = method;
+}
+
+InterpolationMethod TwoUnitsChanger::getInterpolationMethod() const
+{
+    return m_interpolationMethod;
+}
+
+float TwoUnitsChanger::setTransitionDuration(const float duration)
 {
     m_transitionDuration = std::min<float>(std::max<float>(duration, 0.0), 1.0);
     checkAndAdjustTransitionDuration();
@@ -37,7 +50,7 @@ const float TwoUnitsChanger::setTransitionDuration(const float duration)
 
 
 void TwoUnitsChanger::pushUnit(
-    const GLint unit
+    const gl::GLint unit
 ,   const float time)
 {
     const float t = std::min<float>(std::max<float>(time, 0.0), 1.0);
@@ -45,7 +58,7 @@ void TwoUnitsChanger::pushUnit(
     // check if time is valid
     if(m_unitsByTime.lower_bound(t) != m_unitsByTime.end())
     {
-        osg::notify(osg::WARN) << "Attempt to push unit before the last unit was ignored." << std::endl;
+        std::cout << "Attempt to push unit before the last unit was ignored." << std::endl;
         return;
     }
 
@@ -77,7 +90,7 @@ void TwoUnitsChanger::updateSmallestRange()
         if(i1 == ie)
             i1 = i0;
 
-        const float range = _abs(i1->first - i->first);
+        const float range = std::abs(i1->first - i->first);
 
         if(range < m_smallestRange)
             m_smallestRange = range;
@@ -91,7 +104,7 @@ void TwoUnitsChanger::checkAndAdjustTransitionDuration()
     if(m_transitionDuration > m_smallestRange)
     {
         m_transitionDuration = m_smallestRange;
-        osg::notify(osg::WARN) << "Transition duration was bigger than smallest time range. Set to smallest range." << std::endl;
+        std::cout << "Transition duration was bigger than smallest time range. Set to smallest range." << std::endl;
     }
 }
 
@@ -183,21 +196,21 @@ void TwoUnitsChanger::update(const float time) const
 }
 
 
-const GLint TwoUnitsChanger::getBackUnit(const float time) const
+gl::GLint TwoUnitsChanger::getBackUnit(const float time) const
 {
     update(time);
     return m_back;
 }
 
 
-const GLint TwoUnitsChanger::getSrcUnit(const float time) const
+gl::GLint TwoUnitsChanger::getSrcUnit(const float time) const
 {
     update(time);
     return m_src;
 }
 
 
-const float TwoUnitsChanger::getSrcAlpha(const float time) const
+float TwoUnitsChanger::getSrcAlpha(const float time) const
 {
     update(time);
     return m_srcAlpha;

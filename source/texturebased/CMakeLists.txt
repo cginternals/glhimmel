@@ -43,6 +43,7 @@ set(headers
     ${include_path}/julianday.h
     ${include_path}/AstronomicalTime.h
     ${include_path}/TwoUnitsChanger.h
+    ${include_path}/interpolate.h
 )
 
 set(sources
