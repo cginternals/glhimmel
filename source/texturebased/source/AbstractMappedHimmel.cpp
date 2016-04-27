@@ -13,7 +13,7 @@
 //#include <osg/Geode>
 //#include <osg/MatrixTransform>
 
-#include <assert.h>
+#include <cassert>
 #include <limits>
 #include <glbinding/gl/types.h>
 
@@ -42,9 +42,8 @@ namespace glHimmel
 
         , m_razTransform(new osg::MatrixTransform())
         , m_razDirection(RD_NorthWestSouthEast)
-        
-
-        , m_fakeSun(fakeSun)*/
+        */
+        , m_fakeSun(fakeSun)
     {
         setupProgram();
         setupUniforms();
