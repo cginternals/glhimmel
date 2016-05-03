@@ -99,7 +99,7 @@ enum class InterpolationMethod
 
 
 template<typename T>
-inline const T interpolate(
+T interpolate(
     const T t
 ,   const InterpolationMethod function = InterpolationMethod::Linear)
 {

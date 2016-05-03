@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <texturebased/texturebased_api.h>
@@ -18,18 +17,21 @@ public:
     void assignTime(std::unique_ptr<TimeF> timef);
     TimeF* getTime() const;
 
-    void update();
+    virtual void update();
     void initialize();
+
+    virtual bool isDirty();
+    void dirty(bool dirty = true);
 
 protected:
     float timef() const;
-    virtual void postInitialize() = 0;
 
 protected:
     std::unique_ptr<TimeF> m_timef;
     bool m_initialized;
     bool m_autoUpdateTime;
     bool m_dirty;
+    long double m_lastElapsed;
 };
 
 } // namespace osgHimmel

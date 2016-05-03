@@ -7,6 +7,7 @@ AbstractHimmel::AbstractHimmel()
 ,   m_initialized(false)
 ,   m_autoUpdateTime(false)
 ,   m_dirty(false)
+,   m_lastElapsed(0.0)
 {
 }
 
@@ -64,5 +65,16 @@ float AbstractHimmel::timef() const
 
     return 0.f;
 }
+
+void AbstractHimmel::dirty(bool dirty)
+{
+    m_dirty = dirty;
+}
+
+bool AbstractHimmel::isDirty()
+{
+    return m_dirty;
+}
+
 
 } // namespace glhimmel

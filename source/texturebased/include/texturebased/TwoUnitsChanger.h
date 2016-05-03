@@ -3,9 +3,11 @@
 
 #include <texturebased/interpolate.h>
 #include <texturebased/texturebased_api.h>
+#include <globjects/Texture.h>
 
 #include <map>
 #include <glbinding/gl/types.h>
+#include <globjects/base/ref_ptr.h>
 
 
 namespace glHimmel
@@ -34,15 +36,15 @@ public:
     // time  0.0  0.1  0.2  0.3  0.4  0.5  0.6  0.7  0.8  0.9  1.0/0.0
     // unit   1    1   1/0   0    0    0    0    0   0/1   1    1
 
-    void pushUnit(
-        const gl::GLint unit
+    void push(
+        globjects::ref_ptr<globjects::Texture> texture
     ,   const float time = 1.f);
 
 
     // Getter (they call update if required).
 
-    gl::GLint getBackUnit (const float time) const;
-    gl::GLint getSrcUnit  (const float time) const;
+    globjects::ref_ptr<globjects::Texture> getBack (const float time) const;
+    globjects::ref_ptr<globjects::Texture> getSrc  (const float time) const;
 
     float getSrcAlpha  (const float time) const;
 
@@ -62,7 +64,7 @@ protected:
     float m_transitionDuration;
     InterpolationMethod m_interpolationMethod;
 
-    typedef std::map<float, gl::GLint> t_unitsByTime;
+    typedef std::map<float, globjects::ref_ptr<globjects::Texture>> t_unitsByTime;
 
     t_unitsByTime m_unitsByTime;
     mutable t_unitsByTime m_backUnitsByTime;
@@ -74,8 +76,8 @@ protected:
     mutable bool m_updated; // helper for first update
     mutable float m_lastTime;
 
-    mutable gl::GLint m_back;
-    mutable gl::GLint m_src;
+    globjects::ref_ptr<globjects::Texture> m_back;
+    globjects::ref_ptr<globjects::Texture> m_src;
 
     mutable float m_srcAlpha;
 };

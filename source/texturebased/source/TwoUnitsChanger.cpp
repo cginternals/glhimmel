@@ -49,8 +49,8 @@ float TwoUnitsChanger::setTransitionDuration(const float duration)
 }
 
 
-void TwoUnitsChanger::pushUnit(
-    const gl::GLint unit
+void TwoUnitsChanger::push(
+    globjects::ref_ptr<globjects::Texture> texture
 ,   const float time)
 {
     const float t = std::min<float>(std::max<float>(time, 0.0), 1.0);
@@ -62,7 +62,7 @@ void TwoUnitsChanger::pushUnit(
         return;
     }
 
-    m_unitsByTime[t] = unit;
+    m_unitsByTime[t] = texture;
     m_backUnitsByTime.clear();
 
     updateSmallestRange();
@@ -196,14 +196,14 @@ void TwoUnitsChanger::update(const float time) const
 }
 
 
-gl::GLint TwoUnitsChanger::getBackUnit(const float time) const
+globjects::ref_ptr<globjects::Texture> TwoUnitsChanger::getBack(const float time) const
 {
     update(time);
     return m_back;
 }
 
 
-gl::GLint TwoUnitsChanger::getSrcUnit(const float time) const
+globjects::ref_ptr<globjects::Texture> TwoUnitsChanger::getSrc(const float time) const
 {
     update(time);
     return m_src;

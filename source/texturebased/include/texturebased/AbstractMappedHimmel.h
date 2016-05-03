@@ -1,15 +1,15 @@
 #pragma once
 
-#include <memory>
-
 #include <texturebased/texturebased_api.h>
 #include <texturebased/AbstractHimmel.h>
-//#include "twounitschanger.h"
 #include <texturebased/ScreenAlignedQuad.h>
+#include <texturebased/TwoUnitsChanger.h>
+#include <texturebased/Timef.h>
 
 #include <glbinding/gl/gl.h>
 
 #include <glm/vec4.hpp>
+#include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 
 #include <globjects/Program.h>
@@ -19,18 +19,16 @@ using namespace gl;
 namespace glHimmel
 {
 
-    class TimeF;
-
     class TEXTUREBASED_API AbstractMappedHimmel : public AbstractHimmel
     {
     public:
 
-        enum e_RazDirection
+        enum class RazDirection
         {
             // RD_NorthEastSouthWest and RD_NorthWestSouthEast were used to avoid misinterpretations of CW and CCW.
 
-            RD_NorthWestSouthEast
-            , RD_NorthEastSouthWest
+            NorthWestSouthEast
+            , NorthEastSouthWest
         };
 
     public:
@@ -49,7 +47,7 @@ namespace glHimmel
         // These calls get redirected to a TwoUnitsChanger instance (see comment there).
 
         void setTransitionDuration(const float duration);
-        const float getTransitionDuration() const;
+        float getTransitionDuration() const;
 
         // This call gets redirected to a TwoUnitsChanger instance  (see comment there).
         void pushTextureUnit(
@@ -63,18 +61,18 @@ namespace glHimmel
         // independent from the himmels timef.
 
         void setSecondsPerRAZ(const float secondsPerRAZ); // reasonable values should be around 2000+
-        const float getSecondsPerRAZ() const;
+        float getSecondsPerRAZ() const;
 
-        void setRazDirection(const e_RazDirection razDirection);
-        const e_RazDirection getRazDirection() const;
+        void setRazDirection(const RazDirection razDirection);
+        RazDirection getRazDirection() const;
 
 
-        const float setSunScale(const float scale);
-        const float getSunScale() const;
+        void setSunScale(const float scale);
+        float getSunScale() const;
 
-        const glm::vec4 setSunCoeffs(const glm::vec4 &coeffs);
-        const glm::vec4 getSunCoeffs() const;
-        static const glm::vec4 defaultSunCoeffs();
+        void setSunCoeffs(const glm::vec4 &coeffs);
+        glm::vec4 getSunCoeffs() const;
+        static glm::vec4 defaultSunCoeffs();
 
 
     protected:
@@ -82,37 +80,12 @@ namespace glHimmel
         // Inherited by AbstractHimmel. Call this first when inherited!
         virtual void update();
 
-        void assignUnit(
-            const GLint textureUnit
-            , const GLint targetIndex);
-
-        // For convenience in subclasses.
-        void assignBackUnit(const GLint textureUnit);
-        void assignSrcUnit(const GLint textureUnit);
-
         const float updateSrcAlpha() const; // Accesses TwoUnitsChanger.
 
-                                            // Shader
+        // Shader
 
         virtual void setupProgram();
         virtual void setupUniforms();
-
-        void makeVertexShader();
-        void unmakeVertexShader();
-
-        void makeFragmentShader();
-        void unmakeFragmentShader();
-
-        void reassignShader();
-
-        // abstract interface
-
-        virtual const std::string getVertexShaderSource();
-        virtual const std::string getFragmentShaderSource() = 0;
-
-        // getter
-
-        globjects::Program &program();
 
         // Interface
 
@@ -120,13 +93,13 @@ namespace glHimmel
 
         // AbstractHimmel
 
-        virtual void postInitialize();
+        virtual globjects::ref_ptr<globjects::Shader> getFragmentShader() = 0;
 
     protected:
 
-        std::unique_ptr<ScreenAlignedQuad> m_hquad;
+        ScreenAlignedQuad m_hquad;
 
-        //TwoUnitsChanger m_changer;
+        TwoUnitsChanger m_changer;
 
         // shader
 
@@ -134,33 +107,25 @@ namespace glHimmel
 
         // uniforms
         
-        osg::ref_ptr<osg::Uniform> u_back; // type depends on subclasses
-        osg::ref_ptr<osg::Uniform> u_src;  // type depends on subclasses
+        GLint m_back; 
+        GLint m_src;  
 
         glm::vec3 m_sunCoordinates;
-        osg::ref_ptr<osg::Uniform> u_sunCoeffs;
-        osg::ref_ptr<osg::Uniform> u_sunScale;
+        glm::vec4 m_sunCoeffs;
+        float m_sunScale;
 
-        osg::ref_ptr<osg::Uniform> u_srcAlpha; // float
+        float m_srcAlpha; 
         
-
         GLint m_activeBackUnit;
         GLint m_activeSrcUnit;
 
         glm::mat4 m_razTransform;
-        e_RazDirection m_razDirection;
+        RazDirection m_razDirection;
 
-        TimeF *m_razTimef;
+        TimeF m_razTimef;
 
         const bool m_fakeSun;
 
-
-#ifdef OSGHIMMEL_EXPOSE_SHADERS
-    public:
-        osg::Shader *getVertexShader();
-        osg::Shader *getGeometryShader();
-        osg::Shader *getFragmentShader();
-#endif // OSGHIMMEL_EXPOSE_SHADERS
     };
 
-} // namespace osgHimmel
+} // namespace glHimmel
