@@ -1,20 +1,22 @@
 #version 330
 
-vec4 blend_normal (vec4 back, vec4 src, float srca)\n"         \
-{\n"                                                             \
-    vec3 b = back.rgb;\n"                                        \
-    vec3 s = src.rgb;\n"                                         \
-    \n"                                                              \
-    vec3 bs = s;\n"                                   \
-    \n"                                                              \
-    float ba = back.a;\n"                                        \
-    float sa = clamp(srca, 0.0, 1.0);\n"                         \
-    \n"                                                              \
-    float ra = ba + sa - (ba * sa);\n"                           \
-    \n"                                                              \
-    vec3 r = (1.0 - sa / ra) * b + (sa / ra) * ((1.0 - ba) * s + ba * bs);\n" \
-    \n"                                                              \
-    return vec4(r, ra);\n"                                       \
+layout(location = 0) out vec4 color;
+
+vec4 blend_normal (vec4 back, vec4 src, float srca)
+{
+    vec3 b = back.rgb;
+    vec3 s = src.rgb;
+
+    vec3 bs = s;
+
+    float ba = back.a;
+    float sa = clamp(srca, 0.0, 1.0);
+
+    float ra = ba + sa - (ba * sa);
+
+    vec3 r = (1.0 - sa / ra) * b + (sa / ra) * ((1.0 - ba) * s + ba * bs);
+
+    return vec4(r, ra);
 }
 
 in vec4 m_razInvariant;
@@ -23,7 +25,7 @@ uniform vec3 sun;
 uniform vec4 sunCoeffs;
 uniform float sunScale;
 
-vec4 fakeSun(
+vec4 computeFakeSun(
     const vec3 eye
 ,   const vec3 sun
 ,   const vec4 coeffs
@@ -39,9 +41,11 @@ vec4 fakeSun(
     return vec4(coeffs.rgb * s, coeffs.a);
 }
 
-uniform vec3 hbandParams;
-uniform vec4 hbandBackground;
+uniform float hbandScale;
+uniform float hbandWidth;
+uniform float hbandOffset;
 uniform vec4 hbandColor;
+uniform vec4 hbandBackground;
 
 vec4 hband(
     const float z
@@ -57,17 +61,13 @@ vec4 hband(
     b = smoothstep(width, 1.0, b);
     return blend_normal(color, fc, b);
 }
-    
-PRAGMA_ONCE(main, 
 
-ENABLE_IF(half, getMappingMode() == MM_Half)
-
-ENABLE_IF(hBand, m_hBand)
-ENABLE_IF(fakeSun, m_fakeSun)
+uniform bool isHalf;
+uniform bool hBand;
+uniform bool fakeSun;
 
 
 in vec4 m_ray;
-
 
 // From AbstractMappedHimmel
 
@@ -80,39 +80,33 @@ uniform sampler2D src;
 
 const float c_2OverPi  = 0.6366197723675813430755350534901;
 const float c_1Over2Pi = 0.1591549430918953357688837633725;
+const float c_1OverPi  = 0.3183098861837906715377675267450;
 
 void main(void)
 {
     vec3 stu = normalize(m_ray.xyz);
 
-IF_ELSE_ENABLED(half,
-    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, asin(+stu.z) * c_2OverPi);"
-,
-    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, acos(-stu.z) * c_1OverPi);")
+
+    // TODO: c_1OverPi was not defined anywhere (typo?)
+    float v = isHalf ? asin(+stu.z) * c_2OverPi : acos(-stu.z) * c_1OverPi;
+    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, v);
 
     vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), srcAlpha);
 
+    if (fakeSun)
+    {
+        fc += computeFakeSun(
+            normalize(m_razInvariant.xyz), sun, sunCoeffs, sunScale, fc.a);
+    }
 
-IF_ENABLED(fakeSun,
-
-    fc += fakeSun(
-        normalize(m_razInvariant.xyz)
-    ,   sun
-    ,   sunCoeffs
-    ,   sunScale
-    ,   fc.a);")
-
-IF_ELSE_ENABLED(hBand,
-
-    gl_FragColor = hband(
-        stu.z
-    ,   hbandParams[0]
-    ,   hbandParams[1]
-    ,   hbandParams[2]
-    ,   hbandColor
-    ,   hbandBackground
-    ,   fc);"
-,
-    gl_FragColor = fc;")
+    if (hBand)
+    {
+        color = hband(
+            stu.z, hbandScale, hbandWidth, hbandOffset, hbandColor, hbandBackground, fc);
+    }
+    else
+    {
+        color = fc;
+    }
 
 }

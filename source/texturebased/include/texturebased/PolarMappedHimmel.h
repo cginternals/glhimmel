@@ -4,12 +4,14 @@
 #include <texturebased/texturebased_api.h>
 #include <texturebased/AbstractMappedHimmel.h>
 
+#include <globjects/base/ref_ptr.h>
+
+
 #include <map>
 
-
-namespace osg
-{
-    class Texture2D;
+namespace globjects {
+    class Shader;
+    class Texture;
 }
 
 
@@ -39,10 +41,10 @@ namespace glHimmel
             , const bool hBand = false
             , const bool fakeSun = false);
 
-        virtual ~PolarMappedHimmel();
+        virtual ~PolarMappedHimmel() = default;
 
         // Use this helper to work with pre-configured textures.
-        globjects::ref_ptr<globjects::Texture> getOrCreateTexture2D(const GLint textureUnit);
+        globjects::ref_ptr<globjects::Texture> getOrCreateTexture2D(const unsigned int textureUnit);
 
         MappingMode getMappingMode() const
         {
@@ -51,6 +53,8 @@ namespace glHimmel
 
         // Use HorizonBand for horizon blending.
         HorizonBand* hBand() const;
+
+        void update() override;
 
     protected:
 

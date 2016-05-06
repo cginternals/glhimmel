@@ -45,6 +45,11 @@ void AbstractHimmel::update()
     }
 }
 
+void AbstractHimmel::draw()
+{
+    update();
+}
+
 float AbstractHimmel::timef() const
 {
     if (m_timef)

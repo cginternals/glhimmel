@@ -1,3 +1,5 @@
+#include <globjects/Shader.h>
+#include <globjects/Texture.h>
 
 #include <texturebased/PolarMappedHimmel.h>
 #include <texturebased/HorizonBand.h>
@@ -10,11 +12,11 @@ PolarMappedHimmel::PolarMappedHimmel(const MappingMode & mappingMode, const bool
 {
     if (hBand)
     {
-        m_hBand = std::make_unique<HorizonBand>();
+        m_hBand = std::unique_ptr<HorizonBand>(new HorizonBand());
     }
 }
 
-globjects::ref_ptr<globjects::Texture> PolarMappedHimmel::getOrCreateTexture2D(const GLint textureUnit)
+globjects::ref_ptr<globjects::Texture> PolarMappedHimmel::getOrCreateTexture2D(const unsigned int textureUnit)
 {
     // Retrieve an existing texture.
 
@@ -38,6 +40,18 @@ globjects::ref_ptr<globjects::Texture> PolarMappedHimmel::getOrCreateTexture2D(c
         newTex2D->bindActive(textureUnit);
 
     return newTex2D;
+}
+
+void PolarMappedHimmel::update()
+{
+    m_hBand->updateUniforms(m_program);
+    m_program->setUniform("hBand", m_hBand.get() != nullptr);
+    m_program->setUniform("half", m_mappingMode == MappingMode::Half);
+}
+
+globjects::ref_ptr<globjects::Shader> getFragmentShader()
+{
+    return globjects::Shader::fromFile(GL_VERTEX_SHADER, "data/shader/polarMappedHimmel.frag");
 }
 
 HorizonBand* PolarMappedHimmel::hBand() const

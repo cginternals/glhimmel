@@ -121,6 +121,7 @@ namespace glHimmel
         m_program->setUniform("back", BACK_TEXTURE_INDEX);
         m_program->setUniform("src", SRC_TEXTURE_INDEX);
 
+        m_program->setUniform("fakeSun", m_fakeSun);
         if (m_fakeSun)
         {
             m_program->setUniform<glm::vec3>("sunCoords", m_sunCoordinates);
@@ -194,7 +195,7 @@ namespace glHimmel
 
     void AbstractMappedHimmel::draw()
     {
-        update();
+        AbstractHimmel::draw();
 
         m_program->use();
         m_hquad.draw();

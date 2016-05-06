@@ -21,11 +21,11 @@ HorizonBand::~HorizonBand()
 
 void HorizonBand::updateUniforms(globjects::ref_ptr<globjects::Program> program) const
 {
-    program->setUniform("scale", m_scale);
-    program->setUniform("width", m_width);
-    program->setUniform("offset", m_offset);
-    program->setUniform("color", m_color);
-    program->setUniform("bottomColor", m_bottomColor);
+    program->setUniform("hbandScale", m_scale);
+    program->setUniform("hbandWidth", m_width);
+    program->setUniform("hbandOffset", m_offset);
+    program->setUniform("hbandColor", m_color);
+    program->setUniform("hbandBottomColor", m_bottomColor);
 };
 
 

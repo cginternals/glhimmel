@@ -17,7 +17,7 @@ public:
     void assignTime(std::unique_ptr<TimeF> timef);
     TimeF* getTime() const;
 
-    virtual void draw() = 0;
+    virtual void draw();
 
     virtual bool isDirty();
     void dirty(bool dirty = true);
