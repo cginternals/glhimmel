@@ -76,8 +76,8 @@ protected:
     mutable bool m_updated; // helper for first update
     mutable float m_lastTime;
 
-    globjects::ref_ptr<globjects::Texture> m_back;
-    globjects::ref_ptr<globjects::Texture> m_src;
+    mutable globjects::ref_ptr<globjects::Texture> m_back;
+    mutable globjects::ref_ptr<globjects::Texture> m_src;
 
     mutable float m_srcAlpha;
 };

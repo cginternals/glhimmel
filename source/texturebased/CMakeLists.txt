@@ -44,6 +44,7 @@ set(headers
     ${include_path}/AstronomicalTime.h
     ${include_path}/TwoUnitsChanger.h
     ${include_path}/interpolate.h
+    ${include_path}/HorizonBand.h
 )
 
 set(sources
@@ -55,6 +56,7 @@ set(sources
     ${source_path}/julianday.cpp
     ${source_path}/AstronomicalTime.cpp
     ${source_path}/TwoUnitsChanger.cpp
+    ${source_path}/HorizonBand.cpp
 )
 
 # Group source files

@@ -51,7 +51,7 @@ namespace glHimmel
 
         // This call gets redirected to a TwoUnitsChanger instance  (see comment there).
         void pushTextureUnit(
-            const GLint textureUnit
+            const globjects::ref_ptr<globjects::Texture> textureUnit
             , const float time = 1.f);
 
 
@@ -74,24 +74,15 @@ namespace glHimmel
         glm::vec4 getSunCoeffs() const;
         static glm::vec4 defaultSunCoeffs();
 
+        void draw() override;
 
     protected:
 
         // Inherited by AbstractHimmel. Call this first when inherited!
-        virtual void update();
+        void update() override;
 
-        const float updateSrcAlpha() const; // Accesses TwoUnitsChanger.
-
-        // Shader
-
-        virtual void setupProgram();
-        virtual void setupUniforms();
-
-        // Interface
-
-        //virtual osg::StateAttribute *getTextureAttribute(const GLint textureUnit) const = 0;
-
-        // AbstractHimmel
+        void setupProgram();
+        void setupUniforms() const;
 
         virtual globjects::ref_ptr<globjects::Shader> getFragmentShader() = 0;
 
@@ -101,14 +92,10 @@ namespace glHimmel
 
         TwoUnitsChanger m_changer;
 
-        // shader
-
         globjects::ref_ptr<globjects::Program> m_program;
-
-        // uniforms
         
-        GLint m_back; 
-        GLint m_src;  
+        globjects::ref_ptr<globjects::Texture> m_back; 
+        globjects::ref_ptr<globjects::Texture> m_src;
 
         glm::vec3 m_sunCoordinates;
         glm::vec4 m_sunCoeffs;
@@ -116,8 +103,8 @@ namespace glHimmel
 
         float m_srcAlpha; 
         
-        GLint m_activeBackUnit;
-        GLint m_activeSrcUnit;
+        globjects::ref_ptr<globjects::Texture> m_activeBackUnit;
+        globjects::ref_ptr<globjects::Texture> m_activeSrcUnit;
 
         glm::mat4 m_razTransform;
         RazDirection m_razDirection;

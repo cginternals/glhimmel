@@ -12,9 +12,9 @@ class ScreenAlignedQuad
 {
 public:
     ScreenAlignedQuad();
-    ~ScreenAlignedQuad();
+    ~ScreenAlignedQuad() = default;
     
-    void draw();
+    void draw() const;
 
 protected:
     void initialize();

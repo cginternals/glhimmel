@@ -11,8 +11,8 @@ TwoUnitsChanger::TwoUnitsChanger()
 ,   m_smallestRange(1.f)
 ,   m_updated(false)
 ,   m_lastTime(0.f)
-,   m_back(0)
-,   m_src(0)
+,   m_back(nullptr)
+,   m_src(nullptr)
 ,   m_srcAlpha(0.f)
 
 ,   m_interpolationMethod(InterpolationMethod::Linear)
@@ -139,8 +139,8 @@ void TwoUnitsChanger::update(const float time) const
     // If no or only one unit is assigned do nothing.
     if(m_unitsByTime.size() < 2)
     {
-        m_back = 0;
-        m_src  = 0;
+        m_back = nullptr;
+        m_src  = nullptr;
         m_srcAlpha = 0.f;
 
         return;

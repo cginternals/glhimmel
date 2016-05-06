@@ -39,8 +39,8 @@ namespace glHimmel
 
         , m_program(nullptr)
         , m_razTimef()
-        , m_activeBackUnit(std::numeric_limits<GLint>::max())
-        , m_activeSrcUnit(std::numeric_limits<GLint>::max())
+        , m_activeBackUnit(nullptr)
+        , m_activeSrcUnit(nullptr)
 
         , m_razTransform()
         , m_razDirection(RazDirection::NorthWestSouthEast)
@@ -53,14 +53,6 @@ namespace glHimmel
         setupUniforms();
 
         m_razTimef.start();
-
-        // Encapsulate hQuad into MatrixTransform.
-
-        /*osg::Geode *geode = new osg::Geode();
-        geode->addDrawable(m_hquad);
-
-        m_razTransform->addChild(geode);
-        addChild(m_razTransform);*/
     };
 
 
@@ -99,18 +91,18 @@ namespace glHimmel
 
         // Avoid unnecessary unit switches.
 
-        const GLint backUnit(m_changer.getBackUnit(t));
+        const globjects::ref_ptr<globjects::Texture> backUnit(m_changer.getBack(t));
         if (backUnit != m_activeBackUnit)
         {
-            assignBackUnit(backUnit);
-            assert(backUnit == m_activeBackUnit);
+            backUnit->bindActive(BACK_TEXTURE_INDEX);
+            m_activeBackUnit = backUnit;
         }
 
-        const GLint srcUnit(m_changer.getSrcUnit(t));
+        const globjects::ref_ptr<globjects::Texture> srcUnit(m_changer.getSrc(t));
         if (srcUnit != m_activeSrcUnit)
         {
-            assignSrcUnit(srcUnit);
-            assert(srcUnit == m_activeSrcUnit);
+            srcUnit->bindActive(SRC_TEXTURE_INDEX);
+            m_activeSrcUnit = srcUnit;
         }
     }
 
@@ -123,11 +115,11 @@ namespace glHimmel
     }
 
 
-    void AbstractMappedHimmel::setupUniforms()
+    void AbstractMappedHimmel::setupUniforms() const
     {
-        m_program->setUniform<float>("srcAlpha", m_srcAlpha);
-        m_program->setUniform<GLint>("back", m_back);
-        m_program->setUniform<GLint>("src", m_src);
+        m_program->setUniform("srcAlpha", m_srcAlpha);
+        m_program->setUniform("back", BACK_TEXTURE_INDEX);
+        m_program->setUniform("src", SRC_TEXTURE_INDEX);
 
         if (m_fakeSun)
         {
@@ -150,10 +142,10 @@ namespace glHimmel
     }
     
     void AbstractMappedHimmel::pushTextureUnit(
-        const GLint textureUnit
+        const globjects::ref_ptr<globjects::Texture> textureUnit
         , const float time)
     {
-        m_changer.pushUnit(textureUnit, time);
+        m_changer.push(textureUnit, time);
     }
     
     void AbstractMappedHimmel::setSecondsPerRAZ(const float secondsPerRAZ)
@@ -198,6 +190,14 @@ namespace glHimmel
     glm::vec4 AbstractMappedHimmel::defaultSunCoeffs()
     {
         return glm::vec4(0.63, 0.58, 0.49, 1.0);
+    }
+
+    void AbstractMappedHimmel::draw()
+    {
+        update();
+
+        m_program->use();
+        m_hquad.draw();
     }
    
 

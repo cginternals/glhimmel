@@ -17,14 +17,14 @@ public:
     void assignTime(std::unique_ptr<TimeF> timef);
     TimeF* getTime() const;
 
-    virtual void update();
-    void initialize();
+    virtual void draw() = 0;
 
     virtual bool isDirty();
     void dirty(bool dirty = true);
 
 protected:
     float timef() const;
+    virtual void update();
 
 protected:
     std::unique_ptr<TimeF> m_timef;

@@ -15,15 +15,6 @@ AbstractHimmel::~AbstractHimmel()
 {
 }
 
-void AbstractHimmel::initialize()
-{
-    if (m_initialized)
-        return;
-
-    postInitialize();
-
-    m_initialized = true;
-}
 
 void AbstractHimmel::assignTime(std::unique_ptr<TimeF> timef)
 {
@@ -37,16 +28,12 @@ TimeF* AbstractHimmel::getTime() const
 
 void AbstractHimmel::update()
 {
-    if (!m_initialized)
-        initialize();
-
     if (m_autoUpdateTime && m_timef)
     {
         m_timef->update();
         dirty();
     }
-
-
+    
     if (!m_timef)
         return;
 

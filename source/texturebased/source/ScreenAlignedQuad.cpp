@@ -44,7 +44,7 @@ void ScreenAlignedQuad::initialize()
     m_vao->enable(0);
 }
 
-void ScreenAlignedQuad::draw()
+void ScreenAlignedQuad::draw() const
 {
     m_vao->drawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }

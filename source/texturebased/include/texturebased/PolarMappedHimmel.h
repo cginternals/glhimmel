@@ -26,51 +26,44 @@ namespace glHimmel
     {
     public:
 
-        enum e_MappingMode
+        enum class MappingMode
         {
-            MM_Full
-            , MM_Half
+            Full
+            , Half
         };
 
     public:
 
         PolarMappedHimmel(
-            const e_MappingMode &mappingMode = MM_Half
+            const MappingMode &mappingMode = MappingMode::Half
             , const bool hBand = false
             , const bool fakeSun = false);
 
         virtual ~PolarMappedHimmel();
 
         // Use this helper to work with pre-configured textures.
-        osg::Texture2D* getOrCreateTexture2D(const GLint textureUnit);
+        globjects::ref_ptr<globjects::Texture> getOrCreateTexture2D(const GLint textureUnit);
 
-        inline const e_MappingMode getMappingMode() const
+        MappingMode getMappingMode() const
         {
             return m_mappingMode;
         }
 
         // Use HorizonBand for horizon blending.
-        HorizonBand *hBand();
+        HorizonBand* hBand() const;
 
     protected:
 
-        // AbstractMappedHimmel interface
-
-        //virtual osg::StateAttribute *getTextureAttribute(const GLint textureUnit) const;
-
-
-        // AbstractHimmel interface
-
-        virtual const std::string getFragmentShaderSource();
+        globjects::ref_ptr<globjects::Shader> getFragmentShader() override;
 
     protected:
 
-        typedef std::map<GLint, std::unique_ptr<osg::Texture2D> > t_tex2DById;
+        typedef std::map<GLint, globjects::ref_ptr<globjects::Texture>> t_tex2DById;
         t_tex2DById m_tex2DsById;
 
-        e_MappingMode m_mappingMode;
+        MappingMode m_mappingMode;
 
-        HorizonBand *m_hBand;
+        std::unique_ptr<HorizonBand> m_hBand;
     };
 
 } // namespace glHimmel
