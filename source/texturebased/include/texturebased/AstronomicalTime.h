@@ -30,17 +30,17 @@ typedef struct TEXTUREBASED_API s_AstronomicalTime
     ,   const long double day
     ,   const short utcOffset = 0);
 
-    static const s_AstronomicalTime fromTimeT(
+    static s_AstronomicalTime fromTimeT(
         const time_t &localTime
     ,   const time_t &utcOffset);
 
-    static const s_AstronomicalTime fromTimeF(const TimeF &t);
+    static s_AstronomicalTime fromTimeF(const TimeF &t);
 
-    const time_t toTime_t() const;
+    time_t toTime_t() const;
 
-    const long double dayf() const;
+    long double dayf() const;
 
-    const bool operator==(const s_AstronomicalTime &other) const
+    bool operator==(const s_AstronomicalTime &other) const
     {
         return other.year   == year
             && other.month  == month

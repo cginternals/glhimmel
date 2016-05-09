@@ -1,7 +1,7 @@
 
 #include <texturebased/AstronomicalTime.h>
 
-#include <texturebased/timef.h>
+#include <texturebased/Timef.h>
 #include <glm/common.hpp>
 
 namespace glHimmel
@@ -58,7 +58,7 @@ s_AstronomicalTime::s_AstronomicalTime(
 }
 
 
-const s_AstronomicalTime s_AstronomicalTime::fromTimeT(
+s_AstronomicalTime s_AstronomicalTime::fromTimeT(
     const time_t &time
 ,   const time_t &utcOffset)
 {
@@ -87,13 +87,13 @@ const s_AstronomicalTime s_AstronomicalTime::fromTimeT(
 }
 
 
-const s_AstronomicalTime s_AstronomicalTime::fromTimeF(const TimeF &t)
+s_AstronomicalTime s_AstronomicalTime::fromTimeF(const TimeF &t)
 {
     return fromTimeT(t.gett(), t.getUtcOffset());
 }
 
 
-const time_t s_AstronomicalTime::toTime_t() const
+time_t s_AstronomicalTime::toTime_t() const
 {
     time_t t = 0;
 
@@ -120,7 +120,7 @@ const time_t s_AstronomicalTime::toTime_t() const
 }
 
 
-const long double s_AstronomicalTime::dayf() const
+long double s_AstronomicalTime::dayf() const
 {
     return day + toDays(hour, minute, second);
 }

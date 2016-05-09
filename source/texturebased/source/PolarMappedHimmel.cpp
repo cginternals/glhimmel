@@ -29,7 +29,7 @@ globjects::ref_ptr<globjects::Texture> PolarMappedHimmel::getOrCreateTexture2D(c
     auto newTex2D = globjects::Texture::createDefault();
 
     newTex2D->setParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
-    
+
     m_tex2DsById[textureUnit] = newTex2D;
 
     // Assign some textures if there are none.
@@ -49,7 +49,7 @@ void PolarMappedHimmel::update()
     m_program->setUniform("half", m_mappingMode == MappingMode::Half);
 }
 
-globjects::ref_ptr<globjects::Shader> getFragmentShader()
+globjects::ref_ptr<globjects::Shader> PolarMappedHimmel::getFragmentShader()
 {
     return globjects::Shader::fromFile(GL_VERTEX_SHADER, "data/shader/polarMappedHimmel.frag");
 }

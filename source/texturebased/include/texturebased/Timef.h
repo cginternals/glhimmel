@@ -11,10 +11,10 @@ namespace glHimmel
 {
 
 // TimeF manages an osg::Timer and features an interface for floating time
-// in the closed interval [0;1] representing a full day and standard c 
-// time (time_t) simultaneously. The time updates have to be requested 
+// in the closed interval [0;1] representing a full day and standard c
+// time (time_t) simultaneously. The time updates have to be requested
 // explicitly, thus simplifying usage between multiple recipients.
-// The time starts cycling automatically, but can also be paused, stopped, 
+// The time starts cycling automatically, but can also be paused, stopped,
 // or set to a specific value.
 
 class TEXTUREBASED_API TimeF
@@ -26,8 +26,8 @@ class TEXTUREBASED_API TimeF
     };
 
 public:
-    
-    static const long utcOffset();
+
+    static long utcOffset();
 
 
     TimeF(
@@ -51,53 +51,53 @@ public:
     void reset(const bool forceUpdate = false); // Resets the time to initial value (secondsPerCycle remain unchanged).
     void stop (const bool forceUpdate = false); // Stops and resets the time.
 
-    const long double getSecondsPerCycle() const;
-  
-    const long double setSecondsPerCycle(const long double secondsPerCycle);
+    long double getSecondsPerCycle() const;
+
+    long double setSecondsPerCycle(const long double secondsPerCycle);
 
 
     // Float time in the intervall [0;1]
-    inline const long double getf() const
+    long double getf() const
     {
         return m_timef[1];
     }
 
-    const long double getf(const bool updateFirst);
+    long double getf(const bool updateFirst);
 
     // Sets only time, date remains unchanged.
-    const long double setf(
+    long double setf(
         long double time
     ,   const bool forceUpdate = false);
 
     // Elapsed float time from initialized time.
-    const long double getNonModf(const bool updateFirst = false);
+    long double getNonModf(const bool updateFirst = false);
 
     // Time in seconds from initial time.
-    inline const time_t gett() const
+    time_t gett() const
     {
         return m_time[1] + utcOffset();
     }
 
-    const time_t gett(const bool updateFirst);
-    const time_t sett(
+    time_t gett(const bool updateFirst);
+    time_t sett(
         const time_t &time
     ,   const bool forceUpdate = false);
 
-    const time_t getUtcOffset() const;
-    const time_t setUtcOffset(const time_t &utcOffset /* In Seconds. */);
+    time_t getUtcOffset() const;
+    time_t setUtcOffset(const time_t &utcOffset /* In Seconds. */);
 
-    // 
+    //
 
-    const bool isRunning() const;
+    bool isRunning() const;
 
 protected:
-    static inline const long double secondsTof(const time_t &time);
-    static inline const time_t fToSeconds(const long double time);
+    static long double secondsTof(const time_t &time);
+    static time_t fToSeconds(const long double time);
 
     void initialize();
 
 protected:
-    
+
     long double elapsedTime();
 
     std::chrono::steady_clock::time_point m_startTime;

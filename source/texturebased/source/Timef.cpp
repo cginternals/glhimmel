@@ -11,7 +11,7 @@
 namespace glHimmel
 {
 
-const long TimeF::utcOffset()
+long TimeF::utcOffset()
 {
     long tz;
 
@@ -93,7 +93,7 @@ void TimeF::update()
 }
 
 
-const long double TimeF::getf(const bool updateFirst)
+long double TimeF::getf(const bool updateFirst)
 {
     if(updateFirst)
         update();
@@ -101,7 +101,7 @@ const long double TimeF::getf(const bool updateFirst)
     return m_timef[1];
 }
 
-const long double TimeF::setf(
+long double TimeF::setf(
     long double timef
 ,   const bool forceUpdate)
 {
@@ -116,13 +116,13 @@ const long double TimeF::setf(
     m_offset = 0;
 
     const time_t seconds(fToSeconds(timef));
-    
+
 #ifdef __GNUC__
     struct tm lcl(*localtime(&m_time[1]));
 #else // __GNUC__
     struct tm lcl;
     localtime_s(&lcl, &m_time[1]);
-#endif // __GNUC__      
+#endif // __GNUC__
 
     lcl.tm_hour = seconds / 3600;
     lcl.tm_min  = seconds % 3600 / 60;
@@ -140,13 +140,13 @@ const long double TimeF::setf(
 }
 
 
-const long double TimeF::getNonModf(const bool updateFirst)
+long double TimeF::getNonModf(const bool updateFirst)
 {
     return secondsTof(gett(updateFirst));
 }
 
 
-const time_t TimeF::gett(const bool updateFirst)
+time_t TimeF::gett(const bool updateFirst)
 {
     if(updateFirst)
         update();
@@ -155,7 +155,7 @@ const time_t TimeF::gett(const bool updateFirst)
 }
 
 
-const time_t TimeF::sett(
+time_t TimeF::sett(
     const time_t &time
 ,   const bool forceUpdate)
 {
@@ -174,12 +174,12 @@ const time_t TimeF::sett(
     return gett();
 }
 
-const long double TimeF::getSecondsPerCycle() const
+long double TimeF::getSecondsPerCycle() const
 {
     return m_secondsPerCycle;
 }
 
-const long double TimeF::setSecondsPerCycle(const long double secondsPerCycle)
+long double TimeF::setSecondsPerCycle(const long double secondsPerCycle)
 {
     // intepret elapsed seconds within new cycle time
     const long double elapsed(M_Running == m_mode ? elapsedTime() : m_lastModeChangeTime);
@@ -196,19 +196,19 @@ const long double TimeF::setSecondsPerCycle(const long double secondsPerCycle)
 }
 
 
-inline const long double TimeF::secondsTof(const time_t &time)
+long double TimeF::secondsTof(const time_t &time)
 {
     return static_cast<long double>((time) / (60.0 * 60.0 * 24.0));
 }
 
 
-inline const time_t TimeF::fToSeconds(const long double time)
+time_t TimeF::fToSeconds(const long double time)
 {
     return static_cast<time_t>(time * 60.0 * 60.0 * 24.0 + 0.1);
 }
 
 
-const bool TimeF::isRunning() const
+bool TimeF::isRunning() const
 {
     return M_Running == m_mode;
 }
@@ -243,7 +243,7 @@ void TimeF::pause(const bool forceUpdate)
     if(forceUpdate)
         update();
 }
- 
+
 
 void TimeF::reset(const bool forceUpdate)
 {
@@ -267,12 +267,12 @@ void TimeF::stop(const bool forceUpdate)
 }
 
 
-const time_t TimeF::getUtcOffset() const
+time_t TimeF::getUtcOffset() const
 {
     return m_utcOffset;
 }
 
-const time_t TimeF::setUtcOffset(const time_t &utcOffset)
+time_t TimeF::setUtcOffset(const time_t &utcOffset)
 {
     m_utcOffset = utcOffset;
 
