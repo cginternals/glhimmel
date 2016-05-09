@@ -17,7 +17,6 @@
 
 
 using namespace gl;
-using namespace glm;
 using namespace globjects;
 
 ScreenAlignedQuad::ScreenAlignedQuad()
@@ -30,16 +29,16 @@ void ScreenAlignedQuad::initialize()
     // By default, counterclockwise polygons are taken to be front-facing.
     // http://www.opengl.org/sdk/docs/man/xhtml/glFrontFace.xml
 
-    static const std::array<vec2, 4> raw{ { vec2(+1.f,-1.f), vec2(+1.f,+1.f), vec2(-1.f,-1.f), vec2(-1.f,+1.f) } };
+    static const std::array<glm::vec2, 4> raw{ { glm::vec2(+1.f,-1.f), glm::vec2(+1.f,+1.f), glm::vec2(-1.f,-1.f), glm::vec2(-1.f,+1.f) } };
 
     m_vao = new VertexArray();
 
-    auto buffer = globjects::ref_ptr<Buffer>();
+    globjects::ref_ptr<Buffer> buffer = new Buffer();
     buffer->setData(raw, GL_STATIC_DRAW); //needed for some drivers
 
     auto binding = m_vao->binding(0);
     binding->setAttribute(0);
-    binding->setBuffer(buffer, 0, sizeof(vec2));
+    binding->setBuffer(buffer, 0, sizeof(glm::vec2));
     binding->setFormat(2, GL_FLOAT, GL_FALSE, 0);
     m_vao->enable(0);
 }

@@ -28,13 +28,14 @@ void key_callback(GLFWwindow * window, int key, int /*scancode*/, int action, in
 }
 
 // Read raw binary file into a char vector (probably the fastest way).
-std::vector<char> rawFromFile(const char * filePath)
+std::vector<char> rawFromFile(const std::string& filePath)
 {
     auto stream = std::ifstream(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
     if (!stream)
     {
         std::cerr << "Reading from file '" << filePath << "' failed." << std::endl;
+        exit(1);
         return std::vector<char>();
     }
 
@@ -65,7 +66,7 @@ std::unique_ptr<AbstractHimmel> createPolarMappedDemo()
     himmel->setSecondsPerRAZ(300.f);
     himmel->setRazDirection(AbstractMappedHimmel::RazDirection::NorthWestSouthEast);
 
-    auto image = rawFromFile("resources/polar_half_art_0.jpg");
+    auto image = rawFromFile("resources/polar_half_art_0.8192.2048.rgba.ub.raw");
 
     himmel->getOrCreateTexture2D(0)->image2D(0, GL_RGBA32F, 8192, 2048, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data());
 
@@ -116,11 +117,14 @@ int main(int, char *[])
     glbinding::Binding::initialize(false); // only resolve functions that are actually used (lazy)
     globjects::init();
 
+    auto himmel = createPolarMappedDemo();
+
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwSwapBuffers(window);
+        himmel->draw();
     }
 
     glfwTerminate();
