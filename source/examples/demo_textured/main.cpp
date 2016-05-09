@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <memory>
+#include <fstream>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -26,9 +27,31 @@ void key_callback(GLFWwindow * window, int key, int /*scancode*/, int action, in
         glfwSetWindowShouldClose(window, 1);
 }
 
+// Read raw binary file into a char vector (probably the fastest way).
+std::vector<char> rawFromFile(const char * filePath)
+{
+    auto stream = std::ifstream(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+
+    if (!stream)
+    {
+        std::cerr << "Reading from file '" << filePath << "' failed." << std::endl;
+        return std::vector<char>();
+    }
+
+    stream.seekg(0, std::ios::end);
+
+    const auto size = stream.tellg();
+    auto raw = std::vector<char>(size);
+
+    stream.seekg(0, std::ios::beg);
+    stream.read(raw.data(), size);
+
+    return raw;
+}
+
 std::unique_ptr<AbstractHimmel> createPolarMappedDemo()
 {
-    std::unique_ptr<PolarMappedHimmel> himmel = std::make_unique<PolarMappedHimmel>(PolarMappedHimmel::MappingMode::Half, true);
+    auto himmel = std::unique_ptr<PolarMappedHimmel>(new PolarMappedHimmel(PolarMappedHimmel::MappingMode::Half, true));
 
     /*
     himmel->hBand()->setBottomColor(glm::vec4(0.48f, 0.46f, 0.42f, 1.00f));
@@ -42,7 +65,10 @@ std::unique_ptr<AbstractHimmel> createPolarMappedDemo()
     himmel->setSecondsPerRAZ(300.f);
     himmel->setRazDirection(AbstractMappedHimmel::RazDirection::NorthWestSouthEast);
 
-    himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_0.jpg"));
+    auto image = rawFromFile("resources/polar_half_art_0.jpg");
+
+    himmel->getOrCreateTexture2D(0)->image2D(0, GL_RGBA32F, 8192, 2048, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data());
+
     /*himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
     himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_half_gen_2.jpg"));
     himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/polar_half_pho_1.jpg"));
@@ -54,8 +80,10 @@ std::unique_ptr<AbstractHimmel> createPolarMappedDemo()
     himmel->pushTextureUnit(3, 0.6f);
     himmel->pushTextureUnit(4, 0.8f);
     */
-    return himmel;
-}
+    return std::move(himmel);
+ }
+
+
 
 
 int main(int, char *[])

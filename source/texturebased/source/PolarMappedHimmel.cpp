@@ -9,6 +9,7 @@ using namespace gl;
 namespace glHimmel
 {
 PolarMappedHimmel::PolarMappedHimmel(const MappingMode & mappingMode, const bool hBand, const bool fakeSun)
+:   m_mappingMode(mappingMode)
 {
     if (hBand)
     {
