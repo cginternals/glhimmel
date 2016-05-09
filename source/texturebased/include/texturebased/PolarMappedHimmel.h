@@ -3,6 +3,7 @@
 #include <memory>
 #include <texturebased/texturebased_api.h>
 #include <texturebased/AbstractMappedHimmel.h>
+#include <texturebased/HorizonBand.h>
 
 #include <globjects/base/ref_ptr.h>
 
@@ -17,9 +18,6 @@ namespace globjects {
 
 namespace glHimmel
 {
-
-    class HorizonBand;
-
 
     // uses method presented by Blinn, James F. and Newell, Martin E.
     // in "Texture and reflection in computer generated images" 1976

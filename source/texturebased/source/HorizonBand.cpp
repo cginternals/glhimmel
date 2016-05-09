@@ -17,7 +17,7 @@ HorizonBand::HorizonBand()
 
 HorizonBand::~HorizonBand()
 {
-};
+}
 
 void HorizonBand::updateUniforms(globjects::ref_ptr<globjects::Program> program) const
 {
@@ -26,7 +26,7 @@ void HorizonBand::updateUniforms(globjects::ref_ptr<globjects::Program> program)
     program->setUniform("hbandOffset", m_offset);
     program->setUniform("hbandColor", m_color);
     program->setUniform("hbandBottomColor", m_bottomColor);
-};
+}
 
 
 void HorizonBand::setScale(const float scale)

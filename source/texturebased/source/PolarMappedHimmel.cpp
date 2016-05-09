@@ -2,7 +2,6 @@
 #include <globjects/Texture.h>
 
 #include <texturebased/PolarMappedHimmel.h>
-#include <texturebased/HorizonBand.h>
 
 using namespace gl;
 

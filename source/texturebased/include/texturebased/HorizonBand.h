@@ -12,12 +12,12 @@ namespace glHimmel
 {
 
 // Some texture projections (polar mapping with MappingMode::Half and paraboloid mapping)
-// discard the lower hemisphere, resulting in a hard edge to gl clear color. 
-// To avoid this, these himmels offer a gradient called HorizonBand. This is 
-// given by scale, width, and offset as well as a color and a bottom color. 
-// The scale is in `[`0;1`[`, with 1.0 overlapping the skies vertical 180 degrees. 
-// Width specifies the vertical region uniformly filled with color. Currently 
-// smoothstep blending is used for the gradient, but inv_squared interpolation 
+// discard the lower hemisphere, resulting in a hard edge to gl clear color.
+// To avoid this, these himmels offer a gradient called HorizonBand. This is
+// given by scale, width, and offset as well as a color and a bottom color.
+// The scale is in `[`0;1`[`, with 1.0 overlapping the skies vertical 180 degrees.
+// Width specifies the vertical region uniformly filled with color. Currently
+// smoothstep blending is used for the gradient, but inv_squared interpolation
 // yields good results too.
 
 class TEXTUREBASED_API HorizonBand
@@ -25,7 +25,7 @@ class TEXTUREBASED_API HorizonBand
 public:
 
     HorizonBand();
-    virtual ~HorizonBand();
+    ~HorizonBand();
 
     void updateUniforms(globjects::ref_ptr<globjects::Program>) const;
 
@@ -55,8 +55,8 @@ protected:
     float m_width;
     float m_offset;
 
-    glm::vec4 m_color; 
-    glm::vec4 m_bottomColor; 
+    glm::vec4 m_color;
+    glm::vec4 m_bottomColor;
 };
 
 } // namespace glHimmel
