@@ -66,7 +66,7 @@ std::unique_ptr<AbstractHimmel> createPolarMappedDemo()
     himmel->setSecondsPerRAZ(300.f);
     himmel->setRazDirection(AbstractMappedHimmel::RazDirection::NorthWestSouthEast);
 
-    auto image = rawFromFile("resources/polar_half_art_0.8192.2048.rgba.ub.raw");
+    auto image = rawFromFile("data/resources/polar_half_art_0.8192.2048.rgba.ub.raw");
 
     himmel->getOrCreateTexture2D(0)->image2D(0, GL_RGBA32F, 8192, 2048, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data());
 
@@ -118,6 +118,7 @@ int main(int, char *[])
     globjects::init();
 
     auto himmel = createPolarMappedDemo();
+    himmel->initialize();
 
     while (!glfwWindowShouldClose(window))
     {

@@ -19,7 +19,7 @@ vec4 blend_normal (vec4 back, vec4 src, float srca)
     return vec4(r, ra);
 }
 
-in vec4 m_razInvariant;
+in vec4 v_razInvariant;
 uniform mat4 razInverse;
 uniform vec3 sun;
 uniform vec4 sunCoeffs;
@@ -67,7 +67,7 @@ uniform bool hBand;
 uniform bool fakeSun;
 
 
-in vec4 m_ray;
+in vec4 v_ray;
 
 // From AbstractMappedHimmel
 
@@ -84,7 +84,7 @@ const float c_1OverPi  = 0.3183098861837906715377675267450;
 
 void main(void)
 {
-    vec3 stu = normalize(m_ray.xyz);
+    vec3 stu = normalize(v_ray.xyz);
 
 
     // TODO: c_1OverPi was not defined anywhere (typo?)
@@ -96,7 +96,7 @@ void main(void)
     if (fakeSun)
     {
         fc += computeFakeSun(
-            normalize(m_razInvariant.xyz), sun, sunCoeffs, sunScale, fc.a);
+            normalize(v_razInvariant.xyz), sun, sunCoeffs, sunScale, fc.a);
     }
 
     if (hBand)

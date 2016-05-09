@@ -51,7 +51,7 @@ void PolarMappedHimmel::update()
 
 globjects::ref_ptr<globjects::Shader> PolarMappedHimmel::getFragmentShader()
 {
-    return globjects::Shader::fromFile(GL_VERTEX_SHADER, "data/shader/polarMappedHimmel.frag");
+    return globjects::Shader::fromFile(GL_FRAGMENT_SHADER, "data/shader/polarMappedHimmel.frag");
 }
 
 HorizonBand* PolarMappedHimmel::hBand() const

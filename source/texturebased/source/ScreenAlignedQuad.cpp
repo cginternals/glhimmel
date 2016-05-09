@@ -33,12 +33,12 @@ void ScreenAlignedQuad::initialize()
 
     m_vao = new VertexArray();
 
-    globjects::ref_ptr<Buffer> buffer = new Buffer();
-    buffer->setData(raw, GL_STATIC_DRAW); //needed for some drivers
+    m_buffer = new Buffer();
+    m_buffer->setData(raw, GL_STATIC_DRAW); //needed for some drivers
 
     auto binding = m_vao->binding(0);
     binding->setAttribute(0);
-    binding->setBuffer(buffer, 0, sizeof(glm::vec2));
+    binding->setBuffer(m_buffer, 0, sizeof(glm::vec2));
     binding->setFormat(2, GL_FLOAT, GL_FALSE, 0);
     m_vao->enable(0);
 }

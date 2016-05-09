@@ -5,15 +5,16 @@
 namespace globjects
 {
     class VertexArray;
+    class Buffer;
 }
 
 
-class ScreenAlignedQuad 
+class ScreenAlignedQuad
 {
 public:
     ScreenAlignedQuad();
     ~ScreenAlignedQuad() = default;
-    
+
     void draw() const;
 
 protected:
@@ -21,4 +22,5 @@ protected:
 
 protected:
     globjects::ref_ptr<globjects::VertexArray> m_vao;
+    globjects::ref_ptr<globjects::Buffer> m_buffer;
 };
