@@ -14,6 +14,8 @@ public:
     AbstractHimmel();
     virtual ~AbstractHimmel();
 
+    virtual void initialize() = 0;
+
     void assignTime(std::unique_ptr<TimeF> timef);
     TimeF* getTime() const;
 

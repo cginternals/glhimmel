@@ -40,14 +40,18 @@ AbstractMappedHimmel::AbstractMappedHimmel(
     , m_sunScale(1.0)
     , m_fakeSun(fakeSun)
 {
-    setupProgram();
-    setupUniforms();
-
-    m_razTimef.start();
 }
 
 AbstractMappedHimmel::~AbstractMappedHimmel()
 {
+}
+
+void AbstractMappedHimmel::initialize()
+{
+    setupProgram();
+    setupUniforms();
+
+    m_razTimef.start();
 }
 
 void AbstractMappedHimmel::update()

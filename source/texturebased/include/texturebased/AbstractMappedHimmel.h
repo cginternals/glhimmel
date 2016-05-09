@@ -36,6 +36,7 @@ namespace glHimmel
         AbstractMappedHimmel(const bool fakeSun = false);
         virtual ~AbstractMappedHimmel();
 
+        void initialize() override;
 
         // When assigning textures to an instance of this class, a TimeF has to be 
         // specified, that is used for internal keypoints. Keypoints define point 
