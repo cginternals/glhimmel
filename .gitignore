@@ -24,6 +24,9 @@ release_build
 /lib
 /install
 
+# Resources
+data/resources
+
 # Qt cache
 CMakeLists.txt.user
 CMakeLists.txt.user.*

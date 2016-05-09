@@ -28,7 +28,7 @@ void key_callback(GLFWwindow * window, int key, int /*scancode*/, int action, in
 
 std::unique_ptr<AbstractHimmel> createPolarMappedDemo()
 {
-    std::unique_ptr<PolarMappedHimmel> himmel = std::make_unique<PolarMappedHimmel>(PolarMappedHimmel::MM_Half, true);
+    std::unique_ptr<PolarMappedHimmel> himmel = std::make_unique<PolarMappedHimmel>(PolarMappedHimmel::MappingMode::Half, true);
 
     /*
     himmel->hBand()->setBottomColor(glm::vec4(0.48f, 0.46f, 0.42f, 1.00f));
@@ -40,7 +40,7 @@ std::unique_ptr<AbstractHimmel> createPolarMappedDemo()
     himmel->setTransitionDuration(0.1f);
 
     himmel->setSecondsPerRAZ(300.f);
-    himmel->setRazDirection(AbstractMappedHimmel::RD_NorthWestSouthEast);
+    himmel->setRazDirection(AbstractMappedHimmel::RazDirection::NorthWestSouthEast);
 
     himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_0.jpg"));
     /*himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
