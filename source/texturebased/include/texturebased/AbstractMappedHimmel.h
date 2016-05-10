@@ -83,7 +83,7 @@ namespace glHimmel
         void update() override;
 
         void setupProgram();
-        void setupUniforms() const;
+        void updateUniforms() const;
 
         virtual globjects::ref_ptr<globjects::Shader> getFragmentShader() = 0;
 

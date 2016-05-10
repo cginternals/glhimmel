@@ -43,8 +43,10 @@ globjects::ref_ptr<globjects::Texture> PolarMappedHimmel::getOrCreateTexture2D(c
 }
 
 void PolarMappedHimmel::update()
-{
-    m_hBand->updateUniforms(m_program);
+{   
+    AbstractMappedHimmel::update();
+    if(m_hBand)
+        m_hBand->updateUniforms(m_program);
     m_program->setUniform("hBand", m_hBand.get() != nullptr);
     m_program->setUniform("half", m_mappingMode == MappingMode::Half);
 }

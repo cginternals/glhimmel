@@ -12,6 +12,7 @@
 #include <cassert>
 #include <limits>
 #include <glbinding/gl/types.h>
+#include <iostream>
 
 namespace
 {
@@ -49,7 +50,6 @@ AbstractMappedHimmel::~AbstractMappedHimmel()
 void AbstractMappedHimmel::initialize()
 {
     setupProgram();
-    setupUniforms();
 
     m_razTimef.start();
 }
@@ -95,6 +95,7 @@ void AbstractMappedHimmel::update()
         srcUnit->bindActive(SRC_TEXTURE_INDEX);
         m_activeSrcUnit = srcUnit;
     }
+    updateUniforms();
 }
 
 void AbstractMappedHimmel::setupProgram()
@@ -103,14 +104,18 @@ void AbstractMappedHimmel::setupProgram()
     auto vertexShader = globjects::Shader::fromFile(GL_VERTEX_SHADER, "data/shader/abstractMappedHimmel.vert");
     m_program->attach(vertexShader);
     m_program->attach(getFragmentShader());
+    m_program->use();
+    std::cout << m_program->infoLog() << std::endl;
 }
 
 
-void AbstractMappedHimmel::setupUniforms() const
+void AbstractMappedHimmel::updateUniforms() const
 {
     m_program->setUniform("srcAlpha", m_srcAlpha);
     m_program->setUniform("back", BACK_TEXTURE_INDEX);
     m_program->setUniform("src", SRC_TEXTURE_INDEX);
+    m_program->setUniform("modelView", glm::mat4());
+    m_program->setUniform("inverseProjection", glm::inverse(m_projection));
 
     m_program->setUniform("fakeSun", m_fakeSun);
     if (m_fakeSun)

@@ -2,6 +2,7 @@
 
 #include <texturebased/texturebased_api.h>
 #include <memory>
+#include <glm/mat4x4.hpp>
 
 
 namespace glHimmel
@@ -24,6 +25,8 @@ public:
     virtual bool isDirty();
     void dirty(bool dirty = true);
 
+    void setProjection(glm::mat4 projection);
+
 protected:
     float timef() const;
     virtual void update();
@@ -34,6 +37,7 @@ protected:
     bool m_autoUpdateTime;
     bool m_dirty;
     long double m_lastElapsed;
+    glm::mat4 m_projection;
 };
 
 } // namespace osgHimmel

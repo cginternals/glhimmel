@@ -12,9 +12,12 @@
 #include <globjects/globjects.h>
 #include <texturebased/PolarMappedHimmel.h>
 #include <glm/vec4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace gl;
 using namespace glHimmel;
+
+glm::mat4 g_projection;
 
 void error(int errnum, const char * errmsg)
 {
@@ -52,7 +55,7 @@ std::vector<char> rawFromFile(const std::string& filePath)
 
 std::unique_ptr<AbstractHimmel> createPolarMappedDemo()
 {
-    auto himmel = std::unique_ptr<PolarMappedHimmel>(new PolarMappedHimmel(PolarMappedHimmel::MappingMode::Half, true));
+    auto himmel = std::unique_ptr<PolarMappedHimmel>(new PolarMappedHimmel(PolarMappedHimmel::MappingMode::Half));
 
     /*
     himmel->hBand()->setBottomColor(glm::vec4(0.48f, 0.46f, 0.42f, 1.00f));
@@ -84,7 +87,11 @@ std::unique_ptr<AbstractHimmel> createPolarMappedDemo()
     return std::move(himmel);
  }
 
-
+void onResize(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+    g_projection = glm::perspective(1.5, static_cast<double>(width) / height, 1.0, 2.0);
+}
 
 
 int main(int, char *[])
@@ -116,16 +123,21 @@ int main(int, char *[])
 
     glbinding::Binding::initialize(false); // only resolve functions that are actually used (lazy)
     globjects::init();
+    onResize(window, 640, 480);
+
+    glfwSetWindowSizeCallback(window, onResize);
 
     auto himmel = createPolarMappedDemo();
     himmel->initialize();
+    //set projection
 
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glfwSwapBuffers(window);
+        himmel->setProjection(g_projection);
         himmel->draw();
+        glfwSwapBuffers(window);
     }
 
     glfwTerminate();

@@ -93,7 +93,7 @@ void main(void)
 
     vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), srcAlpha);
 
-    if (fakeSun)
+    /*if (fakeSun)
     {
         fc += computeFakeSun(
             normalize(v_razInvariant.xyz), sun, sunCoeffs, sunScale, fc.a);
@@ -105,8 +105,8 @@ void main(void)
             stu.z, hbandScale, hbandWidth, hbandOffset, hbandColor, hbandBackground, fc);
     }
     else
-    {
+    {*/
         color = fc;
-    }
+    //}
 
 }

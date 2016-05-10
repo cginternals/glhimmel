@@ -63,6 +63,11 @@ void AbstractHimmel::dirty(bool dirty)
     m_dirty = dirty;
 }
 
+void AbstractHimmel::setProjection(glm::mat4 projection)
+{
+    m_projection = projection;
+}
+
 bool AbstractHimmel::isDirty()
 {
     return m_dirty;
