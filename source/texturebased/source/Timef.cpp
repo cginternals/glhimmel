@@ -30,10 +30,10 @@ TimeF::TimeF(
 ,   const long double secondsPerCycle)
 :   m_startTime(std::chrono::steady_clock::now())
 ,   m_secondsPerCycle(secondsPerCycle)
-,   m_mode(M_Pausing)
-,   m_offset(0.f)
+,   m_mode(Mode::Pausing)
 ,   m_lastModeChangeTime(0.f)
 ,   m_utcOffset(0)
+,   m_offset(0.f)
 {
     initialize();
     setf(time, true);
@@ -46,10 +46,10 @@ TimeF::TimeF(
 ,   const long double secondsPerCycle)
 :   m_startTime(std::chrono::steady_clock::now())
 ,   m_secondsPerCycle(secondsPerCycle)
-,   m_mode(M_Pausing)
-,   m_offset(0.f)
+,   m_mode(Mode::Pausing)
 ,   m_lastModeChangeTime(0.f)
 ,   m_utcOffset(utcOffset)
+,   m_offset(0.f)
 {
     initialize();
     sett(time, true);
@@ -83,7 +83,7 @@ TimeF::~TimeF()
 
 void TimeF::update()
 {
-    const long double elapsed(M_Running == m_mode ? elapsedTime() : m_lastModeChangeTime);
+    const long double elapsed(Mode::Running == m_mode ? elapsedTime() : m_lastModeChangeTime);
 
     const long double elapsedTimef(m_secondsPerCycle > 0.f ? elapsed / m_secondsPerCycle : 0.f);
 
@@ -182,7 +182,7 @@ long double TimeF::getSecondsPerCycle() const
 long double TimeF::setSecondsPerCycle(const long double secondsPerCycle)
 {
     // intepret elapsed seconds within new cycle time
-    const long double elapsed(M_Running == m_mode ? elapsedTime() : m_lastModeChangeTime);
+    const long double elapsed(Mode::Running == m_mode ? elapsedTime() : m_lastModeChangeTime);
 
     if(m_secondsPerCycle > 0.f)
         m_offset += elapsed / m_secondsPerCycle;
@@ -210,13 +210,13 @@ time_t TimeF::fToSeconds(const long double time)
 
 bool TimeF::isRunning() const
 {
-    return M_Running == m_mode;
+    return Mode::Running == m_mode;
 }
 
 
 void TimeF::start(const bool forceUpdate)
 {
-    if(M_Pausing != m_mode)
+    if(Mode::Pausing != m_mode)
         return;
 
     const long double t(elapsedTime());
@@ -224,7 +224,7 @@ void TimeF::start(const bool forceUpdate)
     if(m_secondsPerCycle > 0.f)
         m_offset -= (t - m_lastModeChangeTime) / m_secondsPerCycle;
 
-    m_mode = M_Running;
+    m_mode = Mode::Running;
 
     if(forceUpdate)
         update();
@@ -233,12 +233,12 @@ void TimeF::start(const bool forceUpdate)
 
 void TimeF::pause(const bool forceUpdate)
 {
-    if(M_Running != m_mode)
+    if(Mode::Running != m_mode)
         return;
 
     m_lastModeChangeTime = elapsedTime();
 
-    m_mode = M_Pausing;
+    m_mode = Mode::Pausing;
 
     if(forceUpdate)
         update();

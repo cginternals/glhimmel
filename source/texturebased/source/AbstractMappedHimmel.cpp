@@ -27,18 +27,22 @@ AbstractMappedHimmel::AbstractMappedHimmel(
     const bool fakeSun)
     : AbstractHimmel()
 
+
     , m_hquad()
 
     , m_program(nullptr)
-    , m_razTimef()
+
+    , m_changer()
     , m_activeBackUnit(nullptr)
     , m_activeSrcUnit(nullptr)
+    , m_srcAlpha(0.0f)
 
+    , m_razTimef()
     , m_razTransform()
     , m_razDirection(RazDirection::NorthWestSouthEast)
     , m_sunCoordinates(glm::vec3(1.0, 0.0, 1.0))
     , m_sunCoeffs(glm::vec4(0.63, 0.58, 0.49, 1.0))
-    , m_sunScale(1.0)
+    , m_sunScale(1.0f)
     , m_fakeSun(fakeSun)
 {
 }
@@ -63,7 +67,7 @@ void AbstractMappedHimmel::update()
     const float razd(m_razDirection == RazDirection::NorthWestSouthEast ? 1.f : -1.f);
     m_razTransform = glm::rotate<float>(glm::mat4(), razd * m_razTimef.getf(true) * glm::pi<float>() * 2.f, glm::vec3(0.f, 0.f, 1.f));
 
-    const float t(timef());
+    const float t = timef();
 
     if (m_fakeSun)
     {

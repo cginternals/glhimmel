@@ -8,7 +8,8 @@ using namespace gl;
 namespace glHimmel
 {
 PolarMappedHimmel::PolarMappedHimmel(const MappingMode & mappingMode, const bool hBand, const bool fakeSun)
-:   m_mappingMode(mappingMode)
+: AbstractMappedHimmel(fakeSun)
+, m_mappingMode(mappingMode)
 {
     if (hBand)
     {
@@ -43,7 +44,7 @@ globjects::ref_ptr<globjects::Texture> PolarMappedHimmel::getOrCreateTexture2D(c
 }
 
 void PolarMappedHimmel::update()
-{   
+{
     AbstractMappedHimmel::update();
     if(m_hBand)
         m_hBand->updateUniforms(m_program);

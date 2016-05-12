@@ -19,10 +19,10 @@ namespace glHimmel
 
 class TEXTUREBASED_API TimeF
 {
-    enum e_Mode
+    enum class Mode
     {
-        M_Running
-    ,   M_Pausing
+        Running
+    ,   Pausing
     };
 
 public:
@@ -102,17 +102,19 @@ protected:
 
     std::chrono::steady_clock::time_point m_startTime;
 
+    long double m_secondsPerCycle;
+
+    Mode m_mode;
+    long double m_lastModeChangeTime;
+
     time_t m_utcOffset;
+    long double m_offset;
 
     time_t m_time[3];       // [2] is for stop
     long double m_timef[3]; // [2] is for stop
 
-    long double m_offset;
 
-    e_Mode m_mode;
-    long double m_lastModeChangeTime;
 
-    long double m_secondsPerCycle;
 };
 
 } // namespace glHimmel

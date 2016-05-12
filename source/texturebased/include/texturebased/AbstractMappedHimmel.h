@@ -38,11 +38,11 @@ namespace glHimmel
 
         void initialize() override;
 
-        // When assigning textures to an instance of this class, a TimeF has to be 
-        // specified, that is used for internal keypoints. Keypoints define point 
-        // in times where one texture gets replaced (abruptly or by smooth fading) 
-        // by the following one. The transition duration can be specified in 
-        // floating time and should be smaller than the minimum time distance between 
+        // When assigning textures to an instance of this class, a TimeF has to be
+        // specified, that is used for internal keypoints. Keypoints define point
+        // in times where one texture gets replaced (abruptly or by smooth fading)
+        // by the following one. The transition duration can be specified in
+        // floating time and should be smaller than the minimum time distance between
         // two adjacent keypoints.
 
         // These calls get redirected to a TwoUnitsChanger instance (see comment there).
@@ -56,9 +56,9 @@ namespace glHimmel
             , const float time = 1.f);
 
 
-        // Rotation around Zenith (RaZ), if used discreetly, can greatly influence the 
-        // dynamic of a scene, by slightly rotating the given texture mapped himmel 
-        // around the up vector. It accesses its own TimeF object and thereby remains 
+        // Rotation around Zenith (RaZ), if used discreetly, can greatly influence the
+        // dynamic of a scene, by slightly rotating the given texture mapped himmel
+        // around the up vector. It accesses its own TimeF object and thereby remains
         // independent from the himmels timef.
 
         void setSecondsPerRAZ(const float secondsPerRAZ); // reasonable values should be around 2000+
@@ -90,28 +90,21 @@ namespace glHimmel
     protected:
 
         ScreenAlignedQuad m_hquad;
+        globjects::ref_ptr<globjects::Program> m_program;
 
         TwoUnitsChanger m_changer;
+        globjects::ref_ptr<globjects::Texture> m_activeBackUnit;
+        globjects::ref_ptr<globjects::Texture> m_activeSrcUnit;
+        float m_srcAlpha;
 
-        globjects::ref_ptr<globjects::Program> m_program;
-        
-        globjects::ref_ptr<globjects::Texture> m_back; 
-        globjects::ref_ptr<globjects::Texture> m_src;
+
+        TimeF m_razTimef;
+        glm::mat4 m_razTransform;
+        RazDirection m_razDirection;
 
         glm::vec3 m_sunCoordinates;
         glm::vec4 m_sunCoeffs;
         float m_sunScale;
-
-        float m_srcAlpha; 
-        
-        globjects::ref_ptr<globjects::Texture> m_activeBackUnit;
-        globjects::ref_ptr<globjects::Texture> m_activeSrcUnit;
-
-        glm::mat4 m_razTransform;
-        RazDirection m_razDirection;
-
-        TimeF m_razTimef;
-
         const bool m_fakeSun;
 
     };

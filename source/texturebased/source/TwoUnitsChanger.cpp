@@ -8,6 +8,7 @@ namespace glHimmel
 
 TwoUnitsChanger::TwoUnitsChanger()
 :   m_transitionDuration(1.f)
+,   m_interpolationMethod(InterpolationMethod::Linear)
 ,   m_smallestRange(1.f)
 ,   m_updated(false)
 ,   m_lastTime(0.f)
@@ -15,7 +16,6 @@ TwoUnitsChanger::TwoUnitsChanger()
 ,   m_src(nullptr)
 ,   m_srcAlpha(0.f)
 
-,   m_interpolationMethod(InterpolationMethod::Linear)
 {
 }
 
@@ -77,7 +77,7 @@ void TwoUnitsChanger::updateSmallestRange()
         return;
 
     const t_unitsByTime::const_iterator ie(m_unitsByTime.end());
-    
+
     t_unitsByTime::const_iterator i(m_unitsByTime.begin());
     t_unitsByTime::const_iterator i0(i), i1(i);
 
@@ -159,7 +159,7 @@ void TwoUnitsChanger::update(const float time) const
 
     if(isrc == ie || isrc == ib)
     {
-        // If time is after last or before first key-point, src 
+        // If time is after last or before first key-point, src
         // is at first key-point, and back is at last key-point.
         isrc  = ib;
         iback = il;
@@ -188,7 +188,7 @@ void TwoUnitsChanger::update(const float time) const
             m_srcAlpha = 0.f;
     }
 
-    // NOTE: This could also be optimized for 8 or less textures by not 
+    // NOTE: This could also be optimized for 8 or less textures by not
     // switching their texture unit and adapting the shader: "EightUnitsChanger" :P
 
     m_back = iback->second;

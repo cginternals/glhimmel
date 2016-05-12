@@ -87,7 +87,7 @@ std::unique_ptr<AbstractHimmel> createPolarMappedDemo()
     return std::move(himmel);
  }
 
-void onResize(GLFWwindow* window, int width, int height)
+void onResize(GLFWwindow*, int width, int height)
 {
     glViewport(0, 0, width, height);
     g_projection = glm::perspective(1.5, static_cast<double>(width) / height, 1.0, 2.0);
@@ -102,6 +102,9 @@ int main(int, char *[])
     glfwSetErrorCallback(error);
 
     glfwDefaultWindowHints();
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
 #ifdef SYSTEM_DARWIN
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
