@@ -18,6 +18,7 @@ using namespace gl;
 
 namespace glHimmel
 {
+    class HorizonBand;
 
     class TEXTUREBASED_API AbstractMappedHimmel : public AbstractHimmel
     {
@@ -33,7 +34,7 @@ namespace glHimmel
 
     public:
 
-        AbstractMappedHimmel(const bool fakeSun = false);
+        AbstractMappedHimmel(const bool hBand = false, const bool fakeSun = false);
         virtual ~AbstractMappedHimmel();
 
         void initialize() override;
@@ -75,6 +76,12 @@ namespace glHimmel
         glm::vec4 getSunCoeffs() const;
         static glm::vec4 defaultSunCoeffs();
 
+        // Use HorizonBand for horizon blending.
+        HorizonBand* hBand() const;
+
+        // Use this helper to work with pre-configured textures.
+        globjects::ref_ptr<globjects::Texture> getOrCreateTexture2D(const unsigned int textureUnit);
+
         void draw() override;
 
     protected:
@@ -106,6 +113,12 @@ namespace glHimmel
         glm::vec4 m_sunCoeffs;
         float m_sunScale;
         const bool m_fakeSun;
+
+        std::unique_ptr<HorizonBand> m_hBand;
+
+        std::map<GLint, globjects::ref_ptr<globjects::Texture>> m_tex2DsById;
+
+        virtual std::string fragmentShaderPath() = 0;
 
     };
 

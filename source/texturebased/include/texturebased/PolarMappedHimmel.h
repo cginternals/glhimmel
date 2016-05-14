@@ -41,27 +41,18 @@ namespace glHimmel
 
         virtual ~PolarMappedHimmel() = default;
 
-        // Use this helper to work with pre-configured textures.
-        globjects::ref_ptr<globjects::Texture> getOrCreateTexture2D(const unsigned int textureUnit);
-
         MappingMode getMappingMode() const
         {
             return m_mappingMode;
         }
 
-        // Use HorizonBand for horizon blending.
-        HorizonBand* hBand() const;
-
         void update() override;
 
     protected:
 
-        globjects::ref_ptr<globjects::Shader> getFragmentShader() override;
+       std::string fragmentShaderPath() override;
 
     protected:
-
-        typedef std::map<GLint, globjects::ref_ptr<globjects::Texture>> t_tex2DById;
-        t_tex2DById m_tex2DsById;
 
         MappingMode m_mappingMode;
 

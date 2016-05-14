@@ -2,25 +2,12 @@
 
 layout(location = 0) out vec4 color;
 
-vec4 blend_normal (vec4 back, vec4 src, float srca)
-{
-    vec3 b = back.rgb;
-    vec3 s = src.rgb;
-
-    vec3 bs = s;
-
-    float ba = back.a;
-    float sa = clamp(srca, 0.0, 1.0);
-
-    float ra = ba + sa - (ba * sa);
-
-    vec3 r = (1.0 - sa / ra) * b + (sa / ra) * ((1.0 - ba) * s + ba * bs);
-
-    return vec4(r, ra);
-}
-
+in vec4 v_ray;
 in vec4 v_razInvariant;
 uniform mat4 razInverse;
+uniform float srcAlpha;
+
+uniform bool fakeSun;
 uniform vec3 sun;
 uniform vec4 sunCoeffs;
 uniform float sunScale;
@@ -41,11 +28,24 @@ vec4 computeFakeSun(
     return vec4(coeffs.rgb * s, coeffs.a);
 }
 
+uniform bool hBand;
 uniform float hbandScale;
 uniform float hbandWidth;
 uniform float hbandOffset;
 uniform vec4 hbandColor;
 uniform vec4 hbandBackground;
+
+vec4 blend_normal (vec4 back, vec4 src, float srca)
+{
+    vec3 b = back.rgb;
+    vec3 s = src.rgb;
+    vec3 bs = s;
+    float ba = back.a;
+    float sa = clamp(srca, 0.0, 1.0);
+    float ra = ba + sa - (ba * sa);
+    vec3 r = (1.0 - sa / ra) * b + (sa / ra) * ((1.0 - ba) * s + ba * bs);
+    return vec4(r, ra);
+}
 
 vec4 hband(
     const float z
@@ -62,30 +62,13 @@ vec4 hband(
     return blend_normal(color, fc, b);
 }
 
-uniform bool isHalf;
-uniform bool hBand;
-uniform bool fakeSun;
 
-
-in vec4 v_ray;
-
-// From AbstractMappedHimmel
-
-uniform float srcAlpha;
-uniform sampler2D back;
-uniform sampler2D src;
-
-
-// Color Retrieval
-
-const float c_2OverPi  = 0.6366197723675813430755350534901;
-const float c_1Over2Pi = 0.1591549430918953357688837633725;
-const float c_1OverPi  = 0.3183098861837906715377675267450;
+#include "/hband.glsl"
+#include "/fakeSun.glsl"
 
 void main(void)
 {
     vec3 stu = normalize(v_ray.xyz);
-
 
     // TODO: c_1OverPi was not defined anywhere (typo?)
     float v = isHalf ? (asin(+stu.z) * c_2OverPi) : (acos(-stu.z) * c_1OverPi);
