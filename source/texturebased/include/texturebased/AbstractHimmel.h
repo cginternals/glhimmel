@@ -17,7 +17,7 @@ public:
 
     virtual void initialize() = 0;
 
-    void assignTime(std::unique_ptr<TimeF> timef);
+    void assignTime(std::shared_ptr<TimeF> timef);
     TimeF* getTime() const;
 
     virtual void draw();
@@ -25,19 +25,21 @@ public:
     virtual bool isDirty();
     void dirty(bool dirty = true);
 
-    void setProjection(glm::mat4 projection);
+    void setProjection(const glm::mat4 & projection);
+    void setView(const glm::mat4 & view);
 
 protected:
     float timef() const;
     virtual void update();
 
 protected:
-    std::unique_ptr<TimeF> m_timef;
+    std::shared_ptr<TimeF> m_timef;
     bool m_initialized;
     bool m_autoUpdateTime;
     bool m_dirty;
     long double m_lastElapsed;
     glm::mat4 m_projection;
+    glm::mat4 m_view;
 };
 
 } // namespace osgHimmel

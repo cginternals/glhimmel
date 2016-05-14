@@ -16,9 +16,9 @@ AbstractHimmel::~AbstractHimmel()
 }
 
 
-void AbstractHimmel::assignTime(std::unique_ptr<TimeF> timef)
+void AbstractHimmel::assignTime(std::shared_ptr<TimeF> timef)
 {
-    m_timef = std::move(timef);
+    m_timef = timef;
 }
 
 TimeF* AbstractHimmel::getTime() const
@@ -63,9 +63,14 @@ void AbstractHimmel::dirty(bool dirty)
     m_dirty = dirty;
 }
 
-void AbstractHimmel::setProjection(glm::mat4 projection)
+void AbstractHimmel::setProjection(const glm::mat4 & projection)
 {
     m_projection = projection;
+}
+
+void AbstractHimmel::setView(const glm::mat4 & view)
+{
+    m_view = view;
 }
 
 bool AbstractHimmel::isDirty()

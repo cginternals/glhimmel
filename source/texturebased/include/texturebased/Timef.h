@@ -10,7 +10,7 @@
 namespace glHimmel
 {
 
-// TimeF manages an osg::Timer and features an interface for floating time
+// TimeF is a Timer and features an interface for floating time
 // in the closed interval [0;1] representing a full day and standard c
 // time (time_t) simultaneously. The time updates have to be requested
 // explicitly, thus simplifying usage between multiple recipients.
@@ -53,7 +53,7 @@ public:
 
     long double getSecondsPerCycle() const;
 
-    long double setSecondsPerCycle(const long double secondsPerCycle);
+    void setSecondsPerCycle(const long double secondsPerCycle);
 
 
     // Float time in the intervall [0;1]
@@ -65,7 +65,7 @@ public:
     long double getf(const bool updateFirst);
 
     // Sets only time, date remains unchanged.
-    long double setf(
+    void setf(
         long double time
     ,   const bool forceUpdate = false);
 

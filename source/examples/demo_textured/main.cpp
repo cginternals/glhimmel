@@ -2,6 +2,7 @@
 #include <iostream>
 #include <memory>
 #include <fstream>
+#include <algorithm>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -49,24 +50,23 @@ std::vector<char> rawFromFile(const std::string& filePath)
 
     stream.seekg(0, std::ios::beg);
     stream.read(raw.data(), size);
-
+    
     return raw;
 }
 
 std::unique_ptr<AbstractHimmel> createPolarMappedDemo()
 {
-    auto himmel = std::unique_ptr<PolarMappedHimmel>(new PolarMappedHimmel(PolarMappedHimmel::MappingMode::Half));
+    auto himmel = std::unique_ptr<PolarMappedHimmel>(new PolarMappedHimmel(PolarMappedHimmel::MappingMode::Half, true));
 
-    /*
+    
     himmel->hBand()->setBottomColor(glm::vec4(0.48f, 0.46f, 0.42f, 1.00f));
     himmel->hBand()->setColor(glm::vec4(0.70f, 0.65f, 0.6f, 1.00f));
     himmel->hBand()->setScale(0.1f);
-    */
-
-    //himmel->assignTime(g_timef);
+    
+    himmel->assignTime(std::make_shared<TimeF>());
     himmel->setTransitionDuration(0.1f);
 
-    himmel->setSecondsPerRAZ(300.f);
+    himmel->setSecondsPerRAZ(30.f);
     himmel->setRazDirection(AbstractMappedHimmel::RazDirection::NorthWestSouthEast);
 
     auto image = rawFromFile("data/resources/polar_half_art_0.8192.2048.rgba.ub.raw");
@@ -90,7 +90,7 @@ std::unique_ptr<AbstractHimmel> createPolarMappedDemo()
 void onResize(GLFWwindow*, int width, int height)
 {
     glViewport(0, 0, width, height);
-    g_projection = glm::perspective(1.5, static_cast<double>(width) / height, 1.0, 2.0);
+    g_projection = glm::perspective(1.0, static_cast<double>(width) / height, 1.0, 2.0);
 }
 
 
@@ -132,12 +132,13 @@ int main(int, char *[])
 
     auto himmel = createPolarMappedDemo();
     himmel->initialize();
-    //set projection
+    himmel->setView(glm::lookAt(glm::vec3(0), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
 
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        himmel->getTime()->update();
         himmel->setProjection(g_projection);
         himmel->draw();
         glfwSwapBuffers(window);

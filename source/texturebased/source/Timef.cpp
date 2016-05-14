@@ -71,7 +71,7 @@ void TimeF::initialize()
 long double TimeF::elapsedTime()
 {
     auto now = std::chrono::steady_clock::now();
-    auto duration = now - m_startTime;
+    std::chrono::duration<float> duration = now - m_startTime;
     return duration.count();
 }
 
@@ -83,13 +83,13 @@ TimeF::~TimeF()
 
 void TimeF::update()
 {
-    const long double elapsed(Mode::Running == m_mode ? elapsedTime() : m_lastModeChangeTime);
+    const long double elapsed = Mode::Running == m_mode ? elapsedTime() : m_lastModeChangeTime;
 
-    const long double elapsedTimef(m_secondsPerCycle > 0.f ? elapsed / m_secondsPerCycle : 0.f);
+    const long double elapsedCycles = m_secondsPerCycle > 0.f ? elapsed / m_secondsPerCycle : 0.f;
 
-    m_timef[1] = glm::fract(m_timef[0] + elapsedTimef + m_offset);
+    m_timef[1] = glm::fract(m_timef[0] + elapsedCycles + m_offset);
 
-    m_time[1] = fToSeconds(elapsedTimef + m_offset) + static_cast<long double>(m_time[0]);
+    m_time[1] = fToSeconds(elapsedCycles + m_offset) + static_cast<long double>(m_time[0]);
 }
 
 
@@ -101,7 +101,7 @@ long double TimeF::getf(const bool updateFirst)
     return m_timef[1];
 }
 
-long double TimeF::setf(
+void TimeF::setf(
     long double timef
 ,   const bool forceUpdate)
 {
@@ -135,8 +135,6 @@ long double TimeF::setf(
         m_time[0] = m_time[2] = mktime(&lcl) - utcOffset();
 
     reset(forceUpdate);
-
-    return getf();
 }
 
 
@@ -179,7 +177,7 @@ long double TimeF::getSecondsPerCycle() const
     return m_secondsPerCycle;
 }
 
-long double TimeF::setSecondsPerCycle(const long double secondsPerCycle)
+void TimeF::setSecondsPerCycle(const long double secondsPerCycle)
 {
     // intepret elapsed seconds within new cycle time
     const long double elapsed(Mode::Running == m_mode ? elapsedTime() : m_lastModeChangeTime);
@@ -191,8 +189,6 @@ long double TimeF::setSecondsPerCycle(const long double secondsPerCycle)
 
     m_secondsPerCycle = secondsPerCycle;
     m_startTime = std::chrono::steady_clock::now();
-
-    return getSecondsPerCycle();
 }
 
 

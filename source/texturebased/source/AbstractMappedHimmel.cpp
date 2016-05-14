@@ -65,6 +65,7 @@ void AbstractMappedHimmel::update()
     // Update rotation around zenith.
 
     const float razd(m_razDirection == RazDirection::NorthWestSouthEast ? 1.f : -1.f);
+    
     m_razTransform = glm::rotate<float>(glm::mat4(), razd * m_razTimef.getf(true) * glm::pi<float>() * 2.f, glm::vec3(0.f, 0.f, 1.f));
 
     const float t = timef();
@@ -118,8 +119,10 @@ void AbstractMappedHimmel::updateUniforms() const
     m_program->setUniform("srcAlpha", m_srcAlpha);
     m_program->setUniform("back", BACK_TEXTURE_INDEX);
     m_program->setUniform("src", SRC_TEXTURE_INDEX);
-    m_program->setUniform("modelView", glm::mat4());
+    m_program->setUniform("modelView", m_view * m_razTransform);
     m_program->setUniform("inverseProjection", glm::inverse(m_projection));
+
+    m_program->setUniform("razInverse", glm::inverse(m_razTransform));
 
     m_program->setUniform("fakeSun", m_fakeSun);
     if (m_fakeSun)
@@ -127,8 +130,6 @@ void AbstractMappedHimmel::updateUniforms() const
         m_program->setUniform<glm::vec3>("sunCoords", m_sunCoordinates);
         m_program->setUniform<glm::vec4>("sunCoeffs", m_sunCoeffs);
         m_program->setUniform<float>("sunScale", m_sunScale);
-
-        m_program->setUniform("razInverse", glm::inverse(m_razTransform));
     }
 }
 

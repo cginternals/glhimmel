@@ -88,7 +88,7 @@ void main(void)
 
 
     // TODO: c_1OverPi was not defined anywhere (typo?)
-    float v = isHalf ? asin(+stu.z) * c_2OverPi : acos(-stu.z) * c_1OverPi;
+    float v = isHalf ? (asin(+stu.z) * c_2OverPi) : (acos(-stu.z) * c_1OverPi);
     vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, v);
 
     vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), srcAlpha);
@@ -98,15 +98,15 @@ void main(void)
         fc += computeFakeSun(
             normalize(v_razInvariant.xyz), sun, sunCoeffs, sunScale, fc.a);
     }
-
+    */
     if (hBand)
     {
         color = hband(
             stu.z, hbandScale, hbandWidth, hbandOffset, hbandColor, hbandBackground, fc);
     }
     else
-    {*/
+    {
         color = fc;
-    //}
+    }
 
 }

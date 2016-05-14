@@ -49,7 +49,7 @@ void PolarMappedHimmel::update()
     if(m_hBand)
         m_hBand->updateUniforms(m_program);
     m_program->setUniform("hBand", m_hBand.get() != nullptr);
-    m_program->setUniform("half", m_mappingMode == MappingMode::Half);
+    m_program->setUniform("isHalf", m_mappingMode == MappingMode::Half);
 }
 
 globjects::ref_ptr<globjects::Shader> PolarMappedHimmel::getFragmentShader()
