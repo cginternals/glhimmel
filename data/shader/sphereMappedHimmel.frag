@@ -1,4 +1,5 @@
 #version 330
+#extension GL_ARB_shading_language_include : require
 
 layout(location = 0) out vec4 color;
 
@@ -11,8 +12,8 @@ uniform sampler2D back;
 uniform sampler2D src;
 uniform bool isHalf;
 
-#include "/hband.glsl"
-#include "/fakeSun.glsl"
+#include </data/shader/hband.glsl>
+#include </data/shader/fakeSun.glsl>
 
 void main(void)
 {
@@ -31,7 +32,7 @@ void main(void)
         fc += computeFakeSun(
             normalize(v_razInvariant.xyz), sun, sunCoeffs, sunScale, fc.a);
     }
-    
+
     if (hBand)
     {
         color = hband(

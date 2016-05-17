@@ -1,19 +1,21 @@
 
 #include <texturebased/AbstractMappedHimmel.h>
 
-#include <texturebased/ScreenAlignedQuad.h>
-#include <texturebased/HorizonBand.h>
-#include <glm/gtc/constants.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <texturebased/coordinates.h>
-
-#include <globjects/Shader.h>
-#include <globjects/Texture.h>
-
 #include <cassert>
 #include <limits>
-#include <glbinding/gl/types.h>
 #include <iostream>
+
+#include <glm/gtc/constants.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glbinding/gl/types.h>
+#include <globjects/Shader.h>
+#include <globjects/Texture.h>
+#include <globjects/NamedString.h>
+#include <globjects/base/File.h>
+
+#include <texturebased/ScreenAlignedQuad.h>
+#include <texturebased/HorizonBand.h>
+#include <texturebased/coordinates.h>
 
 namespace
 {
@@ -67,7 +69,7 @@ void AbstractMappedHimmel::update()
     // Update rotation around zenith.
 
     const float razd(m_razDirection == RazDirection::NorthWestSouthEast ? 1.f : -1.f);
-    
+
     m_razTransform = glm::rotate<float>(glm::mat4(), razd * m_razTimef.getf(true) * glm::pi<float>() * 2.f, glm::vec3(0.f, 0.f, 1.f));
 
     const float t = timef();
@@ -107,9 +109,11 @@ void AbstractMappedHimmel::update()
 
 void AbstractMappedHimmel::setupProgram()
 {
+    globjects::NamedString::create("/data/shader/fakeSun.glsl", new globjects::File("data/shader/fakeSun.glsl", false));
+    globjects::NamedString::create("/data/shader/hband.glsl", new globjects::File("data/shader/hband.glsl", false));
     m_program = new globjects::Program;
     auto vertexShader = globjects::Shader::fromFile(GL_VERTEX_SHADER, "data/shader/mappedHimmel.vert");
-    auto fragmentShader = globjects::Shader::fromFile(GL_FRAGMENT_SHADER, fragmentShaderPath(), { "data/shader/" });
+    auto fragmentShader = globjects::Shader::fromFile(GL_FRAGMENT_SHADER, fragmentShaderPath());
     m_program->attach(vertexShader);
     m_program->attach(fragmentShader);
     m_program->use();
