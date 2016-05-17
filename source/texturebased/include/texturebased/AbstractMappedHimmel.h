@@ -92,7 +92,7 @@ namespace glHimmel
         void setupProgram();
         void updateUniforms() const;
 
-        virtual globjects::ref_ptr<globjects::Shader> getFragmentShader() = 0;
+        virtual std::string fragmentShaderPath() const = 0;
 
     protected:
 
@@ -117,9 +117,6 @@ namespace glHimmel
         std::unique_ptr<HorizonBand> m_hBand;
 
         std::map<GLint, globjects::ref_ptr<globjects::Texture>> m_tex2DsById;
-
-        virtual std::string fragmentShaderPath() = 0;
-
     };
 
 } // namespace glHimmel

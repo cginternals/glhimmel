@@ -8,13 +8,9 @@ using namespace gl;
 namespace glHimmel
 {
 PolarMappedHimmel::PolarMappedHimmel(const MappingMode & mappingMode, const bool hBand, const bool fakeSun)
-: AbstractMappedHimmel(fakeSun)
+: AbstractMappedHimmel(hBand, fakeSun)
 , m_mappingMode(mappingMode)
 {
-    if (hBand)
-    {
-        m_hBand = std::unique_ptr<HorizonBand>(new HorizonBand());
-    }
 }
 
 
@@ -25,7 +21,7 @@ void PolarMappedHimmel::update()
     m_program->setUniform("isHalf", m_mappingMode == MappingMode::Half);
 }
 
-std::string PolarMappedHimmel::fragmentShaderPath()
+std::string PolarMappedHimmel::fragmentShaderPath() const
 {
     return "data/shader/polarMappedHimmel.frag";
 }

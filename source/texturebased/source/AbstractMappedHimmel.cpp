@@ -109,9 +109,9 @@ void AbstractMappedHimmel::setupProgram()
 {
     m_program = new globjects::Program;
     auto vertexShader = globjects::Shader::fromFile(GL_VERTEX_SHADER, "data/shader/mappedHimmel.vert");
-    auto fragmentShader = globjects::Shader::fromFile(GL_FRAGMENT_SHADER, fragmentShaderPath(), "data/shader/include");
+    auto fragmentShader = globjects::Shader::fromFile(GL_FRAGMENT_SHADER, fragmentShaderPath(), { "data/shader/" });
     m_program->attach(vertexShader);
-    m_program->attach(getFragmentShader());
+    m_program->attach(fragmentShader);
     m_program->use();
     std::cout << m_program->infoLog() << std::endl;
 }

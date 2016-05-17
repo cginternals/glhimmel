@@ -50,7 +50,7 @@ namespace glHimmel
 
     protected:
 
-       std::string fragmentShaderPath() override;
+        std::string fragmentShaderPath() const override;
 
     protected:
 

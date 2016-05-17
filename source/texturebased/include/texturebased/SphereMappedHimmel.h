@@ -23,7 +23,7 @@ namespace glHimmel
 class TEXTUREBASED_API SphereMappedHimmel : public AbstractMappedHimmel
 {
 public:
-    SphereMappedHimmel(const bool fakeSun = false);
+    SphereMappedHimmel(const bool hBand = false, const bool fakeSun = false);
 
     virtual ~SphereMappedHimmel();
 
@@ -31,7 +31,7 @@ protected:
 
     // AbstractHimmel interface
 
-    virtual const std::string getFragmentShaderSource();
+    std::string fragmentShaderPath() const override;
 
 protected:
 
