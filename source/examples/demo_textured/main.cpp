@@ -8,28 +8,19 @@
 #include <GLFW/glfw3.h>
 
 #include <glbinding/Binding.h>
-
 #include <glbinding/gl/gl.h>
 #include <globjects/globjects.h>
-#include <texturebased/PolarMappedHimmel.h>
 #include <glm/vec4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include <texturebased/PolarMappedHimmel.h>
+#include <texturebased/SphereMappedHimmel.h>
 
 using namespace gl;
 using namespace glHimmel;
 
 glm::mat4 g_projection;
-
-void error(int errnum, const char * errmsg)
-{
-    std::cerr << errnum << ": " << errmsg << std::endl;
-}
-
-void key_callback(GLFWwindow * window, int key, int /*scancode*/, int action, int /*mods*/)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, 1);
-}
+std::unique_ptr<AbstractHimmel> g_himmel;
 
 // Read raw binary file into a char vector (probably the fastest way).
 std::vector<char> rawFromFile(const std::string& filePath)
@@ -50,7 +41,7 @@ std::vector<char> rawFromFile(const std::string& filePath)
 
     stream.seekg(0, std::ios::beg);
     stream.read(raw.data(), size);
-    
+
     return raw;
 }
 
@@ -58,11 +49,11 @@ std::unique_ptr<AbstractHimmel> createPolarMappedDemo()
 {
     auto himmel = std::unique_ptr<PolarMappedHimmel>(new PolarMappedHimmel(PolarMappedHimmel::MappingMode::Half, true));
 
-    
+
     himmel->hBand()->setBottomColor(glm::vec4(0.48f, 0.46f, 0.42f, 1.00f));
     himmel->hBand()->setColor(glm::vec4(0.70f, 0.65f, 0.6f, 1.00f));
     himmel->hBand()->setScale(0.1f);
-    
+
     himmel->assignTime(std::make_shared<TimeF>());
     himmel->setTransitionDuration(0.1f);
 
@@ -86,6 +77,57 @@ std::unique_ptr<AbstractHimmel> createPolarMappedDemo()
     */
     return std::move(himmel);
  }
+
+std::unique_ptr<AbstractHimmel> createSphereMappedDemo()
+{
+    auto himmel = std::unique_ptr<SphereMappedHimmel>(new SphereMappedHimmel());
+
+
+    himmel->assignTime(std::make_shared<TimeF>());
+    himmel->setTransitionDuration(0.1f);
+
+    himmel->setSecondsPerRAZ(30.f);
+    himmel->setRazDirection(AbstractMappedHimmel::RazDirection::NorthWestSouthEast);
+
+    auto image = rawFromFile("data/resources/sphere_gen_0.4096.4096.rgba.ub.raw");
+    auto image2 = rawFromFile("data/resources/sphere_gen_2.4096.4096.rgba.ub.raw");
+
+    himmel->getOrCreateTexture2D(0)->image2D(0, GL_RGBA32F, 4096, 4096, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data());
+    himmel->getOrCreateTexture2D(1)->image2D(0, GL_RGBA32F, 4096, 4096, 0, GL_RGBA, GL_UNSIGNED_BYTE, image2.data());
+
+    himmel->pushTextureUnit(himmel->getOrCreateTexture2D(0), 0.00f);
+    himmel->pushTextureUnit(himmel->getOrCreateTexture2D(1), 0.50f);
+
+    return std::move(himmel);
+}
+
+void initializeHimmel()
+{
+    g_himmel->initialize();
+    g_himmel->setView(glm::lookAt(glm::vec3(0), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
+}
+
+void error(int errnum, const char * errmsg)
+{
+    std::cerr << errnum << ": " << errmsg << std::endl;
+}
+
+void key_callback(GLFWwindow * window, int key, int /*scancode*/, int action, int /*mods*/)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, 1);
+    else if (key == '1' && action == GLFW_PRESS)
+    {
+        g_himmel = createPolarMappedDemo();
+        initializeHimmel();
+    }
+    else if (key == '2' && action == GLFW_PRESS)
+    {
+        g_himmel = createSphereMappedDemo();
+        initializeHimmel();
+    }
+
+}
 
 void onResize(GLFWwindow*, int width, int height)
 {
@@ -124,23 +166,22 @@ int main(int, char *[])
 
     glfwMakeContextCurrent(window);
 
-    glbinding::Binding::initialize(false); // only resolve functions that are actually used (lazy)
+    glbinding::Binding::initialize(false);
     globjects::init();
     onResize(window, 640, 480);
 
     glfwSetWindowSizeCallback(window, onResize);
 
-    auto himmel = createPolarMappedDemo();
-    himmel->initialize();
-    himmel->setView(glm::lookAt(glm::vec3(0), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
+    g_himmel = createPolarMappedDemo();
+    initializeHimmel();
 
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        himmel->getTime()->update();
-        himmel->setProjection(g_projection);
-        himmel->draw();
+        g_himmel->getTime()->update();
+        g_himmel->setProjection(g_projection);
+        g_himmel->draw();
         glfwSwapBuffers(window);
     }
 
