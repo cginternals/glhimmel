@@ -32,14 +32,14 @@ float g_verticalAngle;
 void setView()
 {
     auto view = glm::lookAt(
-        glm::vec3(0.0), 
+        glm::vec3(0.0),
         glm::vec3(
-            std::cos(g_horizontalAngle),
-            std::sin(g_horizontalAngle),
+            std::cos(g_horizontalAngle) * std::cos(g_verticalAngle),
+            std::sin(g_horizontalAngle) * std::cos(g_verticalAngle),
             std::sin(g_verticalAngle)), 
         glm::vec3(
-            -std::cos(g_horizontalAngle),
-            -std::sin(g_horizontalAngle),
+            -std::cos(g_horizontalAngle) * std::cos(glm::pi<float>() / 2 - g_verticalAngle),
+            -std::sin(g_horizontalAngle) * std::cos(glm::pi<float>() / 2 - g_verticalAngle),
             std::sin(glm::pi<float>() / 2 - g_verticalAngle))
     );
     g_himmel->setView(view);
