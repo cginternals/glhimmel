@@ -10,7 +10,6 @@ vec4 computeFakeSun(
 ,   const float scale
 ,   const float alpha)
 {
-    vec3 fix = normalize(eye.xyz);
     float s = scale * 2.0 / length(normalize(sun) - eye);
     s *= alpha * 0.1 + 0.2;            // Reduce suns' size on low alpha.
     s *= clamp(eye.z + 0.1, 0.0, 0.1); // Disappear in lower hemisphere.

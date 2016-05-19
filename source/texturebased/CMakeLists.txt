@@ -46,6 +46,7 @@ set(headers
     ${include_path}/interpolate.h
     ${include_path}/HorizonBand.h
     ${include_path}/SphereMappedHimmel.h
+    ${include_path}/ParaboloidMappedHimmel.h
 )
 
 set(sources
@@ -59,6 +60,7 @@ set(sources
     ${source_path}/TwoUnitsChanger.cpp
     ${source_path}/HorizonBand.cpp
     ${source_path}/SphereMappedHimmel.cpp
+    ${source_path}/ParaboloidMappedHimmel.cpp
 )
 
 # Group source files

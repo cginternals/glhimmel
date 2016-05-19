@@ -1,14 +1,7 @@
 #pragma once
 
-#include <memory>
 #include <texturebased/texturebased_api.h>
 #include <texturebased/AbstractMappedHimmel.h>
-#include <texturebased/HorizonBand.h>
-
-#include <globjects/base/ref_ptr.h>
-
-
-#include <map>
 
 namespace globjects {
     class Shader;
@@ -55,8 +48,6 @@ namespace glHimmel
     protected:
 
         MappingMode m_mappingMode;
-
-        std::unique_ptr<HorizonBand> m_hBand;
     };
 
 } // namespace glHimmel

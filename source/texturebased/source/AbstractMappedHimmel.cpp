@@ -42,7 +42,7 @@ AbstractMappedHimmel::AbstractMappedHimmel(const bool hBand, const bool fakeSun)
     , m_razDirection(RazDirection::NorthWestSouthEast)
     , m_sunCoordinates(glm::vec3(1.0, 0.0, 1.0))
     , m_sunCoeffs(glm::vec4(0.63, 0.58, 0.49, 1.0))
-    , m_sunScale(1.0f)
+    , m_sunScale(1.f)
     , m_fakeSun(fakeSun)
 {
     if (hBand)

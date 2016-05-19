@@ -2,17 +2,11 @@
 
 #include <texturebased/AbstractMappedHimmel.h>
 #include <texturebased/texturebased_api.h>
-#include <globjects/base/ref_ptr.h>
-#include <glm/vec3.hpp>
-
-#include <map>
 
 namespace globjects {
     class Shader;
     class Texture;
 }
-
-
 
 namespace glHimmel
 {
@@ -33,12 +27,6 @@ protected:
 
     std::string fragmentShaderPath() const override;
 
-protected:
-
-    typedef std::map<GLint, globjects::ref_ptr<globjects::Texture>> t_tex2DById;
-    t_tex2DById m_tex2DsById;
-
-    glm::vec3 m_transform;
 };
 
 } // namespace glHimmel
