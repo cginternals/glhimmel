@@ -21,4 +21,4 @@ std::string SphereMappedHimmel::fragmentShaderPath() const
     return "data/shader/sphereMappedHimmel.frag";
 }
 
-} // namespace osgHimmel
+} // namespace glHimmel

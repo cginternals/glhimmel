@@ -21,4 +21,4 @@ std::string ParaboloidMappedHimmel::fragmentShaderPath() const
     return "data/shader/paraboloidMappedHimmel.frag";
 }
 
-} // namespace osgHimmel
+} // namespace glHimmel

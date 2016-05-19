@@ -25,6 +25,26 @@ glm::mat4 g_projection;
 std::unique_ptr<AbstractHimmel> g_himmel;
 std::shared_ptr<TimeF> g_time;
 
+
+float g_horizontalAngle;
+float g_verticalAngle;
+
+void setView()
+{
+    auto view = glm::lookAt(
+        glm::vec3(0.0), 
+        glm::vec3(
+            std::cos(g_horizontalAngle),
+            std::sin(g_horizontalAngle),
+            std::sin(g_verticalAngle)), 
+        glm::vec3(
+            -std::cos(g_horizontalAngle),
+            -std::sin(g_horizontalAngle),
+            std::sin(glm::pi<float>() / 2 - g_verticalAngle))
+    );
+    g_himmel->setView(view);
+}
+
 // Read raw binary file into a char vector (probably the fastest way).
 std::vector<char> rawFromFile(const std::string& filePath)
 {
@@ -59,7 +79,7 @@ std::unique_ptr<AbstractHimmel> createPolarMappedDemo()
 
     himmel->setTransitionDuration(0.1f);
 
-    himmel->setSecondsPerRAZ(30.f);
+    //himmel->setSecondsPerRAZ(30.f);
     himmel->setRazDirection(AbstractMappedHimmel::RazDirection::NorthWestSouthEast);
 
     auto image = rawFromFile("data/resources/polar_half_art_0.8192.2048.rgba.ub.raw");
@@ -86,7 +106,7 @@ std::unique_ptr<AbstractHimmel> createSphereMappedDemo()
 
     himmel->setTransitionDuration(0.1f);
 
-    himmel->setSecondsPerRAZ(30.f);
+    //himmel->setSecondsPerRAZ(30.f);
     himmel->setRazDirection(AbstractMappedHimmel::RazDirection::NorthWestSouthEast);
 
     auto image1 = rawFromFile("data/resources/sphere_gen_0.4096.4096.rgba.ub.raw");
@@ -103,11 +123,11 @@ std::unique_ptr<AbstractHimmel> createSphereMappedDemo()
 
 std::unique_ptr<AbstractHimmel> createParaboloidMappedDemo()
 {
-    auto himmel = std::unique_ptr<ParaboloidMappedHimmel>(new ParaboloidMappedHimmel(true, true));
+    auto himmel = std::unique_ptr<ParaboloidMappedHimmel>(new ParaboloidMappedHimmel(false, true));
 
     himmel->setTransitionDuration(0.05f);
 
-    himmel->setSecondsPerRAZ(30.f);
+    //himmel->setSecondsPerRAZ(30.f);
     himmel->setRazDirection(AbstractMappedHimmel::RazDirection::NorthWestSouthEast);
 
     auto image1 = rawFromFile("data/resources/paraboloid_gen_0.1024.1024.rgba.ub.raw");
@@ -146,7 +166,7 @@ void initializeHimmel()
 {
     g_himmel->initialize();
     g_himmel->assignTime(g_time);
-    g_himmel->setView(glm::lookAt(glm::vec3(0), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
+    setView();
 }
 
 void error(int errnum, const char * errmsg)
@@ -173,7 +193,27 @@ void key_callback(GLFWwindow * window, int key, int /*scancode*/, int action, in
         g_himmel = createParaboloidMappedDemo();
         initializeHimmel();
     }
-
+    else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
+        g_verticalAngle -= 0.05;
+        g_verticalAngle = std::max(g_verticalAngle, 0.f);
+    }
+    else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
+        g_verticalAngle += 0.05;
+        g_verticalAngle = std::min(g_verticalAngle, glm::pi<float>() / 2.f);
+    }
+    else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
+        g_horizontalAngle -= 0.05;
+        g_horizontalAngle = std::fmod(g_horizontalAngle, glm::pi<float>() * 2.f);
+    }
+    else if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
+        g_horizontalAngle += 0.05;
+        g_horizontalAngle = std::fmod(g_horizontalAngle, glm::pi<float>() * 2.f);
+    }
+    setView();
 }
 
 void onResize(GLFWwindow*, int width, int height)
@@ -181,7 +221,6 @@ void onResize(GLFWwindow*, int width, int height)
     glViewport(0, 0, width, height);
     g_projection = glm::perspective(1.0, static_cast<double>(width) / height, 1.0, 2.0);
 }
-
 
 int main(int, char *[])
 {
@@ -215,8 +254,8 @@ int main(int, char *[])
 
     glbinding::Binding::initialize(false);
     globjects::init();
-    onResize(window, 640, 480);
 
+    onResize(window, 640, 480);
     glfwSetWindowSizeCallback(window, onResize);
 
     g_time = std::make_shared<TimeF>();
@@ -225,12 +264,14 @@ int main(int, char *[])
     initializeHimmel();
     g_time->start();
 
+
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         g_time->update();
         g_himmel->setProjection(g_projection);
+        
         g_himmel->draw();
         glfwSwapBuffers(window);
     }

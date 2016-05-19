@@ -73,6 +73,7 @@ void AbstractMappedHimmel::update()
     m_razTransform = glm::rotate<float>(glm::mat4(), razd * m_razTimef.getf(true) * glm::pi<float>() * 2.f, glm::vec3(0.f, 0.f, 1.f));
 
     const float t = timef();
+    std::cout << t << std::endl;
 
     if (m_fakeSun)
     {

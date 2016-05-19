@@ -30,7 +30,7 @@ void main(void)
     if (fakeSun)
     {
         fc += computeFakeSun(
-            normalize(v_razInvariant.xyz), sun, sunCoeffs, sunScale, fc.a);
+            normalize(v_razInvariant.xyz), fc.a);
     }
 
     if (hBand)
