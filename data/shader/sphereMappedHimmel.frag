@@ -19,7 +19,7 @@ void main(void)
 {
     vec3 stu = normalize(v_ray.xyz);
 
-	float yy = (1.0 - stu.y);
+    float yy = (1.0 - stu.y);
     yy *= yy;
     float m = 0.5 / sqrt(stu.x * stu.x + stu.z * stu.z + yy);
     vec2 uv = vec2(-stu.x, stu.z) * m + 0.5;

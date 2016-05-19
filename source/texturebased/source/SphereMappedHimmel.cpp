@@ -7,12 +7,12 @@ namespace glHimmel
 SphereMappedHimmel::SphereMappedHimmel(const bool hBand, const bool fakeSun)
 :   AbstractMappedHimmel(hBand, fakeSun)
 {
-};
+}
 
 
 SphereMappedHimmel::~SphereMappedHimmel()
 {
-};
+}
 
 
 
