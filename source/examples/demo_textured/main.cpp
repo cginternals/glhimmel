@@ -131,34 +131,23 @@ std::unique_ptr<AbstractHimmel> createParaboloidMappedDemo()
     //himmel->setSecondsPerRAZ(30.f);
     himmel->setRazDirection(AbstractMappedHimmel::RazDirection::NorthWestSouthEast);
 
-    auto image1 = rawFromFile("data/resources/paraboloid_gen_0.1024.1024.rgba.ub.raw");
-    auto image2 = rawFromFile("data/resources/paraboloid_gen_1.1024.1024.rgba.ub.raw");
-    auto image3 = rawFromFile("data/resources/paraboloid_gen_2.1024.1024.rgba.ub.raw");
-    auto image4 = rawFromFile("data/resources/paraboloid_gen_3.1024.1024.rgba.ub.raw");
-    auto image5 = rawFromFile("data/resources/paraboloid_pho_0.1024.1024.rgba.ub.raw");
-    auto image6 = rawFromFile("data/resources/paraboloid_pho_1.1024.1024.rgba.ub.raw");
-    auto image7 = rawFromFile("data/resources/paraboloid_pho_2.1024.1024.rgba.ub.raw");
-    auto image8 = rawFromFile("data/resources/paraboloid_pho_3.1024.1024.rgba.ub.raw");
+    std::vector<std::string> images {
+        "data/resources/paraboloid_gen_0.1024.1024.rgba.ub.raw",
+        "data/resources/paraboloid_gen_1.1024.1024.rgba.ub.raw",
+        "data/resources/paraboloid_gen_2.1024.1024.rgba.ub.raw",
+        "data/resources/paraboloid_gen_3.1024.1024.rgba.ub.raw",
+        "data/resources/paraboloid_pho_0.1024.1024.rgba.ub.raw",
+        "data/resources/paraboloid_pho_1.1024.1024.rgba.ub.raw",
+        "data/resources/paraboloid_pho_2.1024.1024.rgba.ub.raw",
+        "data/resources/paraboloid_pho_3.1024.1024.rgba.ub.raw"
+    };
 
-    himmel->getOrCreateTexture(0)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image1.data());
-    himmel->getOrCreateTexture(1)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image2.data());
-    himmel->getOrCreateTexture(2)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image3.data());
-    himmel->getOrCreateTexture(3)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image4.data());
-    himmel->getOrCreateTexture(4)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image5.data());
-    himmel->getOrCreateTexture(5)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image6.data());
-    himmel->getOrCreateTexture(6)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image7.data());
-    himmel->getOrCreateTexture(7)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image8.data());
-
-    const float a = 1.0 / 8.0;
-
-    himmel->pushTextureUnit(himmel->getOrCreateTexture(0), 0.0 * a);
-    himmel->pushTextureUnit(himmel->getOrCreateTexture(1), 1.0 * a);
-    himmel->pushTextureUnit(himmel->getOrCreateTexture(2), 2.0 * a);
-    himmel->pushTextureUnit(himmel->getOrCreateTexture(3), 3.0 * a);
-    himmel->pushTextureUnit(himmel->getOrCreateTexture(4), 4.0 * a);
-    himmel->pushTextureUnit(himmel->getOrCreateTexture(5), 5.0 * a);
-    himmel->pushTextureUnit(himmel->getOrCreateTexture(6), 6.0 * a);
-    himmel->pushTextureUnit(himmel->getOrCreateTexture(7), 7.0 * a);
+    for (size_t i = 0; i < images.size(); ++i)
+    {
+        auto image = rawFromFile(images[i]);
+        himmel->getOrCreateTexture(i)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data());
+        himmel->pushTextureUnit(himmel->getOrCreateTexture(i), static_cast<float>(i) / images.size());
+    }
 
     return std::move(himmel);
 }

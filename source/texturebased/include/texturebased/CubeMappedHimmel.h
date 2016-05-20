@@ -17,12 +17,9 @@ namespace glHimmel
     class TEXTUREBASED_API CubeMappedHimmel : public AbstractMappedHimmel
     {
     public:
-        CubeMappedHimmel(const bool hBand = false, const bool fakeSun = false, const bool cubify = false);
+        CubeMappedHimmel(const bool hBand = false, const bool fakeSun = false);
 
         virtual ~CubeMappedHimmel();
-
-        void setCubify(const bool cubify);
-        const bool isCubified() const;
 
     protected:
 
@@ -30,8 +27,6 @@ namespace glHimmel
 
         std::string fragmentShaderPath() const override;
         GLenum textureTarget() const override;
-
-        bool m_cubify;
 
     };
 

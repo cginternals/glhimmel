@@ -8,13 +8,10 @@ namespace glHimmel
 
 CubeMappedHimmel::CubeMappedHimmel(
     const bool hBand
-    , const bool fakeSun
-    , const bool cubify)
+    , const bool fakeSun)
     : AbstractMappedHimmel(hBand, fakeSun)
-    , m_cubify(cubify)
 {
 };
-
 
 CubeMappedHimmel::~CubeMappedHimmel()
 {
