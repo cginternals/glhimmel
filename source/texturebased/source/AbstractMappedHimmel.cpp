@@ -144,6 +144,11 @@ void AbstractMappedHimmel::updateUniforms() const
     }
 }
 
+GLenum AbstractMappedHimmel::textureTarget() const
+{
+    return GL_TEXTURE_2D;
+}
+
 void AbstractMappedHimmel::setTransitionDuration(const float duration)
 {
     m_changer.setTransitionDuration(duration);
@@ -220,30 +225,30 @@ void AbstractMappedHimmel::draw()
 }
 
 
-globjects::ref_ptr<globjects::Texture> AbstractMappedHimmel::getOrCreateTexture2D(const unsigned int textureUnit)
+globjects::ref_ptr<globjects::Texture> AbstractMappedHimmel::getOrCreateTexture(const unsigned int textureUnit)
 {
     // Retrieve an existing texture.
 
-    const auto existingTex2D = m_tex2DsById.find(textureUnit);
-    if (existingTex2D != m_tex2DsById.end())
-        return existingTex2D->second;
+    const auto existingTexture = m_texturesById.find(textureUnit);
+    if (existingTexture != m_texturesById.end())
+        return existingTexture->second;
 
     // Create and configure new texture object.
 
-    auto newTex2D = globjects::Texture::createDefault();
+    auto newTexture = globjects::Texture::createDefault(textureTarget());
 
-    newTex2D->setParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
+    newTexture->setParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
 
-    m_tex2DsById[textureUnit] = newTex2D;
+    m_texturesById[textureUnit] = newTexture;
 
     // Assign some textures if there are none.
 
-    if (m_tex2DsById.size() == 1)
-        newTex2D->bindActive(textureUnit);
-    if (m_tex2DsById.size() == 2)
-        newTex2D->bindActive(textureUnit);
+    if (m_texturesById.size() == 1)
+        newTexture->bindActive(textureUnit);
+    if (m_texturesById.size() == 2)
+        newTexture->bindActive(textureUnit);
 
-    return newTex2D;
+    return newTexture;
 }
 
 } // namespace glHimmel

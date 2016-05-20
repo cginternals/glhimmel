@@ -25,7 +25,7 @@ void main(void)
     vec2 uv = vec2(-stu.x, stu.z) * m + 0.5;
 
     vec4 fc = mix(
-        texture2D(back, uv), texture2D(src, uv), srcAlpha);
+        texture(back, uv), texture(src, uv), srcAlpha);
 
     if (fakeSun)
     {

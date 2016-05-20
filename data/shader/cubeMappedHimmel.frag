@@ -8,9 +8,8 @@ in vec4 v_razInvariant;
 uniform mat4 razInverse;
 uniform float srcAlpha;
 
-uniform sampler2D back;
-uniform sampler2D src;
-uniform bool isHalf;
+uniform samplerCube back;
+uniform samplerCube src;
 
 #include </data/shader/hband.glsl>
 #include </data/shader/fakeSun.glsl>
@@ -19,15 +18,8 @@ void main(void)
 {
     vec3 stu = normalize(v_ray.xyz);
 
-    const float c_2OverPi  = 0.6366197723675813430755350534901;
-    const float c_1Over2Pi = 0.1591549430918953357688837633725;
-    const float c_1OverPi  = 0.3183098861837906715377675267450;
-
-    // TODO: c_1OverPi was not defined anywhere (typo?)
-    float v = isHalf ? (asin(+stu.z) * c_2OverPi) : (acos(-stu.z) * c_1OverPi);
-    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, v);
-
-    vec4 fc = mix(texture(back, uv), texture(src, uv), srcAlpha);
+    vec4 fc = mix(
+        texture(back, stu), texture(src, stu), srcAlpha);
 
     if (fakeSun)
     {

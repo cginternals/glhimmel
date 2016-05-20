@@ -80,7 +80,7 @@ namespace glHimmel
         HorizonBand* hBand() const;
 
         // Use this helper to work with pre-configured textures.
-        globjects::ref_ptr<globjects::Texture> getOrCreateTexture2D(const unsigned int textureUnit);
+        globjects::ref_ptr<globjects::Texture> getOrCreateTexture(const unsigned int textureUnit);
 
         void draw() override;
 
@@ -93,6 +93,7 @@ namespace glHimmel
         void updateUniforms() const;
 
         virtual std::string fragmentShaderPath() const = 0;
+        virtual GLenum textureTarget() const;
 
     protected:
 
@@ -116,7 +117,7 @@ namespace glHimmel
 
         std::unique_ptr<HorizonBand> m_hBand;
 
-        std::map<GLint, globjects::ref_ptr<globjects::Texture>> m_tex2DsById;
+        std::map<GLint, globjects::ref_ptr<globjects::Texture>> m_texturesById;
     };
 
 } // namespace glHimmel

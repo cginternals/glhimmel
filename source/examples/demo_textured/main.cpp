@@ -17,6 +17,7 @@
 #include <texturebased/SphereMappedHimmel.h>
 #include <texturebased/ParaboloidMappedHimmel.h>
 #include <texturebased/HorizonBand.h>
+#include <texturebased/CubeMappedHimmel.h>
 
 using namespace gl;
 using namespace glHimmel;
@@ -84,12 +85,12 @@ std::unique_ptr<AbstractHimmel> createPolarMappedDemo()
 
     auto image = rawFromFile("data/resources/polar_half_art_0.8192.2048.rgba.ub.raw");
 
-    himmel->getOrCreateTexture2D(0)->image2D(0, GL_RGBA32F, 8192, 2048, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data());
+    himmel->getOrCreateTexture(0)->image2D(0, GL_RGBA32F, 8192, 2048, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data());
 
-    /*himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
-    himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_half_gen_2.jpg"));
-    himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/polar_half_pho_1.jpg"));
-    himmel->getOrCreateTexture2D(4)->setImage(osgDB::readImageFile("resources/polar_half_pho_7.jpg"));
+    /*himmel->getOrCreateTexture(1)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
+    himmel->getOrCreateTexture(2)->setImage(osgDB::readImageFile("resources/polar_half_gen_2.jpg"));
+    himmel->getOrCreateTexture(3)->setImage(osgDB::readImageFile("resources/polar_half_pho_1.jpg"));
+    himmel->getOrCreateTexture(4)->setImage(osgDB::readImageFile("resources/polar_half_pho_7.jpg"));
     */
     himmel->pushTextureUnit(0, 0.0f);
     /*himmel->pushTextureUnit(1, 0.33f);
@@ -112,11 +113,11 @@ std::unique_ptr<AbstractHimmel> createSphereMappedDemo()
     auto image1 = rawFromFile("data/resources/sphere_gen_0.4096.4096.rgba.ub.raw");
     auto image2 = rawFromFile("data/resources/sphere_gen_2.4096.4096.rgba.ub.raw");
 
-    himmel->getOrCreateTexture2D(0)->image2D(0, GL_RGBA32F, 4096, 4096, 0, GL_RGBA, GL_UNSIGNED_BYTE, image1.data());
-    himmel->getOrCreateTexture2D(1)->image2D(0, GL_RGBA32F, 4096, 4096, 0, GL_RGBA, GL_UNSIGNED_BYTE, image2.data());
+    himmel->getOrCreateTexture(0)->image2D(0, GL_RGBA32F, 4096, 4096, 0, GL_RGBA, GL_UNSIGNED_BYTE, image1.data());
+    himmel->getOrCreateTexture(1)->image2D(0, GL_RGBA32F, 4096, 4096, 0, GL_RGBA, GL_UNSIGNED_BYTE, image2.data());
 
-    himmel->pushTextureUnit(himmel->getOrCreateTexture2D(0), 0.00f);
-    himmel->pushTextureUnit(himmel->getOrCreateTexture2D(1), 0.50f);
+    himmel->pushTextureUnit(himmel->getOrCreateTexture(0), 0.00f);
+    himmel->pushTextureUnit(himmel->getOrCreateTexture(1), 0.50f);
 
     return std::move(himmel);
 }
@@ -139,26 +140,50 @@ std::unique_ptr<AbstractHimmel> createParaboloidMappedDemo()
     auto image7 = rawFromFile("data/resources/paraboloid_pho_2.1024.1024.rgba.ub.raw");
     auto image8 = rawFromFile("data/resources/paraboloid_pho_3.1024.1024.rgba.ub.raw");
 
-    himmel->getOrCreateTexture2D(0)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image1.data());
-    himmel->getOrCreateTexture2D(1)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image2.data());
-    himmel->getOrCreateTexture2D(2)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image3.data());
-    himmel->getOrCreateTexture2D(3)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image4.data());
-    himmel->getOrCreateTexture2D(4)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image5.data());
-    himmel->getOrCreateTexture2D(5)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image6.data());
-    himmel->getOrCreateTexture2D(6)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image7.data());
-    himmel->getOrCreateTexture2D(7)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image8.data());
+    himmel->getOrCreateTexture(0)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image1.data());
+    himmel->getOrCreateTexture(1)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image2.data());
+    himmel->getOrCreateTexture(2)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image3.data());
+    himmel->getOrCreateTexture(3)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image4.data());
+    himmel->getOrCreateTexture(4)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image5.data());
+    himmel->getOrCreateTexture(5)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image6.data());
+    himmel->getOrCreateTexture(6)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image7.data());
+    himmel->getOrCreateTexture(7)->image2D(0, GL_RGBA32F, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image8.data());
 
     const float a = 1.0 / 8.0;
 
-    himmel->pushTextureUnit(himmel->getOrCreateTexture2D(0), 0.0 * a);
-    himmel->pushTextureUnit(himmel->getOrCreateTexture2D(1), 1.0 * a);
-    himmel->pushTextureUnit(himmel->getOrCreateTexture2D(2), 2.0 * a);
-    himmel->pushTextureUnit(himmel->getOrCreateTexture2D(3), 3.0 * a);
-    himmel->pushTextureUnit(himmel->getOrCreateTexture2D(4), 4.0 * a);
-    himmel->pushTextureUnit(himmel->getOrCreateTexture2D(5), 5.0 * a);
-    himmel->pushTextureUnit(himmel->getOrCreateTexture2D(6), 6.0 * a);
-    himmel->pushTextureUnit(himmel->getOrCreateTexture2D(7), 7.0 * a);
+    himmel->pushTextureUnit(himmel->getOrCreateTexture(0), 0.0 * a);
+    himmel->pushTextureUnit(himmel->getOrCreateTexture(1), 1.0 * a);
+    himmel->pushTextureUnit(himmel->getOrCreateTexture(2), 2.0 * a);
+    himmel->pushTextureUnit(himmel->getOrCreateTexture(3), 3.0 * a);
+    himmel->pushTextureUnit(himmel->getOrCreateTexture(4), 4.0 * a);
+    himmel->pushTextureUnit(himmel->getOrCreateTexture(5), 5.0 * a);
+    himmel->pushTextureUnit(himmel->getOrCreateTexture(6), 6.0 * a);
+    himmel->pushTextureUnit(himmel->getOrCreateTexture(7), 7.0 * a);
 
+    return std::move(himmel);
+}
+
+std::unique_ptr<AbstractHimmel> createCubeMappedDemo()
+{
+   auto himmel = std::unique_ptr<CubeMappedHimmel>(new CubeMappedHimmel(false));
+
+    himmel->setTransitionDuration(0.02f);
+
+    std::vector<std::string> name = { "4", "6", "9", "17", "19" };
+    std::vector<std::string> faceID = { "px", "nx", "py", "ny", "pz", "nz" };
+
+    for (int i = 0; i < name.size(); ++i)
+    {
+        auto texture = himmel->getOrCreateTexture(i);
+        texture->bind();
+
+        for (int face = 0; face < 6; ++face)
+        {
+            auto image = rawFromFile("data/resources/cube_gen_" + name[i] + "_" + faceID[face] + ".1024.1024.rgba.ub.raw");
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, static_cast<GLint>(GL_RGBA32F), 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data());
+        }
+        himmel->pushTextureUnit(texture, static_cast<float>(i) / name.size());
+    }
     return std::move(himmel);
 }
 
@@ -191,6 +216,11 @@ void key_callback(GLFWwindow * window, int key, int /*scancode*/, int action, in
     else if (key == '3' && action == GLFW_PRESS)
     {
         g_himmel = createParaboloidMappedDemo();
+        initializeHimmel();
+    }
+    else if (key == '4' && action == GLFW_PRESS)
+    {
+        g_himmel = createCubeMappedDemo();
         initializeHimmel();
     }
     else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
