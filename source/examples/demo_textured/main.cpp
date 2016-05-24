@@ -13,11 +13,11 @@
 #include <glm/vec4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <texturebased/PolarMappedHimmel.h>
-#include <texturebased/SphereMappedHimmel.h>
-#include <texturebased/ParaboloidMappedHimmel.h>
-#include <texturebased/HorizonBand.h>
-#include <texturebased/CubeMappedHimmel.h>
+#include <glhimmel-texturebased/PolarMappedHimmel.h>
+#include <glhimmel-texturebased/SphereMappedHimmel.h>
+#include <glhimmel-texturebased/ParaboloidMappedHimmel.h>
+#include <glhimmel-texturebased/HorizonBand.h>
+#include <glhimmel-texturebased/CubeMappedHimmel.h>
 
 using namespace gl;
 using namespace glHimmel;

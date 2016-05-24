@@ -70,7 +70,7 @@ target_link_libraries(${target}
     PRIVATE
     ${DEFAULT_LIBRARIES}
     ${GLFW_LIBRARIES}
-    ${META_PROJECT_NAME}::texturebased
+    ${META_PROJECT_NAME}::glhimmel-texturebased
 )
 
 

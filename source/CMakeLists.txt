@@ -15,7 +15,9 @@ message(STATUS ${CMAKE_CURRENT_BINARY_DIR}/include/${META_PROJECT_NAME}/${META_P
 
 # Libraries
 set(IDE_FOLDER "")
-add_subdirectory(texturebased)
+add_subdirectory(glhimmel-base)
+add_subdirectory(glhimmel-computed)
+add_subdirectory(glhimmel-texturebased)
 
 # Examples
 set(IDE_FOLDER "Examples")
