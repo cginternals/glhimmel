@@ -33,7 +33,7 @@ struct EquatorialCoords
     const EclipticalCoords<T> toEcliptical(const T obliquity) const;
 
     const HorizontalCoords<T> toHorizontal(
-        const t_julianDay siderealTime /* θ_0 */
+        const JulianDay siderealTime /* θ_0 */
     ,   const T observersLatitude      /* Φ   */
     ,   const T observersLongitude     /* L   */) const;
 
@@ -81,7 +81,7 @@ struct HorizontalCoords
     HorizontalCoords();
 
     const EquatorialCoords<T> toEquatorial(
-        const t_julianDay siderealTime /* θ_0 */
+        const JulianDay siderealTime /* θ_0 */
     ,   const T observersLatitude      /* Φ   */
     ,   const T observersLongitude     /* L   */) const;
 

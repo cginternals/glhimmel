@@ -73,7 +73,7 @@ const EclipticalCoords<T> EquatorialCoords<T>::toEcliptical(const T obliquity) c
 
 template<typename T>
 const HorizontalCoords<T> EquatorialCoords<T>::toHorizontal(
-    const t_julianDay siderealTime /* θ_0 */
+    const JulianDay siderealTime /* θ_0 */
     , const T observersLatitude      /* Φ   */
     , const T observersLongitude     /* L   */) const
 {
@@ -130,7 +130,7 @@ const EquatorialCoords<T> EclipticalCoords<T>::toEquatorial(const T obliquity) c
 
 template<typename T>
 const EquatorialCoords<T> HorizontalCoords<T>::toEquatorial(
-    const t_julianDay siderealTime /* θ_0 */
+    const JulianDay siderealTime /* θ_0 */
     , const T observersLatitude      /* Φ   */
     , const T observersLongitude     /* L   */) const
 {

@@ -9,32 +9,32 @@
 namespace glHimmel
 {
 
-typedef long double t_julianDay;
+typedef long double JulianDay;
 
 
-GLHIMMEL_BASE_API t_julianDay jd(t_aTime aTime);
+GLHIMMEL_BASE_API JulianDay jd(astronomicalTime aTime);
 
-GLHIMMEL_BASE_API t_julianDay jdUT(const t_aTime &aTime);
-GLHIMMEL_BASE_API t_julianDay jd0UT(t_aTime aTime);
+GLHIMMEL_BASE_API JulianDay jdUT(const astronomicalTime &aTime);
+GLHIMMEL_BASE_API JulianDay jd0UT(astronomicalTime aTime);
 
-GLHIMMEL_BASE_API t_julianDay mjd(t_aTime aTime);
+GLHIMMEL_BASE_API JulianDay mjd(astronomicalTime aTime);
 
 
-GLHIMMEL_BASE_API t_aTime makeTime(
-    t_julianDay julianDate
+GLHIMMEL_BASE_API astronomicalTime makeTime(
+    JulianDay julianDate
 ,   const short GMTOffset = 0);
 
-GLHIMMEL_BASE_API t_aTime makeUT(const t_aTime &aTime);
+GLHIMMEL_BASE_API astronomicalTime makeUT(const astronomicalTime &aTime);
 
 
-GLHIMMEL_BASE_API t_julianDay standardEquinox();
+GLHIMMEL_BASE_API JulianDay standardEquinox();
 
-GLHIMMEL_BASE_API t_julianDay j2050();
-GLHIMMEL_BASE_API t_julianDay j2000();
-GLHIMMEL_BASE_API t_julianDay b1900();
-GLHIMMEL_BASE_API t_julianDay b1950();
+GLHIMMEL_BASE_API JulianDay j2050();
+GLHIMMEL_BASE_API JulianDay j2000();
+GLHIMMEL_BASE_API JulianDay b1900();
+GLHIMMEL_BASE_API JulianDay b1950();
 
-GLHIMMEL_BASE_API t_julianDay jdSinceSE(const t_julianDay jd); // JDE
-GLHIMMEL_BASE_API t_julianDay jCenturiesSinceSE(const t_julianDay jd); // T
+GLHIMMEL_BASE_API JulianDay jdSinceSE(const JulianDay jd); // JDE
+GLHIMMEL_BASE_API JulianDay jCenturiesSinceSE(const JulianDay jd); // T
 
 } // namespace glHimmel

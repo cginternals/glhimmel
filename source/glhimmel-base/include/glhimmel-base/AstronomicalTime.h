@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <glhimmel-base/glhimmel-base_api.h>
@@ -10,11 +9,11 @@ namespace glHimmel
 class TimeF;
 
 
-typedef struct GLHIMMEL_BASE_API s_AstronomicalTime
+typedef struct GLHIMMEL_BASE_API AstronomicalTime
 {
-    s_AstronomicalTime();
+    AstronomicalTime();
 
-    s_AstronomicalTime(
+    AstronomicalTime(
         const short year
     ,   const short month
     ,   const short day
@@ -24,23 +23,23 @@ typedef struct GLHIMMEL_BASE_API s_AstronomicalTime
     ,   const short utcOffset = 0);
 
 
-    s_AstronomicalTime(
+    AstronomicalTime(
         const short year
     ,   const short month
     ,   const long double day
     ,   const short utcOffset = 0);
 
-    static s_AstronomicalTime fromTimeT(
+    static AstronomicalTime fromTimeT(
         const time_t &localTime
     ,   const time_t &utcOffset);
 
-    static s_AstronomicalTime fromTimeF(const TimeF &t);
+    static AstronomicalTime fromTimeF(const TimeF &t);
 
     time_t toTime_t() const;
 
     long double dayf() const;
 
-    bool operator==(const s_AstronomicalTime &other) const
+    bool operator==(const AstronomicalTime &other) const
     {
         return other.year   == year
             && other.month  == month
@@ -61,7 +60,7 @@ public:
 
     short utcOffset; // In seconds.
 
-} t_aTime;
+} astronomicalTime;
 
 float toDays(int hour, int minute, int second);
 

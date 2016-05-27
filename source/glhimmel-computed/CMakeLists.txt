@@ -33,11 +33,15 @@ set(include_path "${CMAKE_CURRENT_SOURCE_DIR}/include/${target}")
 set(source_path  "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
 set(headers
-
+	${include_path}/ComputedHimmel.h
+	${include_path}/AbstractAstronomy.h
+	${include_path}/Astronomy.h
 )
 
 set(sources
-
+	${source_path}/ComputedHimmel.cpp
+	${source_path}/AbstractAstronomy.cpp
+	${source_path}/Astronomy.cpp
 )
 
 # Group source files

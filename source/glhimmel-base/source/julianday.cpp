@@ -8,7 +8,7 @@
 
 namespace glHimmel
 {
-t_julianDay jd(t_aTime aTime)
+JulianDay jd(astronomicalTime aTime)
 {
     assert(aTime.month > 0);
 
@@ -49,12 +49,12 @@ t_julianDay jd(t_aTime aTime)
         + static_cast<int>(30.600001 * (aTime.month + 1)) + aTime.day + h + b - 1524.5;
 }
 
-t_julianDay jdUT(const t_aTime &aTime)
+JulianDay jdUT(const astronomicalTime &aTime)
 {
     return jd(0 == aTime.utcOffset ? aTime : makeUT(aTime));
 }
 
-t_julianDay jd0UT(t_aTime aTime)
+JulianDay jd0UT(astronomicalTime aTime)
 {
     aTime.second = 0;
     aTime.minute = 0;
@@ -65,13 +65,13 @@ t_julianDay jd0UT(t_aTime aTime)
 
 
 // Modified Julian Date.
-t_julianDay mjd(t_aTime aTime)
+JulianDay mjd(astronomicalTime aTime)
 {
     return jd(aTime) - 2400000.5;
 }
 
-t_aTime makeTime(
-    t_julianDay julianDate
+astronomicalTime makeTime(
+    JulianDay julianDate
 ,   const short GMTOffset)
 {
     assert(julianDate >= 0.0);
@@ -106,14 +106,13 @@ t_aTime makeTime(
     const short minute = static_cast<short>(m);
     const short second = static_cast<short>(s);
 
-    return t_aTime(year, month, day, hour, minute, second, GMTOffset);
+    return astronomicalTime(year, month, day, hour, minute, second, GMTOffset);
 }
 
-t_aTime makeUT(const t_aTime &aTime)
+astronomicalTime makeUT(const astronomicalTime &aTime)
 {
     return makeTime(jd(aTime) - aTime.utcOffset / 3600.0 / 24.0, 0);
 }
-
 
 // http://en.wikipedia.org/wiki/Equatorial_coordinate_system
 // Over long periods of time, precession and nutation effects alter the Earth's orbit and thus
@@ -121,38 +120,38 @@ t_aTime makeUT(const t_aTime &aTime)
 // their coordinates as seen from Earth. When considering observations separated by long intervals,
 // it is necessary to specify an epoch (frequently J2000.0, for older data B1950.0) when specifying
 // coordinates of planets, stars, galaxies, etc.
-t_julianDay standardEquinox()
+JulianDay standardEquinox()
 {
     return j2000();
 }
 
-t_julianDay j2000()
+JulianDay j2000()
 {
     return 2451545.0; // 2000 January 1 noon TT
     // 2451543.5 was used by http://www.stjarnhimlen.se/comp/tutorial.html
 }
 
-t_julianDay j2050()
+JulianDay j2050()
 {
     return 2469807.5; // 2050 January 1 noon TT
 }
 
-t_julianDay b1900()
+JulianDay b1900()
 {
     return 2415020.3135; // 1900 January 0.8135 TT
 }
 
-t_julianDay b1950()
+JulianDay b1950()
 {
     return 2433282.4235; // 1950 January 0.9235 TT
 }
 
-t_julianDay jdSinceSE(const t_julianDay jd)
+JulianDay jdSinceSE(const JulianDay jd)
 {
     return jd - standardEquinox();
 }
 
-t_julianDay jCenturiesSinceSE(const t_julianDay jd)   // T
+JulianDay jCenturiesSinceSE(const JulianDay jd)   // T
 {
     // Even if google says that 1 century has currently 36 524.2199 days,
     // the julian century is explicitly defined as 36525 days...

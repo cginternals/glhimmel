@@ -7,7 +7,7 @@
 namespace glHimmel
 {
 
-s_AstronomicalTime::s_AstronomicalTime()
+AstronomicalTime::AstronomicalTime()
 :   year(0)
 ,   month(1)
 ,   day(1)
@@ -19,7 +19,7 @@ s_AstronomicalTime::s_AstronomicalTime()
 }
 
 
-s_AstronomicalTime::s_AstronomicalTime(
+AstronomicalTime::AstronomicalTime(
     const short year
 ,   const short month
 ,   const short day
@@ -38,7 +38,7 @@ s_AstronomicalTime::s_AstronomicalTime(
 }
 
 
-s_AstronomicalTime::s_AstronomicalTime(
+AstronomicalTime::AstronomicalTime(
     const short year
 ,   const short month
 ,   const long double day
@@ -58,7 +58,7 @@ s_AstronomicalTime::s_AstronomicalTime(
 }
 
 
-s_AstronomicalTime s_AstronomicalTime::fromTimeT(
+AstronomicalTime AstronomicalTime::fromTimeT(
     const time_t &time
 ,   const time_t &utcOffset)
 {
@@ -74,9 +74,9 @@ s_AstronomicalTime s_AstronomicalTime::fromTimeT(
     time_t mt = mktime(&lcl);
 
     if(mt == -1)
-        return s_AstronomicalTime();
+        return AstronomicalTime();
 
-    return s_AstronomicalTime(
+    return AstronomicalTime(
         static_cast<short>(lcl.tm_year + 1900)
     ,   static_cast<short>(lcl.tm_mon + 1)
     ,   static_cast<short>(lcl.tm_mday)
@@ -87,13 +87,13 @@ s_AstronomicalTime s_AstronomicalTime::fromTimeT(
 }
 
 
-s_AstronomicalTime s_AstronomicalTime::fromTimeF(const TimeF &t)
+AstronomicalTime AstronomicalTime::fromTimeF(const TimeF &t)
 {
     return fromTimeT(t.gett(), t.getUtcOffset());
 }
 
 
-time_t s_AstronomicalTime::toTime_t() const
+time_t AstronomicalTime::toTime_t() const
 {
     time_t t = 0;
 
@@ -120,7 +120,7 @@ time_t s_AstronomicalTime::toTime_t() const
 }
 
 
-long double s_AstronomicalTime::dayf() const
+long double AstronomicalTime::dayf() const
 {
     return day + toDays(hour, minute, second);
 }
