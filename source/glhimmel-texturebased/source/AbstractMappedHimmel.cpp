@@ -13,7 +13,6 @@
 #include <globjects/NamedString.h>
 #include <globjects/base/File.h>
 
-#include <glhimmel-texturebased/ScreenAlignedQuad.h>
 #include <glhimmel-texturebased/HorizonBand.h>
 #include <glhimmel-base/coordinates.h>
 
@@ -28,7 +27,7 @@ namespace glHimmel
 
 AbstractMappedHimmel::AbstractMappedHimmel(const bool hBand, const bool fakeSun)
     : AbstractHimmel()
-    , m_hquad()
+    , m_screenAlignedTriangle()
 
     , m_program(nullptr)
 
@@ -221,7 +220,7 @@ void AbstractMappedHimmel::draw()
     AbstractHimmel::draw();
 
     m_program->use();
-    m_hquad.draw();
+    m_screenAlignedTriangle.draw();
 }
 
 

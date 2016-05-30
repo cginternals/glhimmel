@@ -1,4 +1,4 @@
-#include <glhimmel-texturebased/ScreenAlignedQuad.h>
+#include <glhimmel-base/ScreenAlignedTriangle.h>
 
 #include <cassert>
 #include <array>
@@ -19,17 +19,17 @@
 using namespace gl;
 using namespace globjects;
 
-ScreenAlignedQuad::ScreenAlignedQuad()
+ScreenAlignedTriangle::ScreenAlignedTriangle()
 {
     initialize();
 }
 
-void ScreenAlignedQuad::initialize()
+void ScreenAlignedTriangle::initialize()
 {
     // By default, counterclockwise polygons are taken to be front-facing.
     // http://www.opengl.org/sdk/docs/man/xhtml/glFrontFace.xml
 
-    static const std::array<glm::vec2, 4> raw{ { glm::vec2(+1.f,-1.f), glm::vec2(+1.f,+1.f), glm::vec2(-1.f,-1.f), glm::vec2(-1.f,+1.f) } };
+    static const std::array<glm::vec2, 4> raw{ { glm::vec2(+3.f,-1.f), glm::vec2(-1.f,-1.f), glm::vec2(-1.f,+3.f) } };
 
     m_vao = new VertexArray();
 
@@ -43,7 +43,7 @@ void ScreenAlignedQuad::initialize()
     m_vao->enable(0);
 }
 
-void ScreenAlignedQuad::draw() const
+void ScreenAlignedTriangle::draw() const
 {
-    m_vao->drawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    m_vao->drawArrays(GL_TRIANGLE_STRIP, 0, 3);
 }

@@ -4,6 +4,8 @@
 #
 
 find_package(glm REQUIRED)
+find_package(glbinding REQUIRED)
+find_package(globjects REQUIRED)
 
 
 #
@@ -38,6 +40,7 @@ set(headers
     ${include_path}/julianday.h
     ${include_path}/AstronomicalTime.h
     ${include_path}/interpolate.h
+    ${include_path}/ScreenAlignedTriangle.h
 )
 
 set(sources
@@ -45,6 +48,7 @@ set(sources
     ${source_path}/Timef.cpp
     ${source_path}/julianday.cpp
     ${source_path}/AstronomicalTime.cpp
+    ${source_path}/ScreenAlignedTriangle.cpp
 )
 
 # Group source files
@@ -141,6 +145,8 @@ target_link_libraries(${target}
     PUBLIC
     ${DEFAULT_LIBRARIES}
     glm
+    glbinding::glbinding
+    globjects::globjects
 
     INTERFACE
 )

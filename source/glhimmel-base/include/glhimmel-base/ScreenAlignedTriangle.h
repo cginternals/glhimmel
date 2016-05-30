@@ -1,6 +1,7 @@
 #pragma once
 
 #include <globjects/base/ref_ptr.h>
+#include <glhimmel-base/glhimmel-base_api.h>
 
 namespace globjects
 {
@@ -9,11 +10,11 @@ namespace globjects
 }
 
 
-class ScreenAlignedQuad
+class GLHIMMEL_BASE_API ScreenAlignedTriangle 
 {
 public:
-    ScreenAlignedQuad();
-    ~ScreenAlignedQuad() = default;
+    ScreenAlignedTriangle();
+    ~ScreenAlignedTriangle() = default;
 
     void draw() const;
 

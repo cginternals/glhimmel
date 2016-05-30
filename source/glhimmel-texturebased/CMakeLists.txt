@@ -35,7 +35,6 @@ set(source_path  "${CMAKE_CURRENT_SOURCE_DIR}/source")
 set(headers
     ${include_path}/PolarMappedHimmel.h
     ${include_path}/AbstractMappedHimmel.h
-    ${include_path}/ScreenAlignedQuad.h
     ${include_path}/TwoUnitsChanger.h
     ${include_path}/HorizonBand.h
     ${include_path}/SphereMappedHimmel.h
@@ -46,7 +45,6 @@ set(headers
 set(sources
     ${source_path}/PolarMappedHimmel.cpp
     ${source_path}/AbstractMappedHimmel.cpp
-    ${source_path}/ScreenAlignedQuad.cpp
     ${source_path}/TwoUnitsChanger.cpp
     ${source_path}/HorizonBand.cpp
     ${source_path}/SphereMappedHimmel.cpp

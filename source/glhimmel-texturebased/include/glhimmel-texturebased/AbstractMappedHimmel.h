@@ -2,7 +2,7 @@
 
 #include <glhimmel-texturebased/glhimmel-texturebased_api.h>
 #include <glhimmel-base/AbstractHimmel.h>
-#include <glhimmel-texturebased/ScreenAlignedQuad.h>
+#include <glhimmel-base/ScreenAlignedTriangle.h>
 #include <glhimmel-texturebased/TwoUnitsChanger.h>
 #include <glhimmel-base/Timef.h>
 
@@ -97,7 +97,7 @@ namespace glHimmel
 
     protected:
 
-        ScreenAlignedQuad m_hquad;
+        ScreenAlignedTriangle m_screenAlignedTriangle;
         globjects::ref_ptr<globjects::Program> m_program;
 
         TwoUnitsChanger m_changer;
