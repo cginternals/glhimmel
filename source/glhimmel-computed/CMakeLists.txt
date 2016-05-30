@@ -36,12 +36,16 @@ set(headers
 	${include_path}/ComputedHimmel.h
 	${include_path}/AbstractAstronomy.h
 	${include_path}/Astronomy.h
+	${include_path}/AtmosphereDrawable.h
+	${include_path}/AtmospherePrecompute.h
 )
 
 set(sources
 	${source_path}/ComputedHimmel.cpp
 	${source_path}/AbstractAstronomy.cpp
 	${source_path}/Astronomy.cpp
+	${source_path}/AtmosphereDrawable.cpp
+	${source_path}/AtmospherePrecompute.cpp
 )
 
 # Group source files

@@ -4,8 +4,8 @@
 #include "mathmacros.h"
 #include "earth.h"
 #include <glhimmel-base/Timef.h>
-#include "astronomy.h"
-#include "himmelquad.h"
+#include <glhimmel-computed/Astronomy.h>
+#include <glhimmel-base/ScreenAlignedTriangle.h>
 #include "atmospheregeode.h"
 #include "moongeode.h"
 #include "moonglaregeode.h"

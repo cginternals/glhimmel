@@ -107,8 +107,8 @@ public:
     }
 
 
-    const osg::Vec3f getSunPosition() const;
-    const osg::Vec3f getSunPosition(const astronomicalTime &aTime) const;
+    const glm::vec3 getSunPosition() const;
+    const glm::vec3 getSunPosition(const astronomicalTime &aTime) const;
 
 protected:
 
