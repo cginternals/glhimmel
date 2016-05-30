@@ -27,14 +27,15 @@ with open(sys.argv[1], 'r', encoding=enc) as f:
         content = content.replace(k, v)
 
     new_content = ""
-    include = False
     if sys.argv[1].endswith('.cpp'):
+        include = False
         for n in content.splitlines():
             if n.startswith('#include'):
                 include = True
             if include:
                 new_content += n + '\n'
     elif sys.argv[1].endswith('.h'):
+        pragma = False
         for n in content.splitlines():
             if n.startswith('#pragma'):
                 pragma = True
