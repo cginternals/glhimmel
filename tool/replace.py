@@ -22,6 +22,7 @@ with open(sys.argv[1], 'r', encoding=enc) as f:
         ('_rad(', 'glm::radians('),
         ('_deg(', 'glm::degrees('),
         ('osg::Program *', 'globjects::ref_ptr<globjects::Program> '),
+        ('<osg/Vec3f>', '<glm::vec3>'),
     ]
     for k, v in replacements:
         content = content.replace(k, v)
@@ -45,6 +46,16 @@ with open(sys.argv[1], 'r', encoding=enc) as f:
                 continue
             if pragma:
                 new_content += n + '\n'
+    content = new_content
+
+    new_content = ""
+    for n in content.splitlines():
+        n = n.rstrip()
+        if n.startswith('#include "'):
+            n = n.replace('#include "', '#include <glhimmel-computed/')
+            n = n.replace('"', '>')
+        n.replace('\t', '    ')
+        new_content += n + '\n'
     content = new_content
 
 
