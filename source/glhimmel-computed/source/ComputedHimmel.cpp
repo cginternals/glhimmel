@@ -1,12 +1,11 @@
 
 #include <glhimmel-computed/ComputedHimmel.h>
 
-#include "mathmacros.h"
-#include "earth.h"
+#include <glhimmel-computed/Earth.h>
 #include <glhimmel-base/Timef.h>
 #include <glhimmel-computed/Astronomy.h>
 #include <glhimmel-base/ScreenAlignedTriangle.h>
-#include "atmospheregeode.h"
+#include <glhimmel-computed/AtmosphereDrawable.h>
 #include "moongeode.h"
 #include "moonglaregeode.h"
 #include "starsgeode.h"

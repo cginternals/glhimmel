@@ -2,7 +2,6 @@
 #pragma once
 
 #include <glhimmel-base/glhimmel-base_api.h>
-//#include "typedefs.h"
 
 #include <time.h>
 #include <chrono>

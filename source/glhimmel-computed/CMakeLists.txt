@@ -38,6 +38,10 @@ set(headers
 	${include_path}/Astronomy.h
 	${include_path}/AtmosphereDrawable.h
 	${include_path}/AtmospherePrecompute.h
+	${include_path}/Earth.h
+	${include_path}/Moon.h
+	${include_path}/Sun.h
+	${include_path}/siderealtime.h
 )
 
 set(sources
@@ -46,6 +50,10 @@ set(sources
 	${source_path}/Astronomy.cpp
 	${source_path}/AtmosphereDrawable.cpp
 	${source_path}/AtmospherePrecompute.cpp
+	${source_path}/Earth.cpp
+	${source_path}/Moon.cpp
+	${source_path}/Sun.cpp
+	${source_path}/siderealtime.cpp
 )
 
 # Group source files

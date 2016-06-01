@@ -6,7 +6,7 @@
 #include <glhimmel-base/AstronomicalTime.h>
 
 #include <glhimmel-computed/AbstractAstronomy.h>
-#include "atmospheregeode.h"
+#include <glhimmel-computed/AtmosphereDrawable.h>
 #include "moongeode.h"
 #include "moonglaregeode.h"
 #include "starsgeode.h"
