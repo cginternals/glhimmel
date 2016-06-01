@@ -13,16 +13,21 @@ with open(sys.argv[1], 'r', encoding=enc) as f:
         ('t_longf', 'long double'),
         ('osg::Matrixf::rotate', 'glm::rotate'),
         ('osg::Matrixf', 'glm::mat4'),
+        ('asin(', 'asin###('),
+        ('atan2(', 'atan2###('),
+        ('acos(', 'acos###('),
         ('sin(', 'std::sin('),
         ('cos(', 'std::cos('),
         ('tan(', 'std::tan('),
-        ('asin(', 'std::asin('),
-        ('atan2(', 'std::atan2('),
-        ('acos(', 'std::acos('),
+        ('asin###(', 'std::asin('),
+        ('atan2###(', 'std::atan2('),
+        ('acos###(', 'std::acos('),
         ('_rad(', 'glm::radians('),
         ('_deg(', 'glm::degrees('),
         ('osg::Program *', 'globjects::ref_ptr<globjects::Program> '),
-        ('<osg/Vec3f>', '<glm::vec3>'),
+        ('<osg/Vec3f>', '<glm/vec3>'),
+        ('assert.h', 'cassert'),
+        ('math.h', 'cmath')
     ]
     for k, v in replacements:
         content = content.replace(k, v)
