@@ -1,7 +1,7 @@
 #include <glhimmel-computed/AtmospherePrecompute.h>
 
 #include <glhimmel-computed/ComputedHimmel.h>
-#include "earth.h"
+#include <glhimmel-computed/Earth.h>
 #include "strutils.h"
 
 #include "shaderfragment/bruneton_common.h"

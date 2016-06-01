@@ -1,9 +1,9 @@
 #include <glhimmel-computed/AtmosphereDrawable.h>
 
-//#include "himmel.h"
+#include "glhimmel-computed/ComputedHimmel.h"
 #include <glhimmel-base/ScreenAlignedTriangle.h>
 #include <glhimmel-computed/AbstractAstronomy.h>
-#include "atmosphereprecompute.h"
+#include <glhimmel-computed/AtmospherePrecompute.h>
 
 #include "shaderfragment/common.h"
 #include "shaderfragment/bruneton_common.h"
@@ -22,29 +22,19 @@
 namespace glHimmel
 {
 
-AtmosphereGeode::AtmosphereGeode()
-:   m_precompute(NULL)
-
-,   m_program(new globjects::Program)
-
-,   m_hquad(new ScreenAlignedTriangle())
+AtmosphereDrawable::AtmosphereDrawable()
+:   m_program(new globjects::Program)
 
 ,   m_transmittance(NULL)
 ,   m_irradiance(NULL)
 ,   m_inscatter(NULL)
 
-,   m_sunScale(NULL)
-,   m_lheurebleue(NULL)
-,   m_exposure(NULL)
+,   m_sunScaleFactor(defaultSunScaleFactor())
+,   m_exposure(defaultExposure())
+,   m_lheurebleue(defaultLHeureBleueColor())
+,   m_lheurebleueIntensity(defaultLHeureBleueIntensity())
 
-, m_precompute(new AtmospherePrecompute())
 {
-    m_scale = defaultSunScale();
-
-    
-
-    m_precompute = new AtmospherePrecompute();
-
     setupNode(stateSet);
     setupUniforms(stateSet);
     setupShader(stateSet);
@@ -53,24 +43,28 @@ AtmosphereGeode::AtmosphereGeode()
     precompute();
 
     addDrawable(m_hquad);
-};
+}
 
 
-AtmosphereGeode::~AtmosphereGeode()
+AtmosphereDrawable::~AtmosphereDrawable()
 {
-    delete m_precompute;
-};
+}
 
 
-void AtmosphereGeode::update(const Himmel &himmel)
+void AtmosphereDrawable::update(const Himmel &himmel)
 {
-    u_sunScale->set(himmel.astro()->getAngularSunRadius() * m_scale);
+    auto sunScale = himmel.astro()->getAngularSunRadius() * m_sunScaleFactor;
+
+    m_program->setUniform("sunScale", sunScale);
+    m_program->setUniform("lheurebleueColor", m_lheurebleueColor);
+    m_program->setUniform("lheurebleueIntensity", m_lheurebleueIntensity);
+    m_program->setUniform("exposure", m_exposure);
 
     precompute();
 }
 
 
-void AtmosphereGeode::setupNode(osg::StateSet* stateSet)
+void AtmosphereDrawable::setupNode(osg::StateSet* stateSet)
 {
     osg::Depth* depth = new osg::Depth(osg::Depth::LEQUAL, 1.0, 1.0);    
     stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
@@ -80,7 +74,7 @@ void AtmosphereGeode::setupNode(osg::StateSet* stateSet)
 }
 
 
-void AtmosphereGeode::setupShader(osg::StateSet* stateSet)
+void AtmosphereDrawable::setupShader(osg::StateSet* stateSet)
 {
     m_vShader->setShaderSource(getVertexShaderSource());
 
@@ -93,42 +87,25 @@ void AtmosphereGeode::setupShader(osg::StateSet* stateSet)
 }
 
 
-void AtmosphereGeode::updateShader(osg::StateSet*)
+void AtmosphereDrawable::updateShader(osg::StateSet*)
 {
     std::string fSource(getFragmentShaderSource());
-    m_precompute->substituteMacros(fSource);
+    m_precompute.substituteMacros(fSource);
 
     m_fShader->setShaderSource(fSource);
 }
 
-
-void AtmosphereGeode::setupUniforms(osg::StateSet* stateSet)
-{
-    u_sunScale = new osg::Uniform("sunScale", 1.f); // apparent angular radius (not diameter!)
-    stateSet->addUniform(u_sunScale);
-
-    u_exposure = new osg::Uniform("exposure", defaultExposure());
-    stateSet->addUniform(u_exposure);
-
-    const glm::vec3 hb(defaultLHeureBleueColor());
-
-    u_lheurebleue = new osg::Uniform("lheurebleue", glm::vec4(hb[0], hb[1], hb[2], defaultLHeureBleueIntensity()));
-    stateSet->addUniform(u_lheurebleue);
-    
-}
-
-
-void AtmosphereGeode::setupTextures(osg::StateSet* stateSet)
+void AtmosphereDrawable::setupTextures(osg::StateSet* stateSet)
 {
     assert(m_precompute);
 
-    m_transmittance = m_precompute->getTransmittanceTexture();
+    m_transmittance = m_precompute.getTransmittanceTexture();
     stateSet->setTextureAttributeAndModes(0, m_transmittance);
 
-    m_irradiance = m_precompute->getIrradianceTexture();
+    m_irradiance = m_precompute.getIrradianceTexture();
     stateSet->setTextureAttributeAndModes(1, m_irradiance);
 
-    m_inscatter = m_precompute->getInscatterTexture();
+    m_inscatter = m_precompute.getInscatterTexture();
     stateSet->setTextureAttributeAndModes(2, m_inscatter);
 
     stateSet->addUniform(new osg::Uniform("transmitstd::tanceSampler", 0));
@@ -137,147 +114,135 @@ void AtmosphereGeode::setupTextures(osg::StateSet* stateSet)
 }
 
 
-void AtmosphereGeode::precompute()
+void AtmosphereDrawable::precompute()
 {   
-    if(m_precompute->compute())
+    if(m_precompute.compute())
         updateShader(getOrCreateStateSet());
 }
 
 
-const float AtmosphereGeode::setSunScale(const float scale)
+void AtmosphereDrawable::setSunScaleFactor(const float scale)
 {
-    float temp;
-    u_sunScale->get(temp);
-
-    temp = temp / m_scale * scale;
-    u_sunScale->set(temp);
-
-    m_scale = scale;
-
-    return getSunScale();
+    m_sunScaleFactor = scale;
 }
 
-const float AtmosphereGeode::getSunScale() const
+float AtmosphereDrawable::getSunScaleFactor() const
 {
-    return m_scale;
+    return m_sunScaleFactor;
 }
 
-const float AtmosphereGeode::defaultSunScale()
+float AtmosphereDrawable::defaultSunScaleFactor()
 {
     return 2.f;
 }
 
 
-const float AtmosphereGeode::setExposure(const float exposure)
+void AtmosphereDrawable::setExposure(const float exposure)
 {
-    u_exposure->set(exposure);
-    return getExposure();
+    m_exposure = exposure;
 }
 
-const float AtmosphereGeode::getExposure() const
+float AtmosphereDrawable::getExposure() const
 {
-    float exposure;
-    u_exposure->get(exposure);
-    return exposure;
+    return m_exposure;
 }
 
-const float AtmosphereGeode::defaultExposure()
+float AtmosphereDrawable::defaultExposure()
 {
     return 0.22f;
 }
 
 
-const glm::vec3 AtmosphereGeode::setLHeureBleueColor(const glm::vec3 &color)
+void AtmosphereDrawable::setLHeureBleueColor(const glm::vec3 &color)
 {
-    glm::vec4 temp;
-    u_lheurebleue->get(temp);
+    m_lheurebleueColor = color;
 
-    temp[0] = color[0];
-    temp[1] = color[1];
-    temp[2] = color[2];
-
-    u_lheurebleue->set(temp);
-
-    return getLHeureBleueColor();
 }
 
-const glm::vec3 AtmosphereGeode::getLHeureBleueColor() const
+glm::vec3 AtmosphereDrawable::getLHeureBleueColor() const
 {
-    glm::vec4 temp;
-    u_lheurebleue->get(temp);
-    return glm::vec3(temp[0], temp[1], temp[2]);
+    return m_lheurebleueColor;
 }
 
-const glm::vec3 AtmosphereGeode::defaultLHeureBleueColor()
+glm::vec3 AtmosphereDrawable::defaultLHeureBleueColor()
 {
     return glm::vec3(0.08, 0.3, 1.0);
 }
 
 
-const float AtmosphereGeode::setLHeureBleueIntensity(const float intensity)
+void AtmosphereDrawable::setLHeureBleueIntensity(const float intensity)
 {
-    glm::vec4 temp;
-    u_lheurebleue->get(temp);
-
-    temp[3] = intensity;
-    u_lheurebleue->set(temp);
-
-    return getLHeureBleueIntensity();
+    m_lheurebleueIntensity = intensity;
 }
 
-const float AtmosphereGeode::getLHeureBleueIntensity() const
+float AtmosphereDrawable::getLHeureBleueIntensity() const
 {
-    glm::vec4 temp;
-    u_lheurebleue->get(temp);
-    return temp[3];
+    return m_lheurebleueIntensity;
 }
 
-const float AtmosphereGeode::defaultLHeureBleueIntensity()
+float AtmosphereDrawable::defaultLHeureBleueIntensity()
 {
     return 0.5f;
 }
 
-void AtmosphereGeode::setAverageGroundReflectance(const float reflectance)
+void AtmosphereDrawable::setAverageGroundReflectance(const float reflectance)
 {
-    m_precompute->getModelConfig().avgGroundReflectance = reflectance;
-    m_precompute->dirty();
+    m_precompute.getModelConfig().avgGroundReflectance = reflectance;
+    m_precompute.dirty();
 }
 
-void AtmosphereGeode::setThicknessRayleigh(const float thickness)
+void AtmosphereDrawable::setThicknessRayleigh(const float thickness)
 {
-    m_precompute->getModelConfig().HR = thickness;
-    m_precompute->dirty();
+    m_precompute.getModelConfig().HR = thickness;
+    m_precompute.dirty();
 }
 
-void AtmosphereGeode::setScatteringRayleigh(const glm::vec3 &coefficients)
+void AtmosphereDrawable::setScatteringRayleigh(const glm::vec3 &coefficients)
 {
-    m_precompute->getModelConfig().betaR = coefficients;
-    m_precompute->dirty();
+    m_precompute.getModelConfig().betaR = coefficients;
+    m_precompute.dirty();
 }
 
-void AtmosphereGeode::setThicknessMie(const float thickness)
+void AtmosphereDrawable::setThicknessMie(const float thickness)
 {
-    m_precompute->getModelConfig().HM = thickness;
-    m_precompute->dirty();
+    m_precompute.getModelConfig().HM = thickness;
+    m_precompute.dirty();
 }
 
-void AtmosphereGeode::setScatteringMie(const float coefficient)
+void AtmosphereDrawable::setScatteringMie(const float coefficient)
 {
-    m_precompute->getModelConfig().betaMSca = glm::vec3(1, 1, 1) * coefficient;
-    m_precompute->getModelConfig().betaMEx = m_precompute->getModelConfig().betaMSca / 0.9;
-    m_precompute->dirty();
+    m_precompute.getModelConfig().betaMSca = glm::vec3(1, 1, 1) * coefficient;
+    m_precompute.getModelConfig().betaMEx = m_precompute.getModelConfig().betaMSca / 0.9f;
+    m_precompute.dirty();
 }
 
-void AtmosphereGeode::setPhaseG(const float g)
+void AtmosphereDrawable::setPhaseG(const float g)
 {
-    m_precompute->getModelConfig().mieG = g;
-    m_precompute->dirty();
+    m_precompute.getModelConfig().mieG = g;
+    m_precompute.dirty();
+}
+
+void AtmosphereDrawable::draw()
+{
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_DEPTH_TEST);
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glEnable(GL_BLEND);
+
+    m_program->use();
+    m_screenAlignedTriangle.draw();
+
+    glDepthFunc(GL_LESS);
+    glDisable(GL_DEPTH_TEST);
+    
+    glDisable(GL_BLEND);
 }
 
 
 
 
-const std::string AtmosphereGeode::getVertexShaderSource()
+const std::string AtmosphereDrawable::getVertexShaderSource()
 {
     return glsl_version_150()
 
@@ -298,7 +263,7 @@ const std::string AtmosphereGeode::getVertexShaderSource()
 }
 
 
-const std::string AtmosphereGeode::getFragmentShaderSource()
+const std::string AtmosphereDrawable::getFragmentShaderSource()
 {
     return glsl_version_150()
 
@@ -523,15 +488,15 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
 
 #ifdef OSGHIMMEL_EXPOSE_SHADERS
 
-osg::Shader *AtmosphereGeode::getVertexShader()
+osg::Shader *AtmosphereDrawable::getVertexShader()
 {
     return m_vShader;
 }
-osg::Shader *AtmosphereGeode::getGeometryShader()
+osg::Shader *AtmosphereDrawable::getGeometryShader()
 {
     return NULL;
 }
-osg::Shader *AtmosphereGeode::getFragmentShader()
+osg::Shader *AtmosphereDrawable::getFragmentShader()
 {
     return m_fShader;
 }

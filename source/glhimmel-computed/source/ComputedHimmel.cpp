@@ -32,7 +32,7 @@ Himmel *Himmel::createWithoutClouds()
         new StarMapGeode("resources/skymap?.png")
     ,   new MoonGeode("resources/moon?.png")
     ,   new StarsGeode("resources/brightstars")
-    ,   new AtmosphereGeode()
+    ,   new AtmosphereDrawable()
     ,   NULL//new HighCloudLayerGeode()
     ,   NULL//new DubeCloudLayerGeode()
     ,   new Astronomy()
@@ -50,7 +50,7 @@ Himmel *Himmel::createWithClouds()
         new StarMapGeode("resources/skymap?.png")
     ,   new MoonGeode("resources/moon?.png")
     ,   new StarsGeode("resources/brightstars")
-    ,   new AtmosphereGeode()
+    ,   new AtmosphereDrawable()
     ,   new HighCloudLayerGeode()
     ,   new DubeCloudLayerGeode()
     ,   new Astronomy()
@@ -62,7 +62,7 @@ Himmel::Himmel(
     StarMapGeode *milkyWay
 ,   MoonGeode *moon
 ,   StarsGeode *stars
-,   AtmosphereGeode *atmosphere
+,   AtmosphereDrawable *atmosphere
 ,   HighCloudLayerGeode *highLayer
 ,   DubeCloudLayerGeode *dubeLayer
 ,   AbstractAstronomy *astronomy)

@@ -42,7 +42,7 @@ public:
         StarMapGeode *milkyWay
     ,   MoonGeode *moon
     ,   StarsGeode *stars
-    ,   AtmosphereGeode *atmosphere
+    ,   AtmosphereDrawable *atmosphere
     ,   HighCloudLayerGeode *highLayer
     ,   DubeCloudLayerGeode *dubeLayer
     ,   AbstractAstronomy *astronomy);
@@ -66,7 +66,7 @@ public:
     static const float defaultAltitude();
 
 
-    inline AtmosphereGeode *atmosphere() const 
+    inline AtmosphereDrawable *atmosphere() const 
     {
         return m_atmosphere;
     }
@@ -133,7 +133,7 @@ protected:
 
     AbstractAstronomy *m_astronomy;
 
-    osg::ref_ptr<AtmosphereGeode>     m_atmosphere;
+    osg::ref_ptr<AtmosphereDrawable>     m_atmosphere;
     osg::ref_ptr<MoonGeode>           m_moon;
     osg::ref_ptr<MoonGlareGeode>      m_moonGlare;
     osg::ref_ptr<StarsGeode>          m_stars;

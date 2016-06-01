@@ -19,31 +19,31 @@ namespace glHimmel
 {
 class Himmel;
 
-class GLHIMMEL_COMPUTED_API AtmosphereGeode
+class GLHIMMEL_COMPUTED_API AtmosphereDrawable
 {
 public:
 
-    AtmosphereGeode();
-    virtual ~AtmosphereGeode();
+    AtmosphereDrawable();
+    virtual ~AtmosphereDrawable();
 
     void update(const Himmel &himmel);
     //void precompute();
 
-    const float setSunScale(const float scale);
-    const float getSunScale() const;
-    static const float defaultSunScale();
+    void setSunScaleFactor(const float scale);
+    float getSunScaleFactor() const;
+    static float defaultSunScaleFactor();
 
-    const float setExposure(const float exposure);
-    const float getExposure() const;
-    static const float defaultExposure();
+    void setExposure(const float exposure);
+    float getExposure() const;
+    static float defaultExposure();
 
-    const glm::vec3 setLHeureBleueColor(const glm::vec3 &color);
-    const glm::vec3 getLHeureBleueColor() const;
-    static const glm::vec3 defaultLHeureBleueColor();
+    void setLHeureBleueColor(const glm::vec3 &color);
+    glm::vec3 getLHeureBleueColor() const;
+    static glm::vec3 defaultLHeureBleueColor();
     
-    const float setLHeureBleueIntensity(const float intensity);
-    const float getLHeureBleueIntensity() const;
-    static const float defaultLHeureBleueIntensity();
+    void setLHeureBleueIntensity(const float intensity);
+    float getLHeureBleueIntensity() const;
+    static float defaultLHeureBleueIntensity();
 
 
     void setAverageGroundReflectance(const float reflectance); // [0;1]
@@ -52,6 +52,8 @@ public:
     void setThicknessMie(const float thickness); 
     void setScatteringMie(const float coefficient); 
     void setPhaseG(const float g);  // [-1;+1]
+
+    void draw();
 
 protected:
 
@@ -71,15 +73,16 @@ protected:
 
     AtmospherePrecompute m_precompute;
 
+    globjects::ref_ptr<globjects::Program> m_program;
+
     osg::Texture2D *m_transmittance;
     osg::Texture2D *m_irradiance;
     osg::Texture3D *m_inscatter;
 
-    globjects::ref_ptr<globjects::Program> m_program;
-
-    float m_sunScale;
+    float m_sunScaleFactor;
     float m_exposure;
-    glm::vec4 m_lheurebleue;
+    glm::vec3 m_lheurebleueColor;
+    float m_lheurebleueIntensity;
 
     float m_scale;
 
