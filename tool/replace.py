@@ -9,7 +9,7 @@ with open(sys.argv[1], 'r', encoding=enc) as f:
         ('"declspec.h"', '<glhimmel-computed/glhimmel-computed_api.h>'),
         ('t_julianDay', 'JulianDay'),
         ('t_aTime', 'AstronomicalTime'),
-        ('OSGH_API', 'GLHIMMEL_TEXTUREBASED_API'),
+        ('OSGH_API', 'GLHIMMEL_COMPUTED_API'),
         ('t_longf', 'long double'),
         ('osg::Matrixf::rotate', 'glm::rotate'),
         ('osg::Matrixf', 'glm::mat4'),
@@ -27,7 +27,10 @@ with open(sys.argv[1], 'r', encoding=enc) as f:
         ('osg::Program *', 'globjects::ref_ptr<globjects::Program> '),
         ('<osg/Vec3f>', '<glm/vec3>'),
         ('assert.h', 'cassert'),
-        ('math.h', 'cmath')
+        ('math.h', 'cmath'),
+        ('t_equd', 'EquatorialCoords<long double>'),
+        ('t_hord', 'HorizontalCoords<long double>'),
+        ('t_ecld', 'EclipticalCoords<long double>'),
     ]
     for k, v in replacements:
         content = content.replace(k, v)
