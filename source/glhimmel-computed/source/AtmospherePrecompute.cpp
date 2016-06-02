@@ -40,7 +40,7 @@ AtmospherePrecompute::AtmospherePrecompute()
     m_modelCfg.betaR = glm::vec3(5.8e-3, 1.35e-2, 3.31e-2);
     
     m_modelCfg.HM = 6.f; //1.2f;
-    m_modelCfg.betaMSca = glm::vec3(1.f, 1.f, 1.f) * 20e-3, //8e-3; 
+    m_modelCfg.betaMSca = glm::vec3(1.0, 1.0, 1.0) * 20e-3, //8e-3; 
     m_modelCfg.betaMEx = m_modelCfg.betaMSca / 0.9f;
     m_modelCfg.mieG = 0.6; //0.76;
 
@@ -62,38 +62,25 @@ AtmospherePrecompute::~AtmospherePrecompute()
 }
 
 
-osg::Texture2D *AtmospherePrecompute::getTransmittanceTexture()
+globjects::Texture *AtmospherePrecompute::getTransmittanceTexture()
 {
     return setupTexture2D("transmittance", GL_RGB16F_ARB, GL_RGB, GL_FLOAT
         , getTextureConfig().transmittanceWidth, getTextureConfig().transmittanceHeight, m_transmittanceImage);
 }
-osg::Texture2D *AtmospherePrecompute::getIrradianceTexture()
+globjects::Texture *AtmospherePrecompute::getIrradianceTexture()
 {
     return setupTexture2D("irradiance", GL_RGB16F_ARB, GL_RGB, GL_FLOAT
         , getTextureConfig().skyWidth, getTextureConfig().skyHeight, m_irradianceImage);
 }
-osg::Texture3D *AtmospherePrecompute::getInscatterTexture()
+globjects::Texture *AtmospherePrecompute::getInscatterTexture()
 {
     return setupTexture3D("inscatter", GL_RGBA16F_ARB, GL_RGBA, GL_FLOAT
         , getTextureConfig().resMuS * getTextureConfig().resNu, getTextureConfig().resMu, getTextureConfig().resR, m_inscatterImage);
 }
 
 
-void AtmospherePrecompute::dirty()
-{
-    if(!m_dirty)
-        m_dirty = true;
-}
-
-
 const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
 {
-    if(ifDirtyOnly && !m_dirty)
-        return false;
-
-    m_dirty = false;
-
-
     osg::Timer_t t = osg::Timer::instance()->tick();
 
     // Setup Viewer
@@ -242,22 +229,22 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
 }
 
 
-osg::Texture2D *AtmospherePrecompute::getDeltaETexture()
+globjects::ref_ptr<globjects::Texture> AtmospherePrecompute::getDeltaETexture()
 {
     return setupTexture2D("deltaE", GL_RGB16F_ARB, GL_RGB, GL_FLOAT
         , getTextureConfig().skyWidth, getTextureConfig().skyHeight);
 }
-osg::Texture3D *AtmospherePrecompute::getDeltaSRTexture()
+globjects::ref_ptr<globjects::Texture> AtmospherePrecompute::getDeltaSRTexture()
 {
     return setupTexture3D("deltaSR", GL_RGB16F_ARB, GL_RGB, GL_FLOAT
         , getTextureConfig().resMuS * getTextureConfig().resNu, getTextureConfig().resMu, getTextureConfig().resR);
 }
-osg::Texture3D *AtmospherePrecompute::getDeltaSMTexture()
+globjects::ref_ptr<globjects::Texture> AtmospherePrecompute::getDeltaSMTexture()
 {
     return setupTexture3D("deltaSM", GL_RGB16F_ARB, GL_RGB, GL_FLOAT
         , getTextureConfig().resMuS * getTextureConfig().resNu, getTextureConfig().resMu, getTextureConfig().resR);
 }
-osg::Texture3D *AtmospherePrecompute::getDeltaJTexture()
+globjects::ref_ptr<globjects::Texture> AtmospherePrecompute::getDeltaJTexture()
 {
     return setupTexture3D("deltaJ", GL_RGB16F_ARB, GL_RGB, GL_FLOAT
         , getTextureConfig().resMuS * getTextureConfig().resNu, getTextureConfig().resMu, getTextureConfig().resR);
@@ -307,7 +294,7 @@ osg::Geode *AtmospherePrecompute::genQuad() const
 }
 
 
-osg::Texture2D *AtmospherePrecompute::setupTexture2D(
+globjects::ref_ptr<globjects::Texture> AtmospherePrecompute::setupTexture2D(
     const char *name // used as sampler identifier
 ,   const GLenum internalFormat
 ,   const GLenum pixelFormat
@@ -316,7 +303,7 @@ osg::Texture2D *AtmospherePrecompute::setupTexture2D(
 ,   const int height
 ,   osg::Image *image)
 {
-    osg::Texture2D *texture(new osg::Texture2D);
+    globjects::Texture *texture(new globjects::Texture);
 
     texture->setName(name);
     texture->setTextureSize(width, height);
@@ -344,7 +331,7 @@ osg::Texture2D *AtmospherePrecompute::setupTexture2D(
 }
 
 
-osg::Texture3D *AtmospherePrecompute::setupTexture3D(
+globjects::ref_ptr<globjects::Texture> AtmospherePrecompute::setupTexture3D(
     const char *name // used as sampler identifier
 ,   const GLenum internalFormat
 ,   const GLenum pixelFormat
@@ -354,7 +341,7 @@ osg::Texture3D *AtmospherePrecompute::setupTexture3D(
 ,   const int depth
 ,   osg::Image *image)
 {
-    osg::Texture3D *texture(new osg::Texture3D);
+    globjects::Texture *texture(new globjects::Texture);
 
     texture->setName(name);
     texture->setTextureSize(width, height, depth);
@@ -492,32 +479,6 @@ osg::Group *AtmospherePrecompute::setupGroup(
 }
 
 
-void AtmospherePrecompute::dirtyTargets(t_tex2DsByUnit &targets2D)
-{
-    t_tex2DsByUnit::const_iterator i2 = targets2D.begin();
-    const t_tex2DsByUnit::const_iterator t2End = targets2D.end();
-
-    for(; i2 != t2End; ++i2)
-    {
-        if(i2->second->getImage())
-            i2->second->getImage()->dirty();
-    }
-}
-
-
-void AtmospherePrecompute::dirtyTargets(t_tex3DsByUnit &targets3D)
-{
-    t_tex3DsByUnit::const_iterator i3 = targets3D.begin();
-    const t_tex3DsByUnit::const_iterator t3End = targets3D.end();
-
-    for(; i3 != t3End; ++i3)
-    {
-        if(i3->second->getImage())
-            i3->second->getImage()->dirty();
-    }
-}
-
-
 void AtmospherePrecompute::cleanUp(
     osgViewer::CompositeViewer *viewer)
 {
@@ -553,7 +514,7 @@ void AtmospherePrecompute::assignSamplers(
     for(i2 = samplers2D.begin(); i2 != s2End; ++i2)
     {
         const GLint unit(i2->first);
-        osg::Texture2D *texture(i2->second);
+        globjects::Texture *texture(i2->second);
 
         stateSet->setTextureAttributeAndModes(unit, texture, osg::StateAttribute::ON);
         stateSet->addUniform(new osg::Uniform((texture->getName() + "Sampler").c_str(), unit));
@@ -566,7 +527,7 @@ void AtmospherePrecompute::assignSamplers(
     for(i3 = samplers3D.begin(); i3 != s3End; ++i3)
     {
         const GLint unit(i3->first);
-        osg::Texture3D *texture(i3->second);
+        globjects::Texture *texture(i3->second);
 
         stateSet->setTextureAttributeAndModes(unit, texture, osg::StateAttribute::ON);
         stateSet->addUniform(new osg::Uniform((texture->getName() + "Sampler").c_str(), unit));
@@ -706,44 +667,6 @@ void AtmospherePrecompute::render3D(
 
     dirtyTargets(targets3D);
     targets3D.clear();
-}
-
-
-void AtmospherePrecompute::substituteMacros(std::string &source)
-{
-    // Replace Precomputed Texture Config "MACROS"
-
-    const t_preTexCfg &tc(getTextureConfig());
-
-    replace(source, "%TRANSMITTANCE_W%", tc.transmittanceWidth);
-    replace(source, "%TRANSMITTANCE_H%", tc.transmittanceHeight);
-
-    replace(source, "%SKY_W%", tc.skyWidth);
-    replace(source, "%SKY_H%", tc.skyHeight);
-
-    replace(source, "%RES_R%", tc.resR);
-    replace(source, "%RES_MU%", tc.resMu);
-    replace(source, "%RES_MU_S%", tc.resMuS);
-    replace(source, "%RES_NU%", tc.resNu);
-
-    replace(source, "%TRANSMITTANCE_INTEGRAL_SAMPLES%", tc.transmittanceIntegralSamples);
-    replace(source, "%INSCATTER_INTEGRAL_SAMPLES%", tc.inscatterIntegralSamples);
-    replace(source, "%IRRADIANCE_INTEGRAL_SAMPLES%", tc.irradianceIntegralSamples);
-    replace(source, "%INSCATTER_SPHERICAL_INTEGRAL_SAMPLES%", tc.inscatterSphericalIntegralSamples);
-
-    // Replace Physical Model Config "MACROS"
-
-    const t_modelCfg &mc(getModelConfig());
-
-    replace(source, "%AVERAGE_GROUND_REFLECTANCE%", mc.avgGroundReflectance);
-
-    replace(source, "%HR%", mc.HR);
-    replace(source, "%betaR%", mc.betaR);
-        
-    replace(source, "%HM%", mc.HM);
-    replace(source, "%betaMSca%", mc.betaMSca);
-    replace(source, "%betaMEx%", mc.betaMEx);
-    replace(source, "%mieG%", mc.mieG);
 }
 
 } // namespace glHimmel
