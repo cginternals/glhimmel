@@ -57,15 +57,9 @@ public:
 
 protected:
 
-    void precompute();
+    void setupProgram();
 
-    void setupUniforms();
     void setupTextures();
-    void setupShader();
-    void updateShader();
-
-    const std::string getVertexShaderSource();
-    const std::string getFragmentShaderSource();
 
 protected:
 

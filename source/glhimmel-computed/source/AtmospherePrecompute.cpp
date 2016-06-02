@@ -9,12 +9,6 @@
 #include "shaderfragment/bruneton_irradiance.h"
 #include "shaderfragment/bruneton_transmittance.h"
 
-#include <osg/Image>
-#include <osg/Geometry>
-#include <osg/Texture2D>
-#include <osg/Texture3D>
-#include <osgViewer/CompositeViewer>
-
 #include <assert.h>
 #include <cstring>
 
@@ -23,10 +17,6 @@ namespace glHimmel
 {
 
 AtmospherePrecompute::AtmospherePrecompute()
-:   m_transmittanceImage(new osg::Image)
-,   m_irradianceImage(new osg::Image)
-,   m_inscatterImage(new osg::Image)
-,   m_dirty(true)
 {
     m_preTexCfg.transmittanceWidth  = 256;
     m_preTexCfg.transmittanceHeight =  64;

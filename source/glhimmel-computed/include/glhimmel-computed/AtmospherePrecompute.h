@@ -10,26 +10,12 @@
 #include <globjects/Program.h>
 
 
-namespace osg
-{
-    class Texture2D;
-    class Texture3D;
-    class Image;
-    class Uniform;
-    class GraphicsContext;
-    class Geode;
-    class StateSet;
-    class Program;
-    class Camera;
-    class Group;
-}
-
-namespace osgViewer
-{
-    class CompositeViewer;
-}
-
 using namespace gl;
+
+namespace globjects
+{
+    class Texture;
+}
 
 namespace glHimmel
 {
@@ -38,7 +24,7 @@ class AtmospherePrecompute
 {
 public:
     
-    typedef struct PrecomputedTextureConfig
+    struct PrecomputedTextureConfig
     {
         int transmittanceWidth;
         int transmittanceHeight;
@@ -55,10 +41,9 @@ public:
         int inscatterIntegralSamples;
         int irradianceIntegralSamples;
         int inscatterSphericalIntegralSamples;
+    };
 
-    } t_preTexCfg;
-
-    typedef struct PhysicalModelConfig
+    struct PhysicalModelConfig
     {
         float avgGroundReflectance;
 
@@ -69,54 +54,50 @@ public:
         glm::vec3 betaMSca;
         glm::vec3 betaMEx;
         float mieG;
+    } ;
 
-    } t_modelCfg;
-
-    t_modelCfg &getModelConfig()
+    PhysicalModelConfig &getModelConfig()
     {
         return m_modelCfg;
     }
 
 protected:
 
-    t_preTexCfg &getTextureConfig()
+    PrecomputedTextureConfig &getTextureConfig()
     {
         return m_preTexCfg;
     }
 
 protected:
 
-    typedef std::map<GLint, osg::Texture2D*> t_tex2DsByUnit;
-    typedef std::map<GLint, osg::Texture3D*> t_tex3DsByUnit;
-
-    typedef std::vector<osg::Uniform*> t_uniforms;
+    typedef std::map<GLint, globjects::ref_ptr<globjects::Texture>> t_tex2DsByUnit;
+    typedef std::map<GLint, globjects::ref_ptr<globjects::Texture>> t_tex3DsByUnit;
 
 public:
 
     AtmospherePrecompute();
     virtual ~AtmospherePrecompute();
 
-    osg::Texture2D *getTransmittanceTexture();
-    osg::Texture2D *getIrradianceTexture();
-    osg::Texture3D *getInscatterTexture();
+    globjects::ref_ptr<globjects::Texture> getTransmittanceTexture();
+    globjects::ref_ptr<globjects::Texture> getIrradianceTexture();
+    globjects::ref_ptr<globjects::Texture> getInscatterTexture();
 
-    const bool compute(const bool ifDirtyOnly = true);
-    void dirty();
+    const bool compute();
 
     void substituteMacros(std::string &source);
 
 protected:
 
-    osg::Texture2D *getDeltaETexture();
-    osg::Texture3D *getDeltaSRTexture();
-    osg::Texture3D *getDeltaSMTexture();
-    osg::Texture3D *getDeltaJTexture();
+    globjects::ref_ptr<globjects::Texture> getDeltaETexture();
+    globjects::ref_ptr<globjects::Texture> getDeltaSRTexture();
+    globjects::ref_ptr<globjects::Texture> getDeltaSMTexture();
+    globjects::ref_ptr<globjects::Texture> getDeltaJTexture();
 
     osg::GraphicsContext *setupContext();
 
     osg::Geode *genQuad() const;
 
-    osg::Texture2D *setupTexture2D(
+    globjects::Texture *setupTexture2D(
         const char *name // used as sampler identifier
     ,   const GLenum internalFormat
     ,   const GLenum pixelFormat
@@ -125,7 +106,7 @@ protected:
     ,   const int height
     ,   osg::Image *image = NULL);
 
-    osg::Texture3D *setupTexture3D(
+    globjects::Texture *setupTexture3D(
         const char *name // used as sampler identifier
     ,   const GLenum internalFormat
     ,   const GLenum pixelFormat
@@ -140,8 +121,7 @@ protected:
     ,   const int layer);
 
     void setupLayerUniforms(
-        osg::StateSet *stateSet
-    ,   const int depth
+        const int depth
     ,   const int layer);
 
     globjects::ref_ptr<globjects::Program> setupProgram(
@@ -159,13 +139,10 @@ protected:
     void cleanUp(
         osgViewer::CompositeViewer *viewer);
 
-    void assignUniforms(
-        osg::StateSet *stateSet
-    ,   t_uniforms &uniforms);
+    void assignUniforms(t_uniforms &uniforms);
 
     void assignSamplers(
-        osg::StateSet *stateSet
-    ,   t_tex2DsByUnit &samplers2D
+        t_tex2DsByUnit &samplers2D
     ,   t_tex3DsByUnit &samplers3D);
 
     void dirtyTargets(t_tex2DsByUnit &targets2D);
@@ -191,22 +168,16 @@ protected:
 
 protected:
 
-    bool m_dirty;
+    PrecomputedTextureConfig m_preTexCfg;
+    PhysicalModelConfig m_modelCfg;
 
-    t_preTexCfg m_preTexCfg;
-    t_modelCfg m_modelCfg;
-
-    globjects::ref_ptr<osg::Texture2D> m_transmittanceTexture;
-    globjects::ref_ptr<osg::Texture2D> m_deltaETexture;
-    globjects::ref_ptr<osg::Texture3D> m_deltaSRTexture;
-    globjects::ref_ptr<osg::Texture3D> m_deltaSMTexture;
-    globjects::ref_ptr<osg::Texture2D> m_irradianceTexture;
-    globjects::ref_ptr<osg::Texture3D> m_inscatterTexture;
-    globjects::ref_ptr<osg::Texture3D> m_deltaJTexture;
-
-    globjects::ref_ptr<osg::Image> m_transmittanceImage;
-    globjects::ref_ptr<osg::Image> m_irradianceImage;
-    globjects::ref_ptr<osg::Image> m_inscatterImage;
+    globjects::ref_ptr<globjects::Texture> m_transmittanceTexture;
+    globjects::ref_ptr<globjects::Texture> m_deltaETexture;
+    globjects::ref_ptr<globjects::Texture> m_deltaSRTexture;
+    globjects::ref_ptr<globjects::Texture> m_deltaSMTexture;
+    globjects::ref_ptr<globjects::Texture> m_irradianceTexture;
+    globjects::ref_ptr<globjects::Texture> m_inscatterTexture;
+    globjects::ref_ptr<globjects::Texture> m_deltaJTexture;
 };
 
 } // namespace glHimmel

@@ -31,19 +31,18 @@
 /**
 * Author: Eric Bruneton
 */
-
+uniform float HR;
+uniform vec3 betaR;
+uniform float HM;
+uniform vec3 betaMSca;
+uniform vec3 betaMEx;
+uniform float mieG;
 
 const int RES_R     = 32;
 const int RES_MU    = 128;
 const int RES_MU_S  = 32;
 const int RES_NU    = 8;
 const float PI      = 3.1415926535897932384626433832795;
-const float HR      = 8.0; 
-const vec3 betaR    = vec3(5.8e-3, 1.35e-2, 3.31e-2);
-const float HM      = 6.0;
-const vec3 betaMSca = vec3(1.0) * 20e-3; 
-const vec3 betaMEx  = betaMSca / 0.9; 
-const float mieG    = 0.6;
 
 vec4 texture4D(sampler3D table, float r, float mu, float muS, float nu)
 {
