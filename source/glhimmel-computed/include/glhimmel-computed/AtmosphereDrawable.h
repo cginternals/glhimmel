@@ -8,12 +8,10 @@
 #include <glhimmel-base/ScreenAlignedTriangle.h>
 #include <glhimmel-computed/AtmospherePrecompute.h>
 
-namespace osg
+namespace globjects
 {
-    class Texture2D;
-    class Texture3D;
+    class Texture;
 }
-
 
 namespace glHimmel
 {
@@ -69,9 +67,9 @@ protected:
 
     globjects::ref_ptr<globjects::Program> m_program;
 
-    osg::Texture2D *m_transmittance;
-    osg::Texture2D *m_irradiance;
-    osg::Texture3D *m_inscatter;
+    globjects::ref_ptr<globjects::Texture> m_transmittance;
+    globjects::ref_ptr<globjects::Texture> m_irradiance;
+    globjects::ref_ptr<globjects::Texture> m_inscatter;
 
     float m_sunScaleFactor;
     float m_exposure;

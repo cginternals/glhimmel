@@ -40,7 +40,7 @@ AtmospherePrecompute::AtmospherePrecompute()
     m_modelCfg.betaR = glm::vec3(5.8e-3, 1.35e-2, 3.31e-2);
     
     m_modelCfg.HM = 6.f; //1.2f;
-    m_modelCfg.betaMSca = glm::vec3(1.0, 1.0, 1.0) * 20e-3, //8e-3; 
+    m_modelCfg.betaMSca = glm::vec3(1.0, 1.0, 1.0) * 20e-3f, //8e-3; 
     m_modelCfg.betaMEx = m_modelCfg.betaMSca / 0.9f;
     m_modelCfg.mieG = 0.6; //0.76;
 
@@ -54,6 +54,9 @@ AtmospherePrecompute::AtmospherePrecompute()
     m_irradianceTexture    = getIrradianceTexture();
     m_inscatterTexture     = getInscatterTexture();
     m_deltaJTexture        = getDeltaJTexture();
+
+    // Setup Program
+    setupProgram();
 }
 
 
@@ -396,8 +399,7 @@ osg::Image *AtmospherePrecompute::getLayerFrom3DImage(
 
 
 void AtmospherePrecompute::setupLayerUniforms(
-    osg::StateSet *stateSet
-,   const int depth
+    const int depth
 ,   const int layer)
 {
     const double Rg = Earth::meanRadius();
@@ -419,6 +421,8 @@ void AtmospherePrecompute::setupLayerUniforms(
         stateSet->getUniform("r")->set(static_cast<float>(r));
     else
         stateSet->addUniform(new osg::Uniform("r", static_cast<float>(r)));
+    
+
 
     if(stateSet->getUniform("dhdH"))
         stateSet->getUniform("dhdH")->set(glm::vec4(dmin, dmax, dminp, dmaxp));
@@ -540,9 +544,7 @@ void AtmospherePrecompute::assignSamplers(
 // it is required that all targets have the same dimensions.
     
 void AtmospherePrecompute::render2D(
-    osgViewer::CompositeViewer *viewer
-,   osg::Geode *geode
-,   t_tex2DsByUnit &targets2D
+    t_tex2DsByUnit &targets2D
 ,   t_tex2DsByUnit &samplers2D
 ,   t_tex3DsByUnit &samplers3D
 ,   t_uniforms &uniforms

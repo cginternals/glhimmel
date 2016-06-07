@@ -52,8 +52,6 @@ void AtmosphereDrawable::update(const Himmel &himmel)
 
 void AtmosphereDrawable::setupTextures()
 {
-    assert(m_precompute);
-
     m_program->setUniform("transmittanceSampler", 0);
     m_program->setUniform("irradianceSampler", 1);
     m_program->setUniform("inscatterSampler", 2);
@@ -73,8 +71,8 @@ void AtmosphereDrawable::setupProgram()
     globjects::NamedString::create("/data/shader/bruneton.glsl", new globjects::File("data/shader/bruneton.glsl", false));
     globjects::NamedString::create("/data/shader/dither.glsl", new globjects::File("data/shader/dither.glsl", false));
     m_program = new globjects::Program;
-    auto vertexShader = globjects::Shader::fromFile(GL_VERTEX_SHADER, "data/shader/computedHimmel.vert");
-    auto fragmentShader = globjects::Shader::fromFile(GL_FRAGMENT_SHADER, "data/shader/computedHimmel.frag");
+    auto vertexShader = globjects::Shader::fromFile(GL_VERTEX_SHADER, "data/shader/atmosphere.vert");
+    auto fragmentShader = globjects::Shader::fromFile(GL_FRAGMENT_SHADER, "data/shader/atmosphere.frag");
     m_program->attach(vertexShader);
     m_program->attach(fragmentShader);
     m_program->use();
@@ -148,38 +146,32 @@ float AtmosphereDrawable::defaultLHeureBleueIntensity()
 void AtmosphereDrawable::setAverageGroundReflectance(const float reflectance)
 {
     m_precompute.getModelConfig().avgGroundReflectance = reflectance;
-    m_precompute.dirty();
 }
 
 void AtmosphereDrawable::setThicknessRayleigh(const float thickness)
 {
     m_precompute.getModelConfig().HR = thickness;
-    m_precompute.dirty();
 }
 
 void AtmosphereDrawable::setScatteringRayleigh(const glm::vec3 &coefficients)
 {
     m_precompute.getModelConfig().betaR = coefficients;
-    m_precompute.dirty();
 }
 
 void AtmosphereDrawable::setThicknessMie(const float thickness)
 {
     m_precompute.getModelConfig().HM = thickness;
-    m_precompute.dirty();
 }
 
 void AtmosphereDrawable::setScatteringMie(const float coefficient)
 {
     m_precompute.getModelConfig().betaMSca = glm::vec3(1, 1, 1) * coefficient;
     m_precompute.getModelConfig().betaMEx = m_precompute.getModelConfig().betaMSca / 0.9f;
-    m_precompute.dirty();
 }
 
 void AtmosphereDrawable::setPhaseG(const float g)
 {
     m_precompute.getModelConfig().mieG = g;
-    m_precompute.dirty();
 }
 
 void AtmosphereDrawable::draw()

@@ -167,6 +167,15 @@ protected:
     ,   const char* fragmentShaderSource);
 
 protected:
+    globjects::ref_ptr<globjects::Program> m_brunetonTransmittanceProgram;
+    globjects::ref_ptr<globjects::Program> m_brunetonIrradianceProgram;
+    globjects::ref_ptr<globjects::Program> m_brunetonInscatterProgram;
+    globjects::ref_ptr<globjects::Program> m_brunetonCopyIrradianceProgram;
+    globjects::ref_ptr<globjects::Program> m_brunetonCopyInscatterProgram;   
+    globjects::ref_ptr<globjects::Program> m_brunetonIrradianceProgramN;
+    globjects::ref_ptr<globjects::Program> m_brunetonInscatterProgramN;
+    globjects::ref_ptr<globjects::Program> m_brunetonInscatterProgramS;
+    globjects::ref_ptr<globjects::Program> m_brunetonCopyInscatterProgramN;
 
     PrecomputedTextureConfig m_preTexCfg;
     PhysicalModelConfig m_modelCfg;

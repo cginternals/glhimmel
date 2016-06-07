@@ -2,7 +2,7 @@
 #extension GL_ARB_shading_language_include : require
 
 #include </data/shader/dither.glsl>
-#inculde </data/shader/bruneton.glsl>
+#include </data/shader/bruneton/bruneton.glsl>
 
 uniform vec4 cmn
         
@@ -27,15 +27,15 @@ vec3 inscatter(inout vec3 x, inout float t, vec3 v, vec3 s, out float r, out flo
     vec3 result;
     r = length(x);
     mu = dot(x, v) / r;
-    float d = -r * mu - sqrt(r * r * (mu * mu - 1.0) + cmn[2] * cmn[2]);
+    float d = -r * mu - sqrt(r * r * (mu * mu - 1.0) + u_radiusUpToEndOfAtmosphere * u_radiusUpToEndOfAtmosphere);
     if (d > 0.0) { // if x in space and ray intersects atmosphere
         // move x to nearest intersection of ray with top atmosphere boundary
         x += d * v;
         t -= d;
-        mu = (r * mu + d) / cmn[2];
-        r = cmn[2];
+        mu = (r * mu + d) / u_radiusUpToEndOfAtmosphere;
+        r = u_radiusUpToEndOfAtmosphere;
     }
-    if (r <= cmn[2]) { // if ray intersects atmosphere
+    if (r <= u_radiusUpToEndOfAtmosphere) { // if ray intersects atmosphere
         float nu = dot(v, s);
         float muS = dot(x, s) / r;
         float phaseR = phaseFunctionR(nu);
@@ -50,7 +50,7 @@ vec3 inscatter(inout vec3 x, inout float t, vec3 v, vec3 s, out float r, out flo
 
             attenuation = transmittance(r, mu, v, x0);
 
-            if (r0 > cmn[1] + 0.01) {
+            if (r0 > u_apparentAngularRadius + 0.01) {
                 // computes S[L]-T(x,x0)S[L]|x0
                 inscatter = max(inscatter - attenuation.rgbr * texture4D(inscatterSampler, r0, mu0, muS0, nu), 0.0);
             }
@@ -70,7 +70,7 @@ vec3 sunColor(vec3 x, float t, vec3 v, vec3 s, float r, float mu) {
     if (t > 0.0) {
         return vec3(0.0);
     } else {
-        vec3 transmittance = r <= cmn[2] ? transmittanceWithShadow(r, mu) : vec3(1.0); // T(x, xo)
+        vec3 transmittance = r <= u_radiusUpToEndOfAtmosphere ? transmittanceWithShadow(r, mu) : vec3(1.0); // T(x, xo)
         float isun = step(cos(sunScale), dot(v, s)) * ISun; // Lsun
         return transmittance * isun; // Eq (9)
     }
@@ -78,12 +78,12 @@ vec3 sunColor(vec3 x, float t, vec3 v, vec3 s, float r, float mu) {
 
 
 void main() {
-    vec3 x = vec3(0.0, 0.0, cmn[1] + cmn[0]);
+    vec3 x = vec3(0.0, 0.0, u_apparentAngularRadius + u_altitude);
     vec3 ray = normalize(m_ray.xyz);
 
     float r = length(x);
     float mu = dot(x, ray) / r;
-    float t = -r * mu - sqrt(r * r * (mu * mu - 1.0) + cmn[1] * cmn[1]);
+    float t = -r * mu - sqrt(r * r * (mu * mu - 1.0) + u_apparentAngularRadius * u_apparentAngularRadius);
 
     vec3 attenuation;
     vec3 inscatterColor = inscatter(x, t, ray, sunr, r, mu, attenuation); // S[L]  - T(x, xs) S[l] | xs"
@@ -99,5 +99,5 @@ void main() {
     vec3 bluehour = lheurebleueIntensity * lheurebleueColor * (dot(ray, sunr) + 1.5) * hb; // * mu (optional..)
 
     gl_FragColor = vec4(HDR(bluehour + sunColor + inscatterColor), 1.0)    // Eq (16)
-        + dither(3, int(cmn[3]));
+        + dither(3, int(u_seed));
 }

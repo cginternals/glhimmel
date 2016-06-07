@@ -31,26 +31,17 @@
 /**
 * Author: Eric Bruneton
 */
-uniform float HR;
-uniform vec3 betaR;
-uniform float HM;
-uniform vec3 betaMSca;
-uniform vec3 betaMEx;
-uniform float mieG;
-
-const int RES_R     = 32;
-const int RES_MU    = 128;
-const int RES_MU_S  = 32;
-const int RES_NU    = 8;
-const float PI      = 3.1415926535897932384626433832795;
+#extension GL_ARB_shading_language_include : require
+#include </data/shader/bruneton/uniforms.glsl>
+#include </data/shader/bruneton/constants.glsl>
 
 vec4 texture4D(sampler3D table, float r, float mu, float muS, float nu)
 {
-    float H = sqrt(cmn[2] * cmn[2] - cmn[1] * cmn[1]);
-    float rho = sqrt(r * r - cmn[1] * cmn[1]);
+    float H = sqrt(u_radiusUpToEndOfAtmosphere * u_radiusUpToEndOfAtmosphere - u_apparentAngularRadius * u_apparentAngularRadius);
+    float rho = sqrt(r * r - u_apparentAngularRadius * u_apparentAngularRadius);
 
     float rmu = r * mu;
-    float delta = rmu * rmu - r * r + cmn[1] * cmn[1];
+    float delta = rmu * rmu - r * r + u_apparentAngularRadius * u_apparentAngularRadius;
     vec4 cst = rmu < 0.0 && delta > 0.0 ? vec4(1.0, 0.0, 0.0, 0.5 - 0.5 / float(RES_MU)) : vec4(-1.0, H * H, H, 0.5 + 0.5 / float(RES_MU));
     float uR = 0.5 / float(RES_R) + rho / H * (1.0 - 1.0 / float(RES_R));
     float uMu = cst.w + (rmu * cst.x + sqrt(delta + cst.y)) / (rho + cst.z) * (0.5 - 1.0 / float(RES_MU));
@@ -68,14 +59,14 @@ vec4 texture4D(sampler3D table, float r, float mu, float muS, float nu)
 
 vec2 getTransmittanceUV(float r, float mu) {
     float uR, uMu;
-    uR = sqrt((r - cmn[1]) / (cmn[2] - cmn[1]));
+    uR = sqrt((r - u_apparentAngularRadius) / (u_radiusUpToEndOfAtmosphere - u_apparentAngularRadius));
     uMu = atan((mu + 0.15) / (1.0 + 0.15) * tan(1.5)) / 1.5;
 
     return vec2(uMu, uR);
 }
 
 vec2 getIrradianceUV(float r, float muS) {
-    float uR = (r - cmn[1]) / (cmn[2] - cmn[1]);
+    float uR = (r - u_apparentAngularRadius) / (u_radiusUpToEndOfAtmosphere - u_apparentAngularRadius);
     float uMuS = (muS + 0.2) / (1.0 + 0.2);
     return vec2(uMuS, uR);
 }
@@ -122,7 +113,7 @@ vec3 transmittance(float r, float mu, float d) {
 // transmittance(=transparency) of atmosphere for infinite ray (r,mu)
 // (mu = cos(view zenith angle)), or zero if ray intersects ground
 vec3 transmittanceWithShadow(float r, float mu) {
-    return mu < -sqrt(1.0 - (cmn[1] / r) * (cmn[1] / r)) ? vec3(0.0) : transmittance(r, mu);
+    return mu < -sqrt(1.0 - (u_apparentAngularRadius / r) * (u_apparentAngularRadius / r)) ? vec3(0.0) : transmittance(r, mu);
 }
 
 vec3 HDR(vec3 L) {
@@ -143,7 +134,7 @@ float opticalDepth(float H, float r, float mu, float d) {
     vec2 a01sq = a01*a01;
     float x = a01s.y > a01s.x ? exp(a01sq.x) : 0.0;
     vec2 y = a01s / (2.3193*abs(a01) + sqrt(1.52*a01sq + 4.0)) * vec2(1.0, exp(-d/H*(d/(2.0*r)+mu)));
-    return sqrt((6.2831*H)*r) * exp((cmn[1]-r)/H) * (x + dot(y, vec2(1.0, -1.0)));
+    return sqrt((6.2831*H)*r) * exp((u_apparentAngularRadius-r)/H) * (x + dot(y, vec2(1.0, -1.0)));
 }
 
 // transmittance(=transparency) of atmosphere for ray (r,mu) of length d
