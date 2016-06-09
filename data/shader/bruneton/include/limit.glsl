@@ -1,0 +1,20 @@
+#extension GL_ARB_shading_language_include : require
+#include </data/shader/bruneton/include/uniforms.glsl>
+
+#ifndef LIMIT
+#define LIMIT
+
+float limit(float r, float mu) {
+    float RL = cmn[2] + 1.0;
+    float dout = -r * mu + sqrt(r * r * (mu * mu - 1.0) + RL * RL);
+    float delta2 = r * r * (mu * mu - 1.0) + cmn[1] * cmn[1];
+    if (delta2 >= 0.0) {
+        float din = -r * mu - sqrt(delta2);
+        if (din >= 0.0) {
+            dout = min(dout, din);
+        }
+    }
+    return dout;
+}
+
+#endif // LIMIT

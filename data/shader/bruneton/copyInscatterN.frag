@@ -1,21 +1,19 @@
-        "float opticalDepth(float H, float r, float mu) {\n"
-        "    float result = 0.0;\n"
-        "    float dx = limit(r, mu) / float(TRANSMITTANCE_INTEGRAL_SAMPLES);\n"
-        "    float xi = 0.0;\n"
-        "    float yi = exp(-(r - u_apparentAngularRadius) / H);\n"
-        "    for (int i = 1; i <= TRANSMITTANCE_INTEGRAL_SAMPLES; ++i) {\n"
-        "        float xj = float(i) * dx;\n"
-        "        float yj = exp(-(sqrt(r * r + xj * xj + 2.0 * xj * r * mu) - u_apparentAngularRadius) / H);\n"
-        "        result += (yi + yj) / 2.0 * dx;\n"
-        "        xi = xj;\n"
-        "        yi = yj;\n"
-        "    }\n"
-        "    return mu < -sqrt(1.0 - (u_apparentAngularRadius / r) * (u_apparentAngularRadius / r)) ? 1e9 : result;\n"
-        "}\n"
-        "\n"
-        "void main() {\n"
-        "    float r, muS;\n"
-        "    getTransmittanceRMu(r, muS);\n"
-        "    vec3 depth = betaR * opticalDepth(HR, r, muS) + betaMEx * opticalDepth(HM, r, muS);\n"
-        "    gl_FragColor = vec4(exp(-depth), 0.0);\n" // Eq (5)
-        "}"
+#version 330
+#extension GL_ARB_shading_language_include : require
+#include </data/shader/bruneton/include/uniforms.glsl>
+#include </data/shader/bruneton/include/constants.glsl>
+#include </data/shader/bruneton/include/muMuSNu.glsl>
+#include </data/shader/bruneton/include/phaseFunction.glsl>
+
+uniform int layer;
+
+uniform sampler3D deltaSRSampler;
+uniform sampler3D inscatterSampler;
+
+void main() {
+    float mu, muS, nu;
+    getMuMuSNu(r, dhdH, mu, muS, nu);
+    vec3 uvw = vec3(gl_FragCoord.xy, float(layer) + 0.5) / vec3(ivec3(RES_MU_S * RES_NU, RES_MU, RES_R));
+    gl_FragColor  = texture3D(inscatterSampler, uvw);
+    gl_FragColor += vec4(texture3D(deltaSRSampler, uvw).rgb / phaseFunctionR(nu), 0.0);
+}

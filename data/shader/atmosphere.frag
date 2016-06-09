@@ -2,9 +2,13 @@
 #extension GL_ARB_shading_language_include : require
 
 #include </data/shader/dither.glsl>
-#include </data/shader/bruneton/bruneton.glsl>
-
-uniform vec4 cmn
+#include </data/shader/bruneton/include/constants.glsl>
+#include </data/shader/bruneton/include/uniforms.glsl>
+#include </data/shader/bruneton/include/transmittance.glsl>
+#include </data/shader/bruneton/include/analyticTransmittance.glsl>
+#include </data/shader/bruneton/include/irradiance.glsl>
+#include </data/shader/bruneton/include/texture4D.glsl>
+#include </data/shader/bruneton/include/phaseFunction.glsl>
         
 uniform vec3 sun;
 uniform vec3 sunr;
@@ -22,6 +26,23 @@ uniform float lheurebleueIntensity;
 uniform sampler2D irradianceSampler;    // precomputed skylight irradiance (E table)
 uniform sampler3D inscatterSampler;     // precomputed inscattered light (S table)
      
+
+vec3 HDR(vec3 L) {
+    L = L * exposure;
+    L.r = L.r < 1.413 ? pow(L.r * 0.38317, 1.0 / 2.2) : 1.0 - exp(-L.r);
+    L.g = L.g < 1.413 ? pow(L.g * 0.38317, 1.0 / 2.2) : 1.0 - exp(-L.g);
+    L.b = L.b < 1.413 ? pow(L.b * 0.38317, 1.0 / 2.2) : 1.0 - exp(-L.b);
+    return L;
+}
+
+vec3 transmittanceWithShadow(float r, float mu) {
+    return mu < -sqrt(1.0 - (cmn[1] / r) * (cmn[1] / r)) ? vec3(0.0) : transmittance(r, mu);
+}
+
+vec3 getMie(vec4 rayMie) {\n // rayMie.rgb = C*, rayMie.w = Cm, r
+    return rayMie.rgb * rayMie.w / max(rayMie.r, 1e-4) * (betaR.r / betaR);
+}
+
 // inscattered light along ray x+tv, when sun in direction s (=S[L]-T(x,x0)S[L]|x0)
 vec3 inscatter(inout vec3 x, inout float t, vec3 v, vec3 s, out float r, out float mu, out vec3 attenuation) {
     vec3 result;
