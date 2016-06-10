@@ -30,15 +30,15 @@ namespace osgHimmel
 namespace glHimmel
 {
 
-class GLHIMMEL_BASE_API Himmel : public AbstractHimmel
+class GLHIMMEL_BASE_API ComputedHimmel : public AbstractHimmel
 {
 public:
-    static Himmel *createWithoutClouds();
-    static Himmel *createWithClouds();
+    static ComputedHimmel *createWithoutClouds();
+    static ComputedHimmel *createWithClouds();
 
 public:
 
-    Himmel(
+    ComputedHimmel(
         StarMapGeode *milkyWay
     ,   MoonGeode *moon
     ,   StarsGeode *stars
@@ -47,13 +47,9 @@ public:
     ,   DubeCloudLayerGeode *dubeLayer
     ,   AbstractAstronomy *astronomy);
 
-    virtual ~Himmel();
+    virtual ~ComputedHimmel();
 
     virtual void update();
-
-
-    static osg::Uniform *cmnUniform();
-
 
     const float setLatitude(const float latitude);
     const float getLatitude() const;
@@ -64,8 +60,7 @@ public:
     const float setAltitude(const float altitude);
     const float getAltitude() const;
     static const float defaultAltitude();
-
-
+    
     inline AtmosphereDrawable *atmosphere() const 
     {
         return m_atmosphere;

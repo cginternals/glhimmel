@@ -2,15 +2,12 @@
 
 #include <glhimmel-computed/ComputedHimmel.h>
 #include <glhimmel-computed/Earth.h>
-#include "strutils.h"
-
-#include "shaderfragment/bruneton_common.h"
-#include "shaderfragment/bruneton_inscatter.h"
-#include "shaderfragment/bruneton_irradiance.h"
-#include "shaderfragment/bruneton_transmittance.h"
 
 #include <assert.h>
 #include <cstring>
+#include <globjects/Texture.h>
+#include <globjects/Shader.h>
+#include <globjects/Framebuffer.h>
 
 
 namespace glHimmel
@@ -65,20 +62,20 @@ AtmospherePrecompute::~AtmospherePrecompute()
 }
 
 
-globjects::Texture *AtmospherePrecompute::getTransmittanceTexture()
+globjects::ref_ptr<globjects::Texture> AtmospherePrecompute::getTransmittanceTexture()
 {
     return setupTexture2D("transmittance", GL_RGB16F_ARB, GL_RGB, GL_FLOAT
-        , getTextureConfig().transmittanceWidth, getTextureConfig().transmittanceHeight, m_transmittanceImage);
+        , getTextureConfig().transmittanceWidth, getTextureConfig().transmittanceHeight);
 }
-globjects::Texture *AtmospherePrecompute::getIrradianceTexture()
+globjects::ref_ptr<globjects::Texture> AtmospherePrecompute::getIrradianceTexture()
 {
     return setupTexture2D("irradiance", GL_RGB16F_ARB, GL_RGB, GL_FLOAT
-        , getTextureConfig().skyWidth, getTextureConfig().skyHeight, m_irradianceImage);
+        , getTextureConfig().skyWidth, getTextureConfig().skyHeight);
 }
-globjects::Texture *AtmospherePrecompute::getInscatterTexture()
+globjects::ref_ptr<globjects::Texture> AtmospherePrecompute::getInscatterTexture()
 {
     return setupTexture3D("inscatter", GL_RGBA16F_ARB, GL_RGBA, GL_FLOAT
-        , getTextureConfig().resMuS * getTextureConfig().resNu, getTextureConfig().resMu, getTextureConfig().resR, m_inscatterImage);
+        , getTextureConfig().resMuS * getTextureConfig().resNu, getTextureConfig().resMu, getTextureConfig().resR);
 }
 
 
@@ -114,7 +111,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
 
     osg::Geode *quad = genQuad();
 
-    osg::ref_ptr<osg::Uniform> u_common = Himmel::cmnUniform();
+    osg::ref_ptr<osg::Uniform> u_common = ComputedHimmel::cmnUniform();
     group->getOrCreateStateSet()->addUniform(u_common);
 
 
@@ -123,7 +120,13 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
     t_tex2DsByUnit targets2D, samplers2D;
     t_tex3DsByUnit targets3D, samplers3D;
 
-    t_uniforms uniforms;
+    m_transmittanceTexture->bindActive(0);
+    m_deltaETexture->bindActive(1);
+    m_deltaSMTexture->bindActive(2);
+    m_deltaSRTexture->bindActive(3);
+    m_deltaJTexture->bindActive(4);
+    m_irradianceTexture->bindActive(5);
+    m_inscatterTexture->bindActive(6);
 
     // computes transmittance texture T (line 1 in algorithm 4.1)
         
@@ -134,7 +137,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
     // computes irradiance texture deltaE (line 2 in algorithm 4.1)
 
     targets2D[0]  = m_deltaETexture;
-    samplers2D[0] = m_transmittanceTexture;
+    m_brunetonIrradianceProgram->setUniform("transmittanceSampler", 0);
 
     render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_irradiance1().c_str());
 
@@ -142,7 +145,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
 
     targets3D[0]  = m_deltaSRTexture;
     targets3D[1]  = m_deltaSMTexture;
-    samplers2D[0] = m_transmittanceTexture;
+    m_brunetonInscatterProgram->setUniform("transmittanceSampler", 0);
 
     render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_inscatter1().c_str());
 
@@ -151,7 +154,8 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
     // THIS PATH SEEMS UNREQUIRED - since k = 0 nothing gets copied? At least it would zero the texture...
 
     targets2D[0]  = m_irradianceTexture;
-    samplers2D[0] = m_deltaETexture;
+    m_brunetonCopyIrradianceProgram->setUniform("deltaESampler", 1);
+    m_brunetonCopyIrradianceProgram->setUniform("irradianceSampler", 5);
     uniforms.push_back(new osg::Uniform("k", 0.f));
 
     render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyIrradiance().c_str());
@@ -161,6 +165,8 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
     targets3D[0]  = m_inscatterTexture;
     samplers3D[0] = m_deltaSRTexture;
     samplers3D[1] = m_deltaSMTexture;
+    m_brunetonInscatterProgram->setUniform("deltaSRSampler", 3);
+    m_brunetonInscatterProgram->setUniform("deltaSMTexture", 2);
 
     render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyInscatter1().c_str());
      
@@ -173,10 +179,10 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         //// computes deltaJ (line 7 in algorithm 4.1)
 
         targets3D[0]  = m_deltaJTexture;
-        samplers2D[0] = m_transmittanceTexture;
-        samplers2D[1] = m_deltaETexture;
-        samplers3D[2] = m_deltaSRTexture;
-        samplers3D[3] = m_deltaSMTexture;
+        m_brunetonInscatterProgram->setUniform("deltaESampler", 1);
+        m_brunetonInscatterProgram->setUniform("deltaSRSampler", 3);
+        m_brunetonInscatterProgram->setUniform("deltaSMSampler", 2);
+        m_brunetonInscatterProgram->setUniform("transmittanceSampler", 0);
         uniforms.push_back(new osg::Uniform("first", first));
 
         render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_inscatterS().c_str());
@@ -184,9 +190,9 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         // computes deltaE (line 8 in algorithm 4.1)
 
         targets2D[0]  = m_deltaETexture;
-        samplers2D[0] = m_transmittanceTexture;
-        samplers3D[1] = m_deltaSRTexture;
-        samplers3D[2] = m_deltaSMTexture;
+        m_brunetonIrradianceProgramN->setUniform("transmittanceSampler", 0);
+        m_brunetonIrradianceProgramN->setUniform("deltaSRSampler", 3);
+        m_brunetonIrradianceProgramN->setUniform("deltaSMTexture", 2);
         uniforms.push_back(new osg::Uniform("first", first));
 
         render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_irradianceN().c_str());
@@ -194,8 +200,10 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         // computes deltaS (line 9 in algorithm 4.1)
 
         targets3D[0]  = m_deltaSRTexture;
-        samplers2D[0] = m_transmittanceTexture;
-        samplers3D[1] = m_deltaJTexture;
+
+        m_brunetonInscatterProgramN->setUniform("transmittanceSampler", 0);
+        m_brunetonInscatterProgramN->setUniform("deltaJSampler", 4);
+
         uniforms.push_back(new osg::Uniform("first", first));
 
         render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_inscatterN().c_str());
@@ -206,8 +214,10 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         // adds deltaE into irradiance texture E (line 10 in algorithm 4.1)
 
         targets2D[0]  = m_irradianceTexture;
-        samplers2D[0] = m_deltaETexture;
-        samplers2D[1] = m_irradianceTexture;
+
+        m_brunetonCopyIrradianceProgram->setUniform("deltaESampler", 1);
+        m_brunetonCopyIrradianceProgram->setUniform("irradianceSampler", 5);
+
         uniforms.push_back(new osg::Uniform("k", 1.f));
 
         render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyIrradiance().c_str());
@@ -215,8 +225,9 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         // adds deltaS into inscatter texture S (line 11 in algorithm 4.1)
       
         targets3D[0]  = m_inscatterTexture;
-        samplers3D[0] = m_deltaSRTexture;
-        samplers3D[1] = m_inscatterTexture;
+          
+        m_brunetonCopyInscatterProgramN->setUniform("inscatterSampler", 6);
+        m_brunetonCopyInscatterProgramN->setUniform("deltaSRSampler", 3);
 
         render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyInscatterN().c_str());
     }
@@ -298,76 +309,42 @@ osg::Geode *AtmospherePrecompute::genQuad() const
 
 
 globjects::ref_ptr<globjects::Texture> AtmospherePrecompute::setupTexture2D(
-    const char *name // used as sampler identifier
-,   const GLenum internalFormat
+    const GLenum internalFormat
 ,   const GLenum pixelFormat
 ,   const GLenum dataType
 ,   const int width
-,   const int height
-,   osg::Image *image)
+,   const int height)
 {
-    globjects::Texture *texture(new globjects::Texture);
+    auto texture = globjects::Texture::createDefault();
 
-    texture->setName(name);
-    texture->setTextureSize(width, height);
+    texture->image2D(0, internalFormat, width, height, 0, pixelFormat, dataType, nullptr);
 
-    if(image)
-    {
-        image->setInternalTextureFormat(internalFormat);
-        image->allocateImage(width, height, 1, pixelFormat, dataType);
-
-        texture->setImage(image);
-    }
-    else
-    {
-        texture->setInternalFormat(internalFormat);
-        texture->setSourceFormat(pixelFormat);
-        texture->setSourceType(dataType);
-    }
-
-    texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR);
-    texture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
-    texture->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
-    texture->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+    texture->setParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    texture->setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    texture->setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    texture->setParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     return texture;
 }
 
 
 globjects::ref_ptr<globjects::Texture> AtmospherePrecompute::setupTexture3D(
-    const char *name // used as sampler identifier
-,   const GLenum internalFormat
+    const GLenum internalFormat
 ,   const GLenum pixelFormat
 ,   const GLenum dataType
 ,   const int width
 ,   const int height
-,   const int depth
-,   osg::Image *image)
+,   const int depth)
 {
-    globjects::Texture *texture(new globjects::Texture);
+    auto texture = globjects::Texture::createDefault(GL_TEXTURE_3D);
 
-    texture->setName(name);
-    texture->setTextureSize(width, height, depth);
+    texture->image3D(0, internalFormat, width, height, depth, 0, pixelFormat, dataType, nullptr);
 
-    if(image)
-    {
-        image->setInternalTextureFormat(internalFormat);
-        image->allocateImage(width, height, depth, pixelFormat, dataType);
-
-        texture->setImage(image);
-    }
-    else
-    {
-        texture->setInternalFormat(internalFormat);
-        texture->setSourceFormat(pixelFormat);
-        texture->setSourceType(dataType);
-    }
-
-    texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR);
-    texture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
-    texture->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
-    texture->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
-    texture->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
+    texture->setParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    texture->setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    texture->setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    texture->setParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    texture->setParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
     return texture;
 }
@@ -399,7 +376,8 @@ osg::Image *AtmospherePrecompute::getLayerFrom3DImage(
 
 
 void AtmospherePrecompute::setupLayerUniforms(
-    const int depth
+    globjects::ref_ptr<globjects::Program> program
+,   const int depth
 ,   const int layer)
 {
     const double Rg = Earth::meanRadius();
@@ -417,146 +395,57 @@ void AtmospherePrecompute::setupLayerUniforms(
     double dminp = r - Rg;
     double dmaxp = sqrt(r * r - Rg2);
 
-    if(stateSet->getUniform("r"))
-        stateSet->getUniform("r")->set(static_cast<float>(r));
-    else
-        stateSet->addUniform(new osg::Uniform("r", static_cast<float>(r)));
+    program->setUniform("u_r", static_cast<float>(r));
     
-
-
-    if(stateSet->getUniform("dhdH"))
-        stateSet->getUniform("dhdH")->set(glm::vec4(dmin, dmax, dminp, dmaxp));
-    else
-        stateSet->addUniform(new osg::Uniform("dhdH", glm::vec4(dmin, dmax, dminp, dmaxp)));
+    program->setUniform("u_dhdH", glm::vec4(dmin, dmax, dminp, dmaxp));
 }
 
 
 globjects::ref_ptr<globjects::Program> AtmospherePrecompute::setupProgram(
-    const std::string &fragmentShaderSource)
+    const std::string &fragmentShaderPath)
 {
-    assert(!fragmentShaderSource.empty());
+    assert(!fragmentShaderPath.empty());
 
-    globjects::ref_ptr<globjects::Program> program(new osg::Program);
-
-    program->addShader(new osg::Shader(osg::Shader::VERTEX,   glsl_bruneton_v_default()));
-
-    if(!fragmentShaderSource.empty())
-    {
-        std::string source(fragmentShaderSource);
-        substituteMacros(source);
-        program->addShader(new osg::Shader(osg::Shader::FRAGMENT, source));
-    }
+    globjects::ref_ptr<globjects::Program> program(new globjects::Program);
+    
+    auto vertexShader = globjects::Shader::fromFile(GL_VERTEX_SHADER, "data/shader/bruneton/bruneton.vert");
+    auto fragmentShader = globjects::Shader::fromFile(GL_FRAGMENT_SHADER, fragmentShaderPath);
+    
+    program->attach(vertexShader);
+    program->attach(fragmentShader);
 
     return program;
 }
 
-
-osg::Camera *AtmospherePrecompute::setupCamera(
-    const int viewportWidth
-,   const int viewportHeight
-,   osg::Geode *geode
-,   const int orderNum)
+void AtmospherePrecompute::setUniforms(globjects::ref_ptr<globjects::Program> program)
 {
-    osg::Camera *camera(new osg::Camera);
-
-    camera->setViewport(0, 0, viewportWidth, viewportHeight);
-    camera->setRenderOrder(osg::Camera::POST_RENDER, orderNum);
-
-    camera->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
-    camera->addChild(geode);
-
-    return camera;
-}
-
-
-osg::Group *AtmospherePrecompute::setupGroup(
-    osgViewer::CompositeViewer *viewer)
-{
-    osg::Group *root(dynamic_cast<osg::Group*>(viewer->getView(0)->getSceneData()));
-        
-    assert(root->getNumChildren() == 0);
-
-    osg::ref_ptr<osg::Group> group(new osg::Group);
-    root->addChild(group.get());
-
-    return group;
-}
-
-
-void AtmospherePrecompute::cleanUp(
-    osgViewer::CompositeViewer *viewer)
-{
-    osg::Group *root(dynamic_cast<osg::Group*>(viewer->getView(0)->getSceneData()));
-    root->removeChildren(0, root->getNumChildren());
-    assert(root->getNumChildren() == 0);
-}
-
-
-void AtmospherePrecompute::assignUniforms(
-    osg::StateSet *stateSet
-,   t_uniforms &uniforms)
-{
-    assert(stateSet);
-
-    t_uniforms::const_iterator u = uniforms.begin();
-    const t_uniforms::const_iterator uEnd = uniforms.end();
-
-    for(; u != uEnd; ++u)
-        stateSet->addUniform(*u);
-    uniforms.clear();
-}
-
+    program->setUniform("u_HM", m_modelCfg.HM);
+    program->setUniform("u_HR", m_modelCfg.HR);
+    program->setUniform("u_averageGroundReflectance", m_modelCfg.avgGroundReflectance);
+    program->setUniform("u_betaMEx", m_modelCfg.betaMEx);
+    program->setUniform("u_betaMSca", m_modelCfg.betaMSca);
+    program->setUniform("u_betaR", m_modelCfg.betaR);
+    program->setUniform("u_mieG", m_modelCfg.mieG);
     
-void AtmospherePrecompute::assignSamplers(
-    osg::StateSet *stateSet
-,   t_tex2DsByUnit &samplers2D
-,   t_tex3DsByUnit &samplers3D)
-{
-    t_tex2DsByUnit::const_iterator i2;
-    const t_tex2DsByUnit::const_iterator s2End = samplers2D.end();
-
-    for(i2 = samplers2D.begin(); i2 != s2End; ++i2)
-    {
-        const GLint unit(i2->first);
-        globjects::Texture *texture(i2->second);
-
-        stateSet->setTextureAttributeAndModes(unit, texture, osg::StateAttribute::ON);
-        stateSet->addUniform(new osg::Uniform((texture->getName() + "Sampler").c_str(), unit));
-    }
-    samplers2D.clear();
-
-    t_tex3DsByUnit::const_iterator i3;
-    const t_tex3DsByUnit::const_iterator s3End = samplers3D.end();
-
-    for(i3 = samplers3D.begin(); i3 != s3End; ++i3)
-    {
-        const GLint unit(i3->first);
-        globjects::Texture *texture(i3->second);
-
-        stateSet->setTextureAttributeAndModes(unit, texture, osg::StateAttribute::ON);
-        stateSet->addUniform(new osg::Uniform((texture->getName() + "Sampler").c_str(), unit));
-    }
-    samplers3D.clear();
+    program->setUniform("u_altitude", ComputedHimmel::defaultAltitude());
+    program->setUniform("u_apparentAngularRadius", Earth::meanRadius());
+    program->setUniform("u_radiusUpToEndOfAtmosphere", Earth::meanRadius() + Earth::atmosphereThicknessNonUniform());
+    program->setUniform("u_seed", 0);
 }
-
-
+    
 // Note: The first targets size is used to setup the camera, and 
 // it is required that all targets have the same dimensions.
     
 void AtmospherePrecompute::render2D(
-    t_tex2DsByUnit &targets2D
-,   t_tex2DsByUnit &samplers2D
-,   t_tex3DsByUnit &samplers3D
-,   t_uniforms &uniforms
-,   const char *fragmentShaderSource)
+    std::vector<globjects::ref_ptr<globjects::Texture>> &targets2D
+,   globjects::ref_ptr<globjects::Program> program)
 {
     assert(targets2D.size() > 0);
 
-    t_tex2DsByUnit::const_iterator i2;
-    const t_tex2DsByUnit::const_iterator t2End = targets2D.end();
+    auto t2End = targets2D.end();
 
-    i2 = targets2D.begin();
-    const int width  = i2->second->getTextureWidth();
+    auto i2 = targets2D.begin();
+    const int width  = i2->second-> getTextureWidth();
     const int height = i2->second->getTextureHeight();
 
     for(i2 = targets2D.begin(); i2 != t2End; ++i2)
@@ -565,51 +454,33 @@ void AtmospherePrecompute::render2D(
         assert(i2->second->getTextureHeight() == height);
     }
         
-    // Setup graph
+    globjects::ref_ptr<globjects::Framebuffer> fbo = new globjects::Framebuffer();
 
-    osg::Group *group = setupGroup(viewer);
-    globjects::ref_ptr<globjects::Program> program(setupProgram(fragmentShaderSource));
-
-    osg::StateSet *ss(group->getOrCreateStateSet());
-    ss->setAttributeAndModes(program);
-
-    assignSamplers(ss, samplers2D, samplers3D);
-    assignUniforms(ss, uniforms);
+    setUniforms(program);
 
     // Setup local camera
 
-    osg::ref_ptr<osg::Camera> camera = setupCamera(width, height, geode, 0);
-    group->addChild(camera.get());
-        
+    glViewport(0, 0, width, height);
 
     // Assign Textures and Samplers
-
-    for(i2 = targets2D.begin(); i2 != t2End; ++i2)
+    GLint i = 0;
+    for(auto & target : targets2D)
     {
-        if(i2->second->getImage())
-            camera->attach(static_cast<osg::Camera::BufferComponent>(osg::Camera::COLOR_BUFFER0 + i2->first), i2->second->getImage());
-        else
-            camera->attach(static_cast<osg::Camera::BufferComponent>(osg::Camera::COLOR_BUFFER0 + i2->first), i2->second);
+        fbo->attachTexture(GL_COLOR_ATTACHMENT0 + i, target);
     }
-
-    //
+    
+    fbo->bind(gl::GL_FRAMEBUFFER);
+    program->use();
+    m_triangle.draw();
 
     viewer->frame(); // Render single frame
     cleanUp(viewer);
-
-    dirtyTargets(targets2D);
-    targets2D.clear();
 }
 
 
 void AtmospherePrecompute::render3D(
-    osgViewer::CompositeViewer *viewer
-,   osg::Geode *geode
-,   t_tex3DsByUnit &targets3D
-,   t_tex2DsByUnit &samplers2D
-,   t_tex3DsByUnit &samplers3D
-,   t_uniforms &uniforms
-,   const char *fragmentShaderSource)
+    std::vector<globjects::ref_ptr<globjects::Texture>> &targets3D
+,   globjects::ref_ptr<globjects::Program> program)
 {
     assert(targets3D.size() > 0);
 
@@ -628,16 +499,8 @@ void AtmospherePrecompute::render3D(
         assert(i3->second->getTextureDepth()  == depth);
     }
 
-    // Setup graph
-
-    osg::Group *group = setupGroup(viewer);
-    globjects::ref_ptr<globjects::Program> program(setupProgram(fragmentShaderSource));
-
-    osg::StateSet *ss(group->getOrCreateStateSet());
-    ss->setAttributeAndModes(program);
-
     assignSamplers(ss, samplers2D, samplers3D);
-    assignUniforms(ss, uniforms);
+    setUniforms(program);
 
     // 
 
@@ -665,7 +528,6 @@ void AtmospherePrecompute::render3D(
         }
     }
     viewer->frame(); // Render single frame
-    cleanUp(viewer);
 
     dirtyTargets(targets3D);
     targets3D.clear();

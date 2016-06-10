@@ -17,13 +17,13 @@ const float dphi = PI / float(INSCATTER_SPHERICAL_INTEGRAL_SAMPLES);
 const float dtheta = PI / float(INSCATTER_SPHERICAL_INTEGRAL_SAMPLES);
 
 void inscatter(float r, float mu, float muS, float nu, out vec3 raymie) {
-    r = clamp(r, cmn[1], cmn[2]);
+    r = clamp(r, u_apparentAngularRadius, u_radiusUpToEndOfAtmosphere);
     mu = clamp(mu, -1.0, 1.0);
     muS = clamp(muS, -1.0, 1.0);
     float var = sqrt(1.0 - mu * mu) * sqrt(1.0 - muS * muS);
     nu = clamp(nu, muS * mu - var, muS * mu + var);
 
-    float cthetamin = -sqrt(1.0 - (cmn[1] / r) * (cmn[1] / r));
+    float cthetamin = -sqrt(1.0 - (u_apparentAngularRadius / r) * (u_apparentAngularRadius / r));
 
     vec3 v = vec3(sqrt(1.0 - mu * mu), 0.0, mu);
     float sx = v.x == 0.0 ? 0.0 : (nu - muS * mu) / v.x;
@@ -41,9 +41,9 @@ void inscatter(float r, float mu, float muS, float nu, out vec3 raymie) {
         vec3 gtransp = vec3(0.0);
         if (ctheta < cthetamin) { // if ground visible in direction w
             // compute transparency gtransp between x and ground
-            greflectance = AVERAGE_GROUND_REFLECTANCE / PI;
-            dground = -r * ctheta - sqrt(r * r * (ctheta * ctheta - 1.0) + cmn[1] * cmn[1]);
-            gtransp = transmittance(cmn[1], -(r * ctheta + dground) / cmn[1], dground);
+            greflectance = u_averageGroundReflectance / PI;
+            dground = -r * ctheta - sqrt(r * r * (ctheta * ctheta - 1.0) + u_apparentAngularRadius * u_apparentAngularRadius);
+            gtransp = transmittance(u_apparentAngularRadius, -(r * ctheta + dground) / u_apparentAngularRadius, dground);
         }
 
         for (int iphi = 0; iphi < 2 * INSCATTER_SPHERICAL_INTEGRAL_SAMPLES; ++iphi) {
@@ -57,8 +57,8 @@ void inscatter(float r, float mu, float muS, float nu, out vec3 raymie) {
             float pm2 = phaseFunctionM(nu2);
 
             // compute irradiance received at ground in direction w (if ground visible) =deltaE
-            vec3 gnormal = (vec3(0.0, 0.0, r) + dground * w) / cmn[1];
-            vec3 girradiance = irradiance(deltaESampler, cmn[1], dot(gnormal, s));
+            vec3 gnormal = (vec3(0.0, 0.0, r) + dground * w) / u_apparentAngularRadius;
+            vec3 girradiance = irradiance(deltaESampler, u_apparentAngularRadius, dot(gnormal, s));
 
             vec3 raymie1; // light arriving at x from direction w
 
@@ -81,7 +81,7 @@ void inscatter(float r, float mu, float muS, float nu, out vec3 raymie) {
             // light coming from direction w and scattered in direction v
             // = light arriving at x from direction w (raymie1) * SUM(scattering coefficient * phaseFunction)
             // see Eq (7)
-            raymie += raymie1 * (betaR * exp(-(r - cmn[1]) / HR) * pr2 + betaMSca * exp(-(r - cmn[1]) / HM) * pm2) * dw;
+            raymie += raymie1 * (u_betaR * exp(-(r - u_apparentAngularRadius) / u_HR) * pr2 + u_betaMSca * exp(-(r - u_apparentAngularRadius) / HM) * pm2) * dw;
         }
     }
 
@@ -91,7 +91,7 @@ void inscatter(float r, float mu, float muS, float nu, out vec3 raymie) {
 void main() {
     vec3 raymie;
     float mu, muS, nu;
-    getMuMuSNu(r, dhdH, mu, muS, nu);
-    inscatter(r, mu, muS, nu, raymie);
+    getMuMuSNu(u_r, u_dhdH, mu, muS, nu);
+    inscatter(u_r, mu, muS, nu, raymie);
     gl_FragColor.rgb = raymie;
 }

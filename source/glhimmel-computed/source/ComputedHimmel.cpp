@@ -22,13 +22,13 @@
 namespace glHimmel
 {
 
-Himmel *Himmel::createWithoutClouds()
+ComputedHimmel *ComputedHimmel::createWithoutClouds()
 {
     // cubeMapFilePaths should contain a questionmark '?' that is replaced
     // by cubemap extensions '_px', '_nx', '_py', etc. 
     // e.g. "resources/starmap?.png" points to "resources/milkyway_px.png" etc.
 
-    return new Himmel(
+    return new ComputedHimmel(
         new StarMapGeode("resources/skymap?.png")
     ,   new MoonGeode("resources/moon?.png")
     ,   new StarsGeode("resources/brightstars")
@@ -40,13 +40,13 @@ Himmel *Himmel::createWithoutClouds()
 }
 
 
-Himmel *Himmel::createWithClouds()
+ComputedHimmel *ComputedHimmel::createWithClouds()
 {
     // cubeMapFilePaths should contain a questionmark '?' that is replaced
     // by cubemap extensions '_px', '_nx', '_py', etc. 
     // e.g. "resources/starmap?.png" points to "resources/milkyway_px.png" etc.
 
-    return new Himmel(
+    return new ComputedHimmel(
         new StarMapGeode("resources/skymap?.png")
     ,   new MoonGeode("resources/moon?.png")
     ,   new StarsGeode("resources/brightstars")
@@ -58,7 +58,7 @@ Himmel *Himmel::createWithClouds()
 }
 
 
-Himmel::Himmel(
+ComputedHimmel::ComputedHimmel(
     StarMapGeode *milkyWay
 ,   MoonGeode *moon
 ,   StarsGeode *stars
@@ -148,7 +148,7 @@ Himmel::Himmel(
 };
 
 
-osg::Geode *Himmel::addAntiCull()
+osg::Geode *ComputedHimmel::addAntiCull()
 {
     // Add a unit cube to this geode, to avoid culling of hquads, stars, 
     // moon, etc. caused by automatic near far retrieval of osg. This geode 
@@ -168,21 +168,13 @@ osg::Geode *Himmel::addAntiCull()
     return antiCull;
 }
 
-
-osg::Uniform *Himmel::cmnUniform()
-{
-    return new osg::Uniform("cmn", glm::vec4(defaultAltitude()
-        , Earth::meanRadius(), Earth::meanRadius() + Earth::atmosphereThicknessNonUniform(), 0));
-}
-
-
-Himmel::~Himmel()
+ComputedHimmel::~ComputedHimmel()
 {
     delete m_astronomy;
 };
 
 
-void Himmel::update()
+void ComputedHimmel::update()
 {
     AbstractHimmel::update();
 
@@ -223,7 +215,7 @@ void Himmel::update()
 }
 
 
-void Himmel::updateSeed()
+void ComputedHimmel::updateSeed()
 {
     glm::vec4 temp; 
     u_common->get(temp);
@@ -233,7 +225,7 @@ void Himmel::updateSeed()
 }
 
 
-const glm::vec3 Himmel::getSunPosition() const
+const glm::vec3 ComputedHimmel::getSunPosition() const
 {
     glm::vec3 sunv;
     u_sun->get(sunv);
@@ -242,13 +234,13 @@ const glm::vec3 Himmel::getSunPosition() const
 }
 
 
-const glm::vec3 Himmel::getSunPosition(const astronomicalTime &aTime) const
+const glm::vec3 ComputedHimmel::getSunPosition(const astronomicalTime &aTime) const
 {
     return astro()->getSunPosition(aTime, m_astronomy->getLatitude(), m_astronomy->getLongitude(), false);
 }
 
 
-const float Himmel::setLatitude(const float latitude)
+const float ComputedHimmel::setLatitude(const float latitude)
 {
     assert(m_astronomy);
     
@@ -256,14 +248,14 @@ const float Himmel::setLatitude(const float latitude)
     return m_astronomy->setLatitude(latitude);
 }
 
-const float Himmel::getLatitude() const
+const float ComputedHimmel::getLatitude() const
 {
     assert(m_astronomy);
     return m_astronomy->getLatitude();
 }
 
 
-const float Himmel::setLongitude(const float longitude)
+const float ComputedHimmel::setLongitude(const float longitude)
 {
     assert(m_astronomy);
 
@@ -271,14 +263,14 @@ const float Himmel::setLongitude(const float longitude)
     return m_astronomy->setLongitude(longitude);
 }
 
-const float Himmel::getLongitude() const
+const float ComputedHimmel::getLongitude() const
 {
     assert(m_astronomy);
     return m_astronomy->getLongitude();
 }
 
 
-const float Himmel::setAltitude(const float altitude)
+const float ComputedHimmel::setAltitude(const float altitude)
 {
     glm::vec4 temp; 
     u_common->get(temp);
@@ -290,7 +282,7 @@ const float Himmel::setAltitude(const float altitude)
     return getAltitude();
 }
 
-const float Himmel::getAltitude() const
+const float ComputedHimmel::getAltitude() const
 {
     glm::vec4 temp; 
     u_common->get(temp);
@@ -298,7 +290,7 @@ const float Himmel::getAltitude() const
     return temp[0];
 }
 
-const float Himmel::defaultAltitude()
+const float ComputedHimmel::defaultAltitude()
 {
     return 0.2f;
 }

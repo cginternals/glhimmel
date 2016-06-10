@@ -15,7 +15,7 @@ namespace globjects
 
 namespace glHimmel
 {
-class Himmel;
+class ComputedHimmel;
 
 class GLHIMMEL_COMPUTED_API AtmosphereDrawable
 {
@@ -24,7 +24,7 @@ public:
     AtmosphereDrawable();
     virtual ~AtmosphereDrawable();
 
-    void update(const Himmel &himmel);
+    void update(const ComputedHimmel &himmel);
     //void precompute();
 
     void setSunScaleFactor(const float scale);

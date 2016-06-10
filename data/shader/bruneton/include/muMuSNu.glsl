@@ -11,12 +11,12 @@ void getMuMuSNu(float r, vec4 dhdH, out float mu, out float muS, out float nu) {
     if (y < float(RES_MU) / 2.0) {
         float d = 1.0 - y / (float(RES_MU) / 2.0 - 1.0);
         d = min(max(dhdH.z, d * dhdH.w), dhdH.w * 0.999);
-        mu = (cmn[1] * cmn[1] - r * r - d * d) / (2.0 * r * d);
-        mu = min(mu, -sqrt(1.0 - (cmn[1] / r) * (cmn[1] / r)) - 0.001);
+        mu = (u_apparentAngularRadius * u_apparentAngularRadius - r * r - d * d) / (2.0 * r * d);
+        mu = min(mu, -sqrt(1.0 - (u_apparentAngularRadius / r) * (u_apparentAngularRadius / r)) - 0.001);
     } else {
         float d = (y - float(RES_MU) / 2.0) / (float(RES_MU) / 2.0 - 1.0);
         d = min(max(dhdH.x, d * dhdH.y), dhdH.y * 0.999);
-        mu = (cmn[2] * cmn[2] - r * r - d * d) / (2.0 * r * d);
+        mu = (u_radiusUpToEndOfAtmosphere * u_radiusUpToEndOfAtmosphere - r * r - d * d) / (2.0 * r * d);
     }
     muS = mod(x, float(RES_MU_S)) / (float(RES_MU_S) - 1.0);
     // paper formula

@@ -2,7 +2,7 @@
 #define IRRADIANCE
 
 vec2 getIrradianceUV(float r, float muS) {
-    float uR = (r - cmn[1]) / (cmn[2] - cmn[1]);
+    float uR = (r - u_apparentAngularRadius) / (u_radiusUpToEndOfAtmosphere - u_apparentAngularRadius);
     float uMuS = (muS + 0.2) / (1.0 + 0.2);
     return vec2(uMuS, uR);
 }

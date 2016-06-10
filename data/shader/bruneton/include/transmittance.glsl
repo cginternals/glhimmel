@@ -8,7 +8,7 @@ uniform sampler2D transmittanceSampler;
 
 vec2 getTransmittanceUV(float r, float mu) {
     float uR, uMu;
-    uR = sqrt((r - cmn[1]) / (cmn[2] - cmn[1]));
+    uR = sqrt((r - u_apparentAngularRadius) / (u_radiusUpToEndOfAtmosphere - u_apparentAngularRadius));
     uMu = atan((mu + 0.15) / (1.0 + 0.15) * tan(1.5)) / 1.5;
     return vec2(uMu, uR);
 }

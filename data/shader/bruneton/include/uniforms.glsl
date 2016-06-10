@@ -1,6 +1,11 @@
 #ifndef UNIFORMS
 #define UNIFORMS
 
+uniform float u_altitude;
+uniform float u_apparentAngularRadius;
+uniform float u_radiusUpToEndOfAtmosphere;
+uniform float u_seed;
+
 uniform float u_HR;
 uniform vec3 u_betaR;
 uniform float u_HM;
@@ -10,7 +15,7 @@ uniform float u_mieG;
 
 uniform float u_averageGroundReflectance;
 
-uniform float r;
-uniform vec4 dhdH;
+uniform float u_r;
+uniform vec4 u_dhdH;
 
 #endif // UNIFORMS

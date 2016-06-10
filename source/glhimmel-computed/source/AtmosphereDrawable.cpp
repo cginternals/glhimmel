@@ -38,7 +38,7 @@ AtmosphereDrawable::~AtmosphereDrawable()
 }
 
 
-void AtmosphereDrawable::update(const Himmel &himmel)
+void AtmosphereDrawable::update(const ComputedHimmel &himmel)
 {
     auto sunScale = himmel.astro()->getAngularSunRadius() * m_sunScaleFactor;
 

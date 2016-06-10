@@ -8,7 +8,7 @@
 void getTransmittanceRMu(out float r, out float muS) {
     r = gl_FragCoord.y / float(TRANSMITTANCE_H);
     muS = gl_FragCoord.x / float(TRANSMITTANCE_W);
-    r = cmn[1] + (r * r) * (cmn[2] - cmn[1]);
+    r = u_apparentAngularRadius + (r * r) * (u_radiusUpToEndOfAtmosphere - u_apparentAngularRadius);
     muS = -0.15 + tan(1.5 * muS) / tan(1.5) * (1.0 + 0.15);
 }
 
@@ -30,6 +30,6 @@ float opticalDepth(float H, float r, float mu) {
 void main() {
     float r, muS;
     getTransmittanceRMu(r, muS);
-    vec3 depth = betaR * opticalDepth(HR, r, muS) + betaMEx * opticalDepth(HM, r, muS);
+    vec3 depth = u_betaR * opticalDepth(u_HR, r, muS) + u_betaMEx * opticalDepth(HM, r, muS);
     gl_FragColor = vec4(exp(-depth), 0.0); // Eq (5)
 }   

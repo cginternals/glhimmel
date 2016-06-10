@@ -1,6 +1,6 @@
 #version 330
 #extension GL_ARB_shading_language_include : require
-#inculde </data/shader/bruneton/include/uniforms.glsl>
+#include </data/shader/bruneton/include/uniforms.glsl>
 #include </data/shader/bruneton/include/constants.glsl>
 #include </data/shader/bruneton/include/irradianceRMuS.glsl>
 #include </data/shader/bruneton/include/transmittance.glsl>

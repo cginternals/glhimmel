@@ -14,7 +14,7 @@ float phaseFunctionR(float mu) {
 }
 
 float phaseFunctionM(float mu) {
-    return 1.5 * 1.0 / (4.0 * PI) * (1.0 - mieG*mieG) * pow(1.0 + (mieG*mieG) - 2.0*mieG*mu, -3.0/2.0) * (1.0 + mu * mu) / (2.0 + mieG*mieG);
+    return 1.5 * 1.0 / (4.0 * PI) * (1.0 - u_mieG*u_mieG) * pow(1.0 + (u_mieG*u_mieG) - 2.0*u_mieG*mu, -3.0/2.0) * (1.0 + mu * mu) / (2.0 + u_mieG*u_mieG);
 }
 
 #endif // PHASE_FUNCTION

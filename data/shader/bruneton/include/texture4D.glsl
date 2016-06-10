@@ -7,11 +7,11 @@
 
 vec4 texture4D(sampler3D table, float r, float mu, float muS, float nu)
 {
-    float H = sqrt(cmn[2] * cmn[2] - cmn[1] * cmn[1]);
-    float rho = sqrt(r * r - cmn[1] * cmn[1]);
+    float H = sqrt(u_radiusUpToEndOfAtmosphere * u_radiusUpToEndOfAtmosphere - u_apparentAngularRadius * u_apparentAngularRadius);
+    float rho = sqrt(r * r - u_apparentAngularRadius * u_apparentAngularRadius);
 
     float rmu = r * mu;
-    float delta = rmu * rmu - r * r + cmn[1] * cmn[1];
+    float delta = rmu * rmu - r * r + u_apparentAngularRadius * u_apparentAngularRadius;
     vec4 cst = rmu < 0.0 && delta > 0.0 ? vec4(1.0, 0.0, 0.0, 0.5 - 0.5 / float(RES_MU)) : vec4(-1.0, H * H, H, 0.5 + 0.5 / float(RES_MU));
     float uR = 0.5 / float(RES_R) + rho / H * (1.0 - 1.0 / float(RES_R));
     float uMu = cst.w + (rmu * cst.x + sqrt(delta + cst.y)) / (rho + cst.z) * (0.5 - 1.0 / float(RES_MU));

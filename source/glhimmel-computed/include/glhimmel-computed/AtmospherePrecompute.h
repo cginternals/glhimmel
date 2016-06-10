@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <globjects/Program.h>
+#include <glhimmel-base/ScreenAlignedTriangle.h>
 
 
 using namespace gl;
@@ -97,74 +98,45 @@ protected:
 
     osg::Geode *genQuad() const;
 
-    globjects::Texture *setupTexture2D(
-        const char *name // used as sampler identifier
-    ,   const GLenum internalFormat
+    globjects::ref_ptr<globjects::Texture> setupTexture2D(
+        const GLenum internalFormat
     ,   const GLenum pixelFormat
     ,   const GLenum dataType
     ,   const int width
-    ,   const int height
-    ,   osg::Image *image = NULL);
+    ,   const int height);
 
-    globjects::Texture *setupTexture3D(
-        const char *name // used as sampler identifier
-    ,   const GLenum internalFormat
+    globjects::ref_ptr<globjects::Texture> setupTexture3D(
+        const GLenum internalFormat
     ,   const GLenum pixelFormat
     ,   const GLenum dataType
     ,   const int width
     ,   const int height
-    ,   const int depth
-    ,   osg::Image *image = NULL);
+    ,   const int depth);
 
     osg::Image *getLayerFrom3DImage(
         osg::Image *source
     ,   const int layer);
 
     void setupLayerUniforms(
-        const int depth
+        globjects::ref_ptr<globjects::Program> program
+    ,   const int depth
     ,   const int layer);
 
     globjects::ref_ptr<globjects::Program> setupProgram(
         const std::string &fragmentShaderSource);
 
-    osg::Camera *setupCamera(
-        const int viewportWidth
-    ,   const int viewportHeight
-    ,   osg::Geode *geode
-    ,   const int orderNum);
-
-    osg::Group *setupGroup(
-        osgViewer::CompositeViewer *viewer);
-
-    void cleanUp(
-        osgViewer::CompositeViewer *viewer);
-
-    void assignUniforms(t_uniforms &uniforms);
-
-    void assignSamplers(
-        t_tex2DsByUnit &samplers2D
-    ,   t_tex3DsByUnit &samplers3D);
+    void setUniforms(globjects::ref_ptr<globjects::Program> program);
 
     void dirtyTargets(t_tex2DsByUnit &targets2D);
     void dirtyTargets(t_tex3DsByUnit &targets3D);
 
     void render2D(
-        osgViewer::CompositeViewer *viewer
-    ,   osg::Geode *geode
-    ,   t_tex2DsByUnit &targets2D
-    ,   t_tex2DsByUnit &samplers2D
-    ,   t_tex3DsByUnit &samplers3D
-    ,   t_uniforms &uniforms
-    ,   const char* fragmentShaderSource);
+        std::vector<globjects::ref_ptr<globjects::Texture>> &targets2D
+    ,   globjects::ref_ptr<globjects::Program> program);
 
     void render3D(
-        osgViewer::CompositeViewer *viewer
-    ,   osg::Geode *geode
-    ,   t_tex3DsByUnit &targets3D
-    ,   t_tex2DsByUnit &samplers2D
-    ,   t_tex3DsByUnit &samplers3D
-    ,   t_uniforms &uniforms
-    ,   const char* fragmentShaderSource);
+        std::vector<globjects::ref_ptr<globjects::Texture>> &targets3D
+    ,   globjects::ref_ptr<globjects::Program> program);
 
 protected:
     globjects::ref_ptr<globjects::Program> m_brunetonTransmittanceProgram;
@@ -187,6 +159,8 @@ protected:
     globjects::ref_ptr<globjects::Texture> m_irradianceTexture;
     globjects::ref_ptr<globjects::Texture> m_inscatterTexture;
     globjects::ref_ptr<globjects::Texture> m_deltaJTexture;
+
+    ScreenAlignedTriangle m_triangle;
 };
 
 } // namespace glHimmel

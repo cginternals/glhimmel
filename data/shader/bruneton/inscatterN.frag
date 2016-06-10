@@ -33,6 +33,6 @@ vec3 inscatter(float r, float mu, float muS, float nu) {
 
 void main() {
     float mu, muS, nu;
-    getMuMuSNu(r, dhdH, mu, muS, nu);
+    getMuMuSNu(u_r, u_dhdH, mu, muS, nu);
     gl_FragColor.rgb = inscatter(r, mu, muS, nu);
 }
