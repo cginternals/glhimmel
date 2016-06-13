@@ -40,7 +40,7 @@ AtmosphereDrawable::~AtmosphereDrawable()
 
 void AtmosphereDrawable::update(const ComputedHimmel &himmel)
 {
-    auto sunScale = himmel.astro()->getAngularSunRadius() * m_sunScaleFactor;
+    auto sunScale = himmel.astronomy()->getAngularSunRadius() * m_sunScaleFactor;
 
     m_program->setUniform("sunScale", sunScale);
     m_program->setUniform("lheurebleueColor", m_lheurebleueColor);
@@ -68,7 +68,7 @@ void AtmosphereDrawable::setupTextures()
 
 void AtmosphereDrawable::setupProgram()
 {
-    globjects::NamedString::create("/data/shader/bruneton.glsl", new globjects::File("data/shader/bruneton.glsl", false));
+    m_precompute.fetchShaderIncludes();
     globjects::NamedString::create("/data/shader/dither.glsl", new globjects::File("data/shader/dither.glsl", false));
     m_program = new globjects::Program;
     auto vertexShader = globjects::Shader::fromFile(GL_VERTEX_SHADER, "data/shader/atmosphere.vert");

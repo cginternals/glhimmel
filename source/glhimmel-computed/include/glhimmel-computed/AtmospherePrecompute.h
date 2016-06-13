@@ -4,7 +4,6 @@
 #include <glm/vec3.hpp>
 #include <glbinding/gl/gl.h>
 
-#include <map>
 #include <vector>
 #include <string>
 #include <globjects/Program.h>
@@ -57,53 +56,32 @@ public:
         float mieG;
     } ;
 
-    PhysicalModelConfig &getModelConfig()
-    {
-        return m_modelCfg;
-    }
+    PhysicalModelConfig& getModelConfig();
 
 protected:
 
-    PrecomputedTextureConfig &getTextureConfig()
-    {
-        return m_preTexCfg;
-    }
-
-protected:
-
-    typedef std::map<GLint, globjects::ref_ptr<globjects::Texture>> t_tex2DsByUnit;
-    typedef std::map<GLint, globjects::ref_ptr<globjects::Texture>> t_tex3DsByUnit;
+    PrecomputedTextureConfig &getTextureConfig();
 
 public:
 
     AtmospherePrecompute();
     virtual ~AtmospherePrecompute();
 
-    globjects::ref_ptr<globjects::Texture> getTransmittanceTexture();
-    globjects::ref_ptr<globjects::Texture> getIrradianceTexture();
-    globjects::ref_ptr<globjects::Texture> getInscatterTexture();
+    globjects::ref_ptr<globjects::Texture> getTransmittanceTexture() const;
+    globjects::ref_ptr<globjects::Texture> getIrradianceTexture() const;
+    globjects::ref_ptr<globjects::Texture> getInscatterTexture() const;
 
-    const bool compute();
-
-    void substituteMacros(std::string &source);
+    void compute();
+    void fetchShaderIncludes() const;
 
 protected:
-
-    globjects::ref_ptr<globjects::Texture> getDeltaETexture();
-    globjects::ref_ptr<globjects::Texture> getDeltaSRTexture();
-    globjects::ref_ptr<globjects::Texture> getDeltaSMTexture();
-    globjects::ref_ptr<globjects::Texture> getDeltaJTexture();
-
-    osg::GraphicsContext *setupContext();
-
-    osg::Geode *genQuad() const;
 
     globjects::ref_ptr<globjects::Texture> setupTexture2D(
         const GLenum internalFormat
     ,   const GLenum pixelFormat
     ,   const GLenum dataType
     ,   const int width
-    ,   const int height);
+    ,   const int height) const;
 
     globjects::ref_ptr<globjects::Texture> setupTexture3D(
         const GLenum internalFormat
@@ -111,11 +89,7 @@ protected:
     ,   const GLenum dataType
     ,   const int width
     ,   const int height
-    ,   const int depth);
-
-    osg::Image *getLayerFrom3DImage(
-        osg::Image *source
-    ,   const int layer);
+    ,   const int depth) const;
 
     void setupLayerUniforms(
         globjects::ref_ptr<globjects::Program> program
@@ -123,34 +97,31 @@ protected:
     ,   const int layer);
 
     globjects::ref_ptr<globjects::Program> setupProgram(
-        const std::string &fragmentShaderSource);
+        const std::string &fragmentShaderSource) const;
 
-    void setUniforms(globjects::ref_ptr<globjects::Program> program);
-
-    void dirtyTargets(t_tex2DsByUnit &targets2D);
-    void dirtyTargets(t_tex3DsByUnit &targets3D);
+    void setUniforms(globjects::ref_ptr<globjects::Program> program) const;
 
     void render2D(
         std::vector<globjects::ref_ptr<globjects::Texture>> &targets2D
-    ,   globjects::ref_ptr<globjects::Program> program);
+    ,   globjects::ref_ptr<globjects::Program> program) const;
 
     void render3D(
         std::vector<globjects::ref_ptr<globjects::Texture>> &targets3D
     ,   globjects::ref_ptr<globjects::Program> program);
 
 protected:
-    globjects::ref_ptr<globjects::Program> m_brunetonTransmittanceProgram;
-    globjects::ref_ptr<globjects::Program> m_brunetonIrradianceProgram;
-    globjects::ref_ptr<globjects::Program> m_brunetonInscatterProgram;
-    globjects::ref_ptr<globjects::Program> m_brunetonCopyIrradianceProgram;
-    globjects::ref_ptr<globjects::Program> m_brunetonCopyInscatterProgram;   
-    globjects::ref_ptr<globjects::Program> m_brunetonIrradianceProgramN;
-    globjects::ref_ptr<globjects::Program> m_brunetonInscatterProgramN;
-    globjects::ref_ptr<globjects::Program> m_brunetonInscatterProgramS;
-    globjects::ref_ptr<globjects::Program> m_brunetonCopyInscatterProgramN;
+    globjects::ref_ptr<globjects::Program> m_transmittanceProgram;
+    globjects::ref_ptr<globjects::Program> m_irradiance1Program;
+    globjects::ref_ptr<globjects::Program> m_inscatter1Program;
+    globjects::ref_ptr<globjects::Program> m_copyIrradianceProgram;
+    globjects::ref_ptr<globjects::Program> m_copyInscatter1Program;   
+    globjects::ref_ptr<globjects::Program> m_irradianceNProgram;
+    globjects::ref_ptr<globjects::Program> m_inscatterNProgram;
+    globjects::ref_ptr<globjects::Program> m_inscatterSProgram;
+    globjects::ref_ptr<globjects::Program> m_copyInscatterNProgram;
 
-    PrecomputedTextureConfig m_preTexCfg;
-    PhysicalModelConfig m_modelCfg;
+    PrecomputedTextureConfig m_preTextureConfig;
+    PhysicalModelConfig m_modelConfig;
 
     globjects::ref_ptr<globjects::Texture> m_transmittanceTexture;
     globjects::ref_ptr<globjects::Texture> m_deltaETexture;

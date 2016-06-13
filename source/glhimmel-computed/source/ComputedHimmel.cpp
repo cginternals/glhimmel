@@ -6,14 +6,14 @@
 #include <glhimmel-computed/Astronomy.h>
 #include <glhimmel-base/ScreenAlignedTriangle.h>
 #include <glhimmel-computed/AtmosphereDrawable.h>
-#include "moongeode.h"
+/*#include "moongeode.h"
 #include "moonglaregeode.h"
 #include "starsgeode.h"
 #include "starmapgeode.h"
 #include "highcloudlayergeode.h"
 #include "dubecloudlayergeode.h"
 
-#include <osg/ShapeDrawable>
+#include <osg/ShapeDrawable>*/
 
 #include <stdlib.h>
 #include <assert.h>
@@ -29,57 +29,57 @@ ComputedHimmel *ComputedHimmel::createWithoutClouds()
     // e.g. "resources/starmap?.png" points to "resources/milkyway_px.png" etc.
 
     return new ComputedHimmel(
-        new StarMapGeode("resources/skymap?.png")
-    ,   new MoonGeode("resources/moon?.png")
-    ,   new StarsGeode("resources/brightstars")
-    ,   new AtmosphereDrawable()
-    ,   NULL//new HighCloudLayerGeode()
-    ,   NULL//new DubeCloudLayerGeode()
+    //    new StarMapGeode("resources/skymap?.png")
+    //,   new MoonGeode("resources/moon?.png")
+    //,   new StarsGeode("resources/brightstars")
+        new AtmosphereDrawable()
+    //,   NULL//new HighCloudLayerGeode()
+    //,   NULL//new DubeCloudLayerGeode()
     ,   new Astronomy()
     );
 }
 
 
-ComputedHimmel *ComputedHimmel::createWithClouds()
-{
-    // cubeMapFilePaths should contain a questionmark '?' that is replaced
-    // by cubemap extensions '_px', '_nx', '_py', etc. 
-    // e.g. "resources/starmap?.png" points to "resources/milkyway_px.png" etc.
-
-    return new ComputedHimmel(
-        new StarMapGeode("resources/skymap?.png")
-    ,   new MoonGeode("resources/moon?.png")
-    ,   new StarsGeode("resources/brightstars")
-    ,   new AtmosphereDrawable()
-    ,   new HighCloudLayerGeode()
-    ,   new DubeCloudLayerGeode()
-    ,   new Astronomy()
-    );
-}
+//ComputedHimmel *ComputedHimmel::createWithClouds()
+//{
+//    // cubeMapFilePaths should contain a questionmark '?' that is replaced
+//    // by cubemap extensions '_px', '_nx', '_py', etc. 
+//    // e.g. "resources/starmap?.png" points to "resources/milkyway_px.png" etc.
+//
+//    return new ComputedHimmel(
+//        new StarMapGeode("resources/skymap?.png")
+//    ,   new MoonGeode("resources/moon?.png")
+//    ,   new StarsGeode("resources/brightstars")
+//    ,   new AtmosphereDrawable()
+//    ,   new HighCloudLayerGeode()
+//    ,   new DubeCloudLayerGeode()
+//    ,   new Astronomy()
+//    );
+//}
 
 
 ComputedHimmel::ComputedHimmel(
-    StarMapGeode *milkyWay
-,   MoonGeode *moon
-,   StarsGeode *stars
-,   AtmosphereDrawable *atmosphere
-,   HighCloudLayerGeode *highLayer
-,   DubeCloudLayerGeode *dubeLayer
+//    StarMapGeode *milkyWay
+//,   MoonGeode *moon
+//,   StarsGeode *stars
+   AtmosphereDrawable *atmosphere
+//,   HighCloudLayerGeode *highLayer
+//,   DubeCloudLayerGeode *dubeLayer
 ,   AbstractAstronomy *astronomy)
 :   AbstractHimmel()
-,   m_starmap(milkyWay)
-,   m_moon(moon)
-,   m_moonGlare(NULL)
-,   m_stars(stars)
+//,   m_starmap(milkyWay)
+//,   m_moon(moon)
+//,   m_moonGlare(NULL)
+//,   m_stars(stars)
 ,   m_atmosphere(atmosphere)
-,   m_highLayer(highLayer)
-,   m_dubeLayer(dubeLayer)
+//,   m_highLayer(highLayer)
+//,   m_dubeLayer(dubeLayer)
 ,   m_astronomy(astronomy)
 
 ,   u_sun(NULL)
 ,   u_sunr(NULL)
 ,   u_time(NULL)
-,   u_common(NULL)
+//,   u_common(NULL)
 {
     assert(m_astronomy);
 
@@ -148,25 +148,6 @@ ComputedHimmel::ComputedHimmel(
 };
 
 
-osg::Geode *ComputedHimmel::addAntiCull()
-{
-    // Add a unit cube to this geode, to avoid culling of hquads, stars, 
-    // moon, etc. caused by automatic near far retrieval of osg. This geode 
-    // should be added first, since all other nodes are drawn with blending.
-
-    osg::ref_ptr<osg::Geode> antiCull = new osg::Geode();
-    addChild(antiCull);
-
-    // 2 * 2 ^ 0.5 -> should fit an rotating cube with radius 1
-    osg::Box *cube = new osg::Box(glm::vec3(), 2.8284f); 
-
-    osg::ShapeDrawable *cubeDrawable = new osg::ShapeDrawable(cube);
-    cubeDrawable->setColor(glm::vec4(0.f, 0.f, 0.f, 1.f));
-
-    antiCull->addDrawable(cubeDrawable);
-
-    return antiCull;
-}
 
 ComputedHimmel::~ComputedHimmel()
 {
@@ -182,33 +163,28 @@ void ComputedHimmel::update()
 
     if(isDirty())
     {
-        const astronomicalTime atime = astronomicalTime::fromTimeF(*getTime());
-        astro()->update(atime);
+        const auto atime = astronomicalTime::fromTimeF(*getTime());
+        m_astronomy->update(atime);
+        m_sunPosition = m_astronomy->getSunPosition(false);
+        m_sunRefractedPosition = m_astronomy->getSunPosition(true);
+        m_time = static_cast<float>(getTime()->getf());
 
-        glm::vec3 sunv = astro()->getSunPosition(false);
-        u_sun->set(sunv);
-
-        glm::vec3 sunrv = astro()->getSunPosition(true);
-        u_sunr->set(sunrv);
-
-        u_time->set(static_cast<float>(getTime()->getf()));
-
-        if(m_starmap)
-            m_starmap->update(*this);
-        if(m_moon)
-        {
-            m_moon->update(*this);
-            //m_moonGlare->update(*this);
-        }
-        if(m_stars)
-            m_stars->update(*this);
+        //if(m_starmap)
+        //    m_starmap->update(*this);
+        //if(m_moon)
+        //{
+        //    m_moon->update(*this);
+        //    //m_moonGlare->update(*this);
+        //}
+        //if(m_stars)
+        //    m_stars->update(*this);
         if(m_atmosphere)
             m_atmosphere->update(*this);
-        if(m_highLayer)
+        /*if(m_highLayer)
             m_highLayer->update(*this);
 
         if(m_dubeLayer)
-            m_dubeLayer->update(*this);
+            m_dubeLayer->update(*this);*/
 
         dirty(false);
     }
@@ -217,30 +193,23 @@ void ComputedHimmel::update()
 
 void ComputedHimmel::updateSeed()
 {
-    glm::vec4 temp; 
-    u_common->get(temp);
-
-    temp[3] = rand();
-    u_common->set(temp);
+    m_seed = rand();
 }
 
 
-const glm::vec3 ComputedHimmel::getSunPosition() const
+glm::vec3 ComputedHimmel::getSunPosition() const
 {
-    glm::vec3 sunv;
-    u_sun->get(sunv);
-
-    return sunv;
+    return m_sunPosition;
 }
 
 
-const glm::vec3 ComputedHimmel::getSunPosition(const astronomicalTime &aTime) const
+glm::vec3 ComputedHimmel::getSunPosition(const astronomicalTime &aTime) const
 {
-    return astro()->getSunPosition(aTime, m_astronomy->getLatitude(), m_astronomy->getLongitude(), false);
+    return m_astronomy->getSunPosition(aTime, m_astronomy->getLatitude(), m_astronomy->getLongitude(), false);
 }
 
 
-const float ComputedHimmel::setLatitude(const float latitude)
+float ComputedHimmel::setLatitude(const float latitude)
 {
     assert(m_astronomy);
     
@@ -248,14 +217,14 @@ const float ComputedHimmel::setLatitude(const float latitude)
     return m_astronomy->setLatitude(latitude);
 }
 
-const float ComputedHimmel::getLatitude() const
+float ComputedHimmel::getLatitude() const
 {
     assert(m_astronomy);
     return m_astronomy->getLatitude();
 }
 
 
-const float ComputedHimmel::setLongitude(const float longitude)
+float ComputedHimmel::setLongitude(const float longitude)
 {
     assert(m_astronomy);
 
@@ -263,34 +232,24 @@ const float ComputedHimmel::setLongitude(const float longitude)
     return m_astronomy->setLongitude(longitude);
 }
 
-const float ComputedHimmel::getLongitude() const
+float ComputedHimmel::getLongitude() const
 {
     assert(m_astronomy);
     return m_astronomy->getLongitude();
 }
 
 
-const float ComputedHimmel::setAltitude(const float altitude)
+void ComputedHimmel::setAltitude(const float altitude)
 {
-    glm::vec4 temp; 
-    u_common->get(temp);
-
-    // Clamp altitude into non uniform atmosphere. (min alt is 1m)
-    temp[0] = _clamp(0.001f, Earth::atmosphereThicknessNonUniform(), altitude);
-    u_common->set(temp);
-
-    return getAltitude();
+    m_altitude = altitude;
 }
 
-const float ComputedHimmel::getAltitude() const
+float ComputedHimmel::getAltitude() const
 {
-    glm::vec4 temp; 
-    u_common->get(temp);
-
-    return temp[0];
+    return m_altitude;
 }
 
-const float ComputedHimmel::defaultAltitude()
+float ComputedHimmel::defaultAltitude()
 {
     return 0.2f;
 }
