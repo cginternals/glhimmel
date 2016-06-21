@@ -1,4 +1,3 @@
-#extension GL_ARB_shading_language_include : require
 #include </data/shader/bruneton/include/uniforms.glsl>
 
 #ifndef ANALYTIC_TRANSMITTANCE

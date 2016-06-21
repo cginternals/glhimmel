@@ -87,15 +87,15 @@ AtmospherePrecompute::AtmospherePrecompute()
     fetchShaderIncludes();
 
     // Setup Program
-    m_copyInscatter1Program = setupProgram("/data/shader/bruneton/copyInscatter1.frag");
-    m_copyInscatterNProgram = setupProgram("/data/shader/bruneton/copyInscatterN.frag");
-    m_copyIrradianceProgram = setupProgram("/data/shader/bruneton/copyIrradiance.frag");
-    m_inscatter1Program = setupProgram("/data/shader/bruneton/inscatter1.frag");
-    m_inscatterNProgram = setupProgram("/data/shader/bruneton/inscatterN.frag");
-    m_inscatterSProgram = setupProgram("/data/shader/bruneton/inscatterS.frag");
-    m_irradiance1Program = setupProgram("/data/shader/bruneton/irradiance1.frag");
-    m_irradianceNProgram = setupProgram("/data/shader/bruneton/irradianceN.frag");
-    m_transmittanceProgram = setupProgram("/data/shader/bruneton/transmittance.frag");
+    m_copyInscatter1Program = setupProgram("data/shader/bruneton/copyInscatter1.frag");
+    m_copyInscatterNProgram = setupProgram("data/shader/bruneton/copyInscatterN.frag");
+    m_copyIrradianceProgram = setupProgram("data/shader/bruneton/copyIrradiance.frag");
+    m_inscatter1Program = setupProgram("data/shader/bruneton/inscatter1.frag");
+    m_inscatterNProgram = setupProgram("data/shader/bruneton/inscatterN.frag");
+    m_inscatterSProgram = setupProgram("data/shader/bruneton/inscatterS.frag");
+    m_irradiance1Program = setupProgram("data/shader/bruneton/irradiance1.frag");
+    m_irradianceNProgram = setupProgram("data/shader/bruneton/irradianceN.frag");
+    m_transmittanceProgram = setupProgram("data/shader/bruneton/transmittance.frag");
 }
 
 AtmospherePrecompute::~AtmospherePrecompute()
@@ -297,10 +297,15 @@ void AtmospherePrecompute::setupLayerUniforms(
 
 void AtmospherePrecompute::fetchShaderIncludes() const
 {
-    std::vector<std::string> fileNames = { "analyticTransmittance", "constants", "irradiance", "irradianceRMuS", "limit", "muMuSNu", "phaseFunction", "texture4D", "transmittance", "uniforms" };
+    std::vector<std::string> fileNames = {
+        "analyticTransmittance", "constants", "irradiance", "irradianceRMuS",
+        "limit", "muMuSNu", "phaseFunction", "texture4D", "transmittance",
+        "uniforms"
+    };
     for(auto & fileName : fileNames)
     {
-        globjects::NamedString::create("/data/shader/bruneton.glsl", new globjects::File("data/shader/" + fileName + ".glsl", false));
+        globjects::NamedString::create("/data/shader/bruneton/include/" + fileName + ".glsl",
+            new globjects::File("data/shader/bruneton/include/" + fileName + ".glsl", false));
 
     }
 }

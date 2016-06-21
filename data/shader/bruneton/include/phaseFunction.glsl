@@ -1,13 +1,8 @@
-#extension GL_ARB_shading_language_include : require
 #include </data/shader/bruneton/include/uniforms.glsl>
 #include </data/shader/bruneton/include/constants.glsl>
 
 #ifndef PHASE_FUNCTION
 #define PHASE_FUNCTION
-
-#extension GL_ARB_shading_language_include : require
-#include </data/shader/bruneton/uniforms.glsl>
-#include </data/shader/bruneton/constants.glsl>
 
 float phaseFunctionR(float mu) {
     return (3.0 / (16.0 * PI)) * (1.0 + mu * mu);

@@ -188,7 +188,7 @@ void AtmosphereDrawable::draw()
 
     glDepthFunc(GL_LESS);
     glDisable(GL_DEPTH_TEST);
-    
+
     glDisable(GL_BLEND);
 }
 
