@@ -40,7 +40,9 @@ namespace
 
 namespace glHimmel
 {
-    AtmospherePrecompute::AtmospherePrecompute()
+AtmospherePrecompute::AtmospherePrecompute()
+:   m_altitude(ComputedHimmel::defaultAltitude())
+,   m_seed(0.f)
 {
     m_preTextureConfig.transmittanceWidth  = 256;
     m_preTextureConfig.transmittanceHeight =  64;
@@ -99,6 +101,16 @@ AtmospherePrecompute::~AtmospherePrecompute()
 AtmospherePrecompute::PhysicalModelConfig& AtmospherePrecompute::getModelConfig()
 {
     return m_modelConfig;
+}
+
+void AtmospherePrecompute::setAltitude(float altitude)
+{
+    m_altitude = altitude;
+}
+
+void AtmospherePrecompute::setSeed(float seed)
+{
+    m_seed = seed;
 }
 
 AtmospherePrecompute::PrecomputedTextureConfig& AtmospherePrecompute::getTextureConfig()
@@ -316,10 +328,10 @@ void AtmospherePrecompute::setUniforms(globjects::ref_ptr<globjects::Program> pr
     program->setUniform("u_betaR", m_modelConfig.betaR);
     program->setUniform("u_mieG", m_modelConfig.mieG);
     
-    program->setUniform("u_altitude", ComputedHimmel::defaultAltitude());
+    program->setUniform("u_altitude", m_altitude);
     program->setUniform("u_apparentAngularRadius", Earth::meanRadius());
     program->setUniform("u_radiusUpToEndOfAtmosphere", Earth::meanRadius() + Earth::atmosphereThicknessNonUniform());
-    program->setUniform("u_seed", 0);
+    program->setUniform("u_seed", m_seed);
 }
     
 // Note: The first targets size is used to setup the camera, and 

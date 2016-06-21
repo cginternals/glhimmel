@@ -23,7 +23,7 @@ AbstractAstronomy::~AbstractAstronomy()
 void AbstractAstronomy::update(const astronomicalTime &aTime)
 {
     m_astronomicalTime = aTime;
-    m_time = jd(aTime);
+    m_time = julianDay(aTime);
 }
 
 const astronomicalTime & AbstractAstronomy::getAstronomicalTime() const
@@ -127,7 +127,7 @@ float AbstractAstronomy::getSunDistance() const
 
 float AbstractAstronomy::getSunDistance(const astronomicalTime &aTime) const
 {
-    return sunDistance(jd(aTime));
+    return sunDistance(julianDay(aTime));
 }
 
 
@@ -138,7 +138,7 @@ float AbstractAstronomy::getAngularSunRadius() const
 
 float AbstractAstronomy::getAngularSunRadius(const astronomicalTime &aTime) const
 {
-    return angularSunRadius(jd(aTime));
+    return angularSunRadius(julianDay(aTime));
 }
 
 
@@ -149,7 +149,7 @@ float AbstractAstronomy::getMoonDistance() const
 
 float AbstractAstronomy::getMoonDistance(const astronomicalTime &aTime) const
 {
-    return moonDistance(jd(aTime));
+    return moonDistance(julianDay(aTime));
 }
 
 
@@ -166,7 +166,7 @@ float AbstractAstronomy::getAngularMoonRadius() const
 
 float AbstractAstronomy::getAngularMoonRadius(const astronomicalTime &aTime) const
 {
-    return angularMoonRadius(jd(aTime));
+    return angularMoonRadius(julianDay(aTime));
 }
 
 

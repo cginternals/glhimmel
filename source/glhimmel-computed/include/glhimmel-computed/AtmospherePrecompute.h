@@ -57,6 +57,8 @@ public:
     } ;
 
     PhysicalModelConfig& getModelConfig();
+    void setAltitude(float altitude);
+    void setSeed(float seed);
 
 protected:
 
@@ -132,6 +134,9 @@ protected:
     globjects::ref_ptr<globjects::Texture> m_deltaJTexture;
 
     ScreenAlignedTriangle m_triangle;
+
+    float m_altitude;
+    float m_seed;
 };
 
 } // namespace glHimmel

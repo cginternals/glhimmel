@@ -76,35 +76,17 @@ ComputedHimmel::ComputedHimmel(
 //,   m_dubeLayer(dubeLayer)
 ,   m_astronomy(astronomy)
 
-,   u_sun(NULL)
-,   u_sunr(NULL)
-,   u_time(NULL)
+,   m_sunPosition(glm::vec3(0.0, 0.0, 0.0))
+,   m_sunRefractedPosition(glm::vec3(0.0, 0.0, 0.0))
+,   m_time(0.f)
 //,   u_common(NULL)
 {
     assert(m_astronomy);
 
-    u_sun = new osg::Uniform("sun", glm::vec3(0.0, 0.0, 0.0));
-    getOrCreateStateSet()->addUniform(u_sun);
-    u_sunr = new osg::Uniform("sunr", glm::vec3(0.0, 0.0, 0.0));
-    getOrCreateStateSet()->addUniform(u_sunr);
-
-
-    u_time = new osg::Uniform("time", 0.f);
-    getOrCreateStateSet()->addUniform(u_time);
-
-    // 0: altitude in km
-    // 1: apparent angular radius (not diameter!)
-    // 2: radius up to "end of atm"
-    // 3: seed (for randomness of stuff)
-    u_common = cmnUniform();
-    getOrCreateStateSet()->addUniform(u_common);
-
 
     int bin = 0;
     static const std::string binName("RenderBin");
-
-    addAntiCull()->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
-
+    /*
     if(m_starmap)
     {
         addChild(m_starmap);
@@ -126,13 +108,6 @@ ComputedHimmel::ComputedHimmel(
 
         //m_moon->addUniformsToVariousStateSate(m_moonGlare->getOrCreateStateSet());
     }
-    if(m_atmosphere)
-    {
-        addChild(m_atmosphere);
-        m_atmosphere->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
-    }
-
-
 
     if(m_highLayer)
     {
@@ -144,14 +119,13 @@ ComputedHimmel::ComputedHimmel(
     {
         addChild(m_dubeLayer);
         m_dubeLayer->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
-    }
+    }*/
 };
 
 
 
 ComputedHimmel::~ComputedHimmel()
 {
-    delete m_astronomy;
 };
 
 
@@ -196,6 +170,11 @@ void ComputedHimmel::updateSeed()
     m_seed = rand();
 }
 
+
+AbstractAstronomy * ComputedHimmel::astronomy() const
+{
+    return m_astronomy.get();
+}
 
 glm::vec3 ComputedHimmel::getSunPosition() const
 {
@@ -252,6 +231,15 @@ float ComputedHimmel::getAltitude() const
 float ComputedHimmel::defaultAltitude()
 {
     return 0.2f;
+}
+
+float ComputedHimmel::getSeed() const
+{
+    return m_seed;
+}
+
+void ComputedHimmel::initialize()
+{
 }
 
 } // namespace glHimmel

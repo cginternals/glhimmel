@@ -1,4 +1,4 @@
-#include <glhimmel-computed/Sun.h>
+﻿#include <glhimmel-computed/Sun.h>
 
 #include <glhimmel-computed/earth.h>
 #include <glhimmel-computed/Moon.h>
@@ -107,7 +107,7 @@ const HorizontalCoords<long double> Sun::horizontalPosition(
 ,   const long double latitude
 ,   const long double longitude)
 {
-    JulianDay t(jd(aTime));
+    JulianDay t(julianDay(aTime));
     JulianDay s(siderealTime(aTime));
 
     EquatorialCoords<long double> equ = Sun::apparentPosition(t);

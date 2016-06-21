@@ -60,6 +60,10 @@ public:
     void setAltitude(const float altitude);
     float getAltitude() const;
     static float defaultAltitude();
+
+    float getSeed() const;
+
+    void initialize() override;
     
     inline AtmosphereDrawable *atmosphere() const 
     {
@@ -101,7 +105,7 @@ public:
         return m_dubeLayer;
     }*/
 
-
+    AbstractAstronomy* astronomy() const;
     glm::vec3 getSunPosition() const;
     glm::vec3 getSunPosition(const astronomicalTime &aTime) const;
 
@@ -112,7 +116,7 @@ protected:
 protected:
 
     float m_altitude;
-    float m_seed = 0.0;
+    float m_seed = 0.0f;
     glm::vec3 m_sunPosition;
     glm::vec3 m_sunRefractedPosition; // refraction corrected
     float m_time;

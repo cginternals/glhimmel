@@ -12,7 +12,7 @@ namespace glHimmel
 typedef long double JulianDay;
 
 
-GLHIMMEL_BASE_API JulianDay jd(astronomicalTime aTime);
+GLHIMMEL_BASE_API JulianDay julianDay(astronomicalTime aTime);
 
 GLHIMMEL_BASE_API JulianDay jdUT(const astronomicalTime &aTime);
 GLHIMMEL_BASE_API JulianDay jd0UT(astronomicalTime aTime);

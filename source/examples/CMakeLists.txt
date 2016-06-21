@@ -7,3 +7,4 @@ endif()
 # Example applications
 add_subdirectory(debugger)
 add_subdirectory(demo_textured)
+add_subdirectory(demo_computed)

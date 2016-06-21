@@ -146,12 +146,12 @@ target_include_directories(${target}
 
 target_link_libraries(${target}
     PRIVATE
-    ${META_PROJECT_NAME}::glhimmel-base
-    glbinding::glbinding
-    globjects::globjects
 
     PUBLIC
     ${DEFAULT_LIBRARIES}
+    ${META_PROJECT_NAME}::glhimmel-base
+    glbinding::glbinding
+    globjects::globjects
 
     INTERFACE
 )

@@ -13,8 +13,6 @@ PolarMappedHimmel::PolarMappedHimmel(const MappingMode & mappingMode, const bool
 {
 }
 
-
-
 void PolarMappedHimmel::update()
 {
     AbstractMappedHimmel::update();

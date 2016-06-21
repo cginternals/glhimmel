@@ -281,7 +281,7 @@ const HorizontalCoords<long double> Moon::horizontalPosition(
 ,   const long double latitude
 ,   const long double longitude)
 {
-    JulianDay t(jd(aTime));
+    JulianDay t(julianDay(aTime));
     JulianDay s(siderealTime(aTime));
 
     EquatorialCoords<long double> equ = apparentPosition(t);
@@ -410,7 +410,7 @@ const long double Moon::parallacticAngle(
 {
     // (AA.13.1)
 
-    const JulianDay t(jd(aTime));
+    const JulianDay t(julianDay(aTime));
 
     const long double la = glm::radians(latitude);
     const long double lo = glm::radians(longitude);

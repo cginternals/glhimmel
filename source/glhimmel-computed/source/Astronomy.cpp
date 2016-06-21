@@ -5,11 +5,11 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/geometric.hpp>
 #include <glm/gtx/transform.hpp>
-#include "earth.h"
-#include "sun.h"
-#include "moon.h"
-#include "stars.h"
-#include "siderealtime.h"
+#include <glhimmel-computed/Earth.h>
+#include <glhimmel-computed/Sun.h>
+#include <glhimmel-computed/Moon.h>
+//#include "stars.h"
+#include <glhimmel-computed/siderealtime.h>
 
 
 namespace glHimmel
@@ -54,7 +54,7 @@ glm::vec3 Astronomy::moonPosition(
 ,   const float longitude
 ,   const bool refractionCorrected) const
 {
-    t_hord moon = Moon::horizontalPosition(aTime, latitude, longitude);
+    HorizontalCoords<long double> moon = Moon::horizontalPosition(aTime, latitude, longitude);
     if(refractionCorrected)
         moon.altitude += Earth::atmosphericRefraction(moon.altitude);
 
@@ -71,7 +71,7 @@ glm::vec3 Astronomy::sunPosition(
 ,   const float longitude
 ,   const bool refractionCorrected) const
 {
-    t_hord sun = Sun::horizontalPosition(aTime, latitude, longitude);
+    HorizontalCoords<long double> sun = Sun::horizontalPosition(aTime, latitude, longitude);
     if(refractionCorrected)
         sun.altitude += Earth::atmosphericRefraction(sun.altitude);
 
@@ -87,7 +87,7 @@ glm::mat4 Astronomy::moonOrientation(
 ,   const float latitude
 ,   const float longitude) const
 {    
-    const JulianDay t(jd(aTime));
+    const JulianDay t(julianDay(aTime));
 
     long double l, b;
     Moon::opticalLibrations(t, l, b);
@@ -130,7 +130,7 @@ glm::mat4 Astronomy::equToHorTransform(
 ,   const float latitude
 ,   const float longitude) const
 {
-    const JulianDay T(jCenturiesSinceSE(jd(aTime)));
+    const JulianDay T(jCenturiesSinceSE(julianDay(aTime)));
     const float s = siderealTime(aTime);
 
     return glm::scale(glm::tvec3<long double>(-1.0, 1.0, 1.0))

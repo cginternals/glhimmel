@@ -8,7 +8,7 @@
 
 namespace glHimmel
 {
-JulianDay jd(astronomicalTime aTime)
+JulianDay julianDay(astronomicalTime aTime)
 {
     assert(aTime.month > 0);
 
@@ -51,7 +51,7 @@ JulianDay jd(astronomicalTime aTime)
 
 JulianDay jdUT(const astronomicalTime &aTime)
 {
-    return jd(0 == aTime.utcOffset ? aTime : makeUT(aTime));
+    return julianDay(0 == aTime.utcOffset ? aTime : makeUT(aTime));
 }
 
 JulianDay jd0UT(astronomicalTime aTime)
@@ -60,14 +60,14 @@ JulianDay jd0UT(astronomicalTime aTime)
     aTime.minute = 0;
     aTime.hour   = 0;
 
-    return jd(0 == aTime.utcOffset ? aTime : makeUT(aTime));
+    return julianDay(0 == aTime.utcOffset ? aTime : makeUT(aTime));
 }
 
 
 // Modified Julian Date.
 JulianDay mjd(astronomicalTime aTime)
 {
-    return jd(aTime) - 2400000.5;
+    return julianDay(aTime) - 2400000.5;
 }
 
 astronomicalTime makeTime(
@@ -111,7 +111,7 @@ astronomicalTime makeTime(
 
 astronomicalTime makeUT(const astronomicalTime &aTime)
 {
-    return makeTime(jd(aTime) - aTime.utcOffset / 3600.0 / 24.0, 0);
+    return makeTime(julianDay(aTime) - aTime.utcOffset / 3600.0 / 24.0, 0);
 }
 
 // http://en.wikipedia.org/wiki/Equatorial_coordinate_system

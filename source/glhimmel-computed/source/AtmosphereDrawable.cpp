@@ -5,7 +5,6 @@
 #include <glhimmel-computed/AbstractAstronomy.h>
 #include <glhimmel-computed/AtmospherePrecompute.h>
 
-#include <assert.h>
 #include <globjects/base/File.h>
 #include <globjects/NamedString.h>
 #include <globjects/Shader.h>
@@ -18,9 +17,9 @@ namespace glHimmel
 AtmosphereDrawable::AtmosphereDrawable()
 :   m_program(new globjects::Program)
 
-,   m_transmittance(NULL)
-,   m_irradiance(NULL)
-,   m_inscatter(NULL)
+,   m_transmittance(nullptr)
+,   m_irradiance(nullptr)
+,   m_inscatter(nullptr)
 
 ,   m_sunScaleFactor(defaultSunScaleFactor())
 ,   m_exposure(defaultExposure())
@@ -47,6 +46,8 @@ void AtmosphereDrawable::update(const ComputedHimmel &himmel)
     m_program->setUniform("lheurebleueIntensity", m_lheurebleueIntensity);
     m_program->setUniform("exposure", m_exposure);
 
+    m_precompute.setAltitude(himmel.getAltitude());
+    m_precompute.setSeed(himmel.getSeed());
     m_precompute.compute();
 }
 
@@ -165,7 +166,7 @@ void AtmosphereDrawable::setThicknessMie(const float thickness)
 
 void AtmosphereDrawable::setScatteringMie(const float coefficient)
 {
-    m_precompute.getModelConfig().betaMSca = glm::vec3(1, 1, 1) * coefficient;
+    m_precompute.getModelConfig().betaMSca = glm::vec3(1.f) * coefficient;
     m_precompute.getModelConfig().betaMEx = m_precompute.getModelConfig().betaMSca / 0.9f;
 }
 
