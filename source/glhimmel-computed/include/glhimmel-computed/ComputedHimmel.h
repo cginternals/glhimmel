@@ -49,7 +49,7 @@ public:
 
     virtual ~ComputedHimmel();
 
-    virtual void update();
+    void update() override;
 
     float setLatitude(const float latitude);
     float getLatitude() const;
@@ -64,11 +64,6 @@ public:
     float getSeed() const;
 
     void initialize() override;
-    
-    inline AtmosphereDrawable *atmosphere() const 
-    {
-        return m_atmosphere.get();
-    }
 
    /* inline MoonGeode *moon() const
     {
@@ -105,6 +100,7 @@ public:
         return m_dubeLayer;
     }*/
 
+    AtmosphereDrawable *atmosphere() const;
     AbstractAstronomy* astronomy() const;
     glm::vec3 getSunPosition() const;
     glm::vec3 getSunPosition(const astronomicalTime &aTime) const;

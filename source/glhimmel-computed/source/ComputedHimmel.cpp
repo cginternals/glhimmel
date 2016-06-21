@@ -67,25 +67,20 @@ ComputedHimmel::ComputedHimmel(
 //,   DubeCloudLayerGeode *dubeLayer
 ,   AbstractAstronomy *astronomy)
 :   AbstractHimmel()
+,   m_sunPosition(glm::vec3(0.0, 0.0, 0.0))
+,   m_sunRefractedPosition(glm::vec3(0.0, 0.0, 0.0))
+,   m_time(0.f)
 //,   m_starmap(milkyWay)
 //,   m_moon(moon)
 //,   m_moonGlare(NULL)
 //,   m_stars(stars)
+,   m_astronomy(astronomy)
 ,   m_atmosphere(atmosphere)
 //,   m_highLayer(highLayer)
 //,   m_dubeLayer(dubeLayer)
-,   m_astronomy(astronomy)
-
-,   m_sunPosition(glm::vec3(0.0, 0.0, 0.0))
-,   m_sunRefractedPosition(glm::vec3(0.0, 0.0, 0.0))
-,   m_time(0.f)
-//,   u_common(NULL)
 {
     assert(m_astronomy);
 
-
-    int bin = 0;
-    static const std::string binName("RenderBin");
     /*
     if(m_starmap)
     {
@@ -122,12 +117,9 @@ ComputedHimmel::ComputedHimmel(
     }*/
 }
 
-
-
 ComputedHimmel::~ComputedHimmel()
 {
 }
-
 
 void ComputedHimmel::update()
 {
@@ -164,16 +156,19 @@ void ComputedHimmel::update()
     }
 }
 
-
 void ComputedHimmel::updateSeed()
 {
     m_seed = rand();
 }
 
-
 AbstractAstronomy * ComputedHimmel::astronomy() const
 {
     return m_astronomy.get();
+}
+
+AtmosphereDrawable * ComputedHimmel::atmosphere() const
+{
+    return m_atmosphere.get();
 }
 
 glm::vec3 ComputedHimmel::getSunPosition() const
@@ -181,12 +176,10 @@ glm::vec3 ComputedHimmel::getSunPosition() const
     return m_sunPosition;
 }
 
-
 glm::vec3 ComputedHimmel::getSunPosition(const astronomicalTime &aTime) const
 {
     return m_astronomy->getSunPosition(aTime, m_astronomy->getLatitude(), m_astronomy->getLongitude(), false);
 }
-
 
 float ComputedHimmel::setLatitude(const float latitude)
 {
@@ -201,7 +194,6 @@ float ComputedHimmel::getLatitude() const
     assert(m_astronomy);
     return m_astronomy->getLatitude();
 }
-
 
 float ComputedHimmel::setLongitude(const float longitude)
 {
