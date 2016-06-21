@@ -1,7 +1,7 @@
-#include <glhimmel-computed/moon.h>
+#include <glhimmel-computed/Moon.h>
 
-#include <glhimmel-computed/sun.h>
-#include <glhimmel-computed/earth.h>
+#include <glhimmel-computed/Sun.h>
+#include <glhimmel-computed/Earth.h>
 #include <glhimmel-computed/siderealtime.h>
 
 #include <cassert>
@@ -12,8 +12,7 @@ namespace glHimmel
 {
 
 // Mean longitude, referred to the mean equinox of the date (AA.45.1).
-
-const long double Moon::meanLongitude(const JulianDay t)
+long double Moon::meanLongitude(const JulianDay t)
 {
     const JulianDay T(jCenturiesSinceSE(t));
 
@@ -26,10 +25,8 @@ const long double Moon::meanLongitude(const JulianDay t)
     return std::fmod(L0, 360.0);
 }
 
-
 // Mean elongation (AA.45.2).
-
-const long double Moon::meanElongation(const JulianDay t)
+long double Moon::meanElongation(const JulianDay t)
 {
     const JulianDay T(jCenturiesSinceSE(t));
 
@@ -42,10 +39,8 @@ const long double Moon::meanElongation(const JulianDay t)
     return std::fmod(D, 360.0);
 }
 
-
 // Mean anomaly (AA.45.4).
-
-const long double Moon::meanAnomaly(const JulianDay t)
+long double Moon::meanAnomaly(const JulianDay t)
 {
     const JulianDay T(jCenturiesSinceSE(t));
 
@@ -58,10 +53,8 @@ const long double Moon::meanAnomaly(const JulianDay t)
     return std::fmod(M, 360.0);
 }
 
-
 // Mean distance of the Moon from its ascending node (AA.45.5)
-
-const long double Moon::meanLatitude(const JulianDay t)
+long double Moon::meanLatitude(const JulianDay t)
 {
     const JulianDay T(jCenturiesSinceSE(t));
 
@@ -74,8 +67,7 @@ const long double Moon::meanLatitude(const JulianDay t)
     return std::fmod(F, 360.0);
 }
 
-
-const long double Moon::meanOrbitLongitude(const JulianDay t)
+long double Moon::meanOrbitLongitude(const JulianDay t)
 {
     const JulianDay T(jCenturiesSinceSE(t));
 
@@ -87,8 +79,7 @@ const long double Moon::meanOrbitLongitude(const JulianDay t)
     return std::fmod(O, 360.0);
 }
 
-
-const EclipticalCoords<long double> Moon::position(const JulianDay t)
+EclipticalCoords<long double> Moon::position(const JulianDay t)
 {
     const long double sM = glm::radians(Sun::meanAnomaly(t));
 
@@ -266,8 +257,7 @@ const EclipticalCoords<long double> Moon::position(const JulianDay t)
     return ecl;
 }
 
-
-const EquatorialCoords<long double> Moon::apparentPosition(const JulianDay t)
+EquatorialCoords<long double> Moon::apparentPosition(const JulianDay t)
 {
     EclipticalCoords<long double> ecl = position(t);
     ecl.longitude += Earth::longitudeNutation(t);
@@ -275,8 +265,7 @@ const EquatorialCoords<long double> Moon::apparentPosition(const JulianDay t)
     return ecl.toEquatorial(Earth::meanObliquity(t));
 }
 
-
-const HorizontalCoords<long double> Moon::horizontalPosition(
+HorizontalCoords<long double> Moon::horizontalPosition(
     const AstronomicalTime &aTime
 ,   const long double latitude
 ,   const long double longitude)
@@ -292,8 +281,7 @@ const HorizontalCoords<long double> Moon::horizontalPosition(
 
 // NOTE: This gives the distance from the center of the moon to the
 // center of the earth.
-
-const long double Moon::distance(const JulianDay t)
+long double Moon::distance(const JulianDay t)
 {
     const long double sM = glm::radians(Sun::meanAnomaly(t));
 
@@ -369,7 +357,6 @@ const long double Moon::distance(const JulianDay t)
     return D;
 }
 
-
 void Moon::opticalLibrations(
     const JulianDay t
 ,   long double &l /* librations in longitude */
@@ -402,8 +389,7 @@ void Moon::opticalLibrations(
     b = glm::degrees(std::asin(-sin_W * cos_la * sin_I - sin_la * cos_I));
 }
 
-
-const long double Moon::parallacticAngle(
+long double Moon::parallacticAngle(
     const AstronomicalTime &aTime
 ,   const long double latitude
 ,   const long double longitude)
@@ -431,8 +417,7 @@ const long double Moon::parallacticAngle(
     return glm::degrees(P);
 }
 
-
-const long double Moon::positionAngleOfAxis(const JulianDay t)
+long double Moon::positionAngleOfAxis(const JulianDay t)
 {
     // (AA.p344)
 
@@ -470,8 +455,7 @@ const long double Moon::positionAngleOfAxis(const JulianDay t)
     return glm::degrees(P);
 }
 
-
-const long double Moon::meanRadius()
+long double Moon::meanRadius()
 {
     // http://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
 

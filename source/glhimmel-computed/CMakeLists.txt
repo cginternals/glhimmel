@@ -152,6 +152,7 @@ target_link_libraries(${target}
     ${META_PROJECT_NAME}::glhimmel-base
     glbinding::glbinding
     globjects::globjects
+    glm
 
     INTERFACE
 )

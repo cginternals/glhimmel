@@ -4,6 +4,7 @@
 #include <glhimmel-computed/Earth.h>
 
 #include <cassert>
+#include <cmath>
 #include <globjects/Texture.h>
 #include <globjects/Shader.h>
 #include <globjects/Framebuffer.h>
@@ -18,6 +19,7 @@ namespace
     int getTextureWidth(globjects::ref_ptr<globjects::Texture> texture)
     {
         int width;
+        texture->bind();
         glGetTexLevelParameteriv(texture->target(), 0, GL_TEXTURE_WIDTH, &width);
         return width;
     }
@@ -25,6 +27,7 @@ namespace
     int getTextureHeight(globjects::ref_ptr<globjects::Texture> texture)
     {
         int height;
+        texture->bind();
         glGetTexLevelParameteriv(texture->target(), 0, GL_TEXTURE_HEIGHT, &height);
         return height;
     }
@@ -32,6 +35,7 @@ namespace
     int getTextureDepth(globjects::ref_ptr<globjects::Texture> texture)
     {
         int depth;
+        texture->bind();
         glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_DEPTH, &depth);
         return depth;
     }
@@ -64,9 +68,9 @@ AtmospherePrecompute::AtmospherePrecompute()
 
     m_modelConfig.HR = 8.f;
     m_modelConfig.betaR = glm::vec3(5.8e-3, 1.35e-2, 3.31e-2);
-    
+
     m_modelConfig.HM = 6.f; //1.2f;
-    m_modelConfig.betaMSca = glm::vec3(1.0, 1.0, 1.0) * 20e-3f, //8e-3; 
+    m_modelConfig.betaMSca = glm::vec3(1.0, 1.0, 1.0) * 20e-3f, //8e-3;
     m_modelConfig.betaMEx = m_modelConfig.betaMSca / 0.9f;
     m_modelConfig.mieG = 0.6; //0.76;
 
@@ -174,7 +178,7 @@ void AtmospherePrecompute::compute()
     m_copyInscatter1Program->setUniform("deltaSRSampler", 3);
     m_copyInscatter1Program->setUniform("deltaSMTexture", 2);
     render3D(targets, m_copyInscatter1Program);
-     
+
     // loop for each scattering order (line 6 in algorithm 4.1)
     for(int order = 2; order <= 4; ++order)
     {
@@ -265,7 +269,7 @@ globjects::ref_ptr<globjects::Texture> AtmospherePrecompute::setupTexture3D(
 
     return texture;
 }
-    
+
 void AtmospherePrecompute::setupLayerUniforms(
     globjects::ref_ptr<globjects::Program> program
 ,   const int depth
@@ -279,15 +283,15 @@ void AtmospherePrecompute::setupLayerUniforms(
 
     double r = layer / (depth - 1.0);
     r *= r;
-    r = sqrt(Rg2 + r * (Rt2 - Rg2)) + (layer == 0 ? 0.01 : (layer == getTextureConfig().resR - 1 ? -0.001 : 0.0));
+    r = std::sqrt(Rg2 + r * (Rt2 - Rg2)) + (layer == 0 ? 0.01 : (layer == getTextureConfig().resR - 1 ? -0.001 : 0.0));
 
     double dmin  = Rt - r;
-    double dmax  = sqrt(r * r - Rg2) + sqrt(Rt2 - Rg2);
+    double dmax  = std::sqrt(r * r - Rg2) + std::sqrt(Rt2 - Rg2);
     double dminp = r - Rg;
-    double dmaxp = sqrt(r * r - Rg2);
+    double dmaxp = std::sqrt(r * r - Rg2);
 
     program->setUniform("u_r", static_cast<float>(r));
-    
+
     program->setUniform("u_dhdH", glm::vec4(dmin, dmax, dminp, dmaxp));
 }
 
@@ -308,10 +312,10 @@ globjects::ref_ptr<globjects::Program> AtmospherePrecompute::setupProgram(
     assert(!fragmentShaderPath.empty());
 
     globjects::ref_ptr<globjects::Program> program(new globjects::Program);
-    
+
     auto vertexShader = globjects::Shader::fromFile(GL_VERTEX_SHADER, "data/shader/bruneton/bruneton.vert");
     auto fragmentShader = globjects::Shader::fromFile(GL_FRAGMENT_SHADER, fragmentShaderPath);
-    
+
     program->attach(vertexShader);
     program->attach(fragmentShader);
 
@@ -327,16 +331,16 @@ void AtmospherePrecompute::setUniforms(globjects::ref_ptr<globjects::Program> pr
     program->setUniform("u_betaMSca", m_modelConfig.betaMSca);
     program->setUniform("u_betaR", m_modelConfig.betaR);
     program->setUniform("u_mieG", m_modelConfig.mieG);
-    
+
     program->setUniform("u_altitude", m_altitude);
-    program->setUniform("u_apparentAngularRadius", Earth::meanRadius());
-    program->setUniform("u_radiusUpToEndOfAtmosphere", Earth::meanRadius() + Earth::atmosphereThicknessNonUniform());
+    program->setUniform("u_apparentAngularRadius", static_cast<float>(Earth::meanRadius()));
+    program->setUniform("u_radiusUpToEndOfAtmosphere", static_cast<float>(Earth::meanRadius() + Earth::atmosphereThicknessNonUniform()));
     program->setUniform("u_seed", m_seed);
 }
-    
-// Note: The first targets size is used to setup the camera, and 
+
+// Note: The first targets size is used to setup the camera, and
 // it is required that all targets have the same dimensions.
-    
+
 void AtmospherePrecompute::render2D(
     std::vector<globjects::ref_ptr<globjects::Texture>> &targets2D
 ,   globjects::ref_ptr<globjects::Program> program) const
@@ -351,7 +355,7 @@ void AtmospherePrecompute::render2D(
         assert(getTextureWidth(target)  == width);
         assert(getTextureHeight(target) == height);
     }
-        
+
     globjects::ref_ptr<globjects::Framebuffer> fbo = new globjects::Framebuffer();
 
     setUniforms(program);
@@ -364,7 +368,7 @@ void AtmospherePrecompute::render2D(
     {
         fbo->attachTexture(GL_COLOR_ATTACHMENT0 + i, target);
     }
-    
+
     fbo->bind(gl::GL_FRAMEBUFFER);
     program->use();
     m_triangle.draw();

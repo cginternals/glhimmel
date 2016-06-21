@@ -31,6 +31,12 @@ with open(sys.argv[1], 'r', encoding=enc) as f:
         ('t_equd', 'EquatorialCoords<long double>'),
         ('t_hord', 'HorizontalCoords<long double>'),
         ('t_ecld', 'EclipticalCoords<long double>'),
+        ('t_equd', 'EquatorialCoords<long double>'),
+        ('t_hord', 'HorizontalCoords<long double>'),
+        ('t_ecld', 'EclipticalCoords<long double>'),
+        ('NULL', 'nullptr'),
+        ('osg::Texture2D', 'globjects::Texture'),
+        ('osg::Texture3D', 'globjects::Texture'),
     ]
     for k, v in replacements:
         content = content.replace(k, v)

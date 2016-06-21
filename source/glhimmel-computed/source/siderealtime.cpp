@@ -8,7 +8,7 @@
 namespace glHimmel
 {
 
-const long double siderealTime(const AstronomicalTime &aTime)
+long double siderealTime(const AstronomicalTime &aTime)
 {
     const AstronomicalTime gmt(makeUT(aTime));
     const JulianDay JD(jdUT(gmt));
@@ -24,7 +24,7 @@ const long double siderealTime(const AstronomicalTime &aTime)
 }
 
 
-const long double siderealTime2(const AstronomicalTime &aTime)
+long double siderealTime2(const AstronomicalTime &aTime)
 {
     const AstronomicalTime gmt(makeUT(aTime));
     const JulianDay JD(jdUT(aTime));

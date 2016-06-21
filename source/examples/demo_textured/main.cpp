@@ -37,7 +37,7 @@ void setView()
         glm::vec3(
             std::cos(g_horizontalAngle) * std::cos(g_verticalAngle),
             std::sin(g_horizontalAngle) * std::cos(g_verticalAngle),
-            std::sin(g_verticalAngle)), 
+            std::sin(g_verticalAngle)),
         glm::vec3(
             -std::cos(g_horizontalAngle) * std::cos(glm::pi<float>() / 2 - g_verticalAngle),
             -std::sin(g_horizontalAngle) * std::cos(glm::pi<float>() / 2 - g_verticalAngle),
@@ -161,7 +161,7 @@ std::unique_ptr<AbstractHimmel> createCubeMappedDemo()
     std::vector<std::string> name = { "4", "6", "9", "17", "19" };
     std::vector<std::string> faceID = { "px", "nx", "py", "ny", "pz", "nz" };
 
-    for (int i = 0; i < name.size(); ++i)
+    for (size_t i = 0; i < name.size(); ++i)
     {
         auto texture = himmel->getOrCreateTexture(i);
         texture->bind();
@@ -290,7 +290,7 @@ int main(int, char *[])
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         g_time->update();
         g_himmel->setProjection(g_projection);
-        
+
         g_himmel->draw();
         glfwSwapBuffers(window);
     }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glhimmel-computed/glhimmel-computed_api.h>
-#include "abstractastronomy.h"
+#include <glhimmel-computed/AbstractAstronomy.h>
 
 
 namespace glHimmel

@@ -1,6 +1,7 @@
-﻿#pragma once 
+﻿#pragma once
 #include <glhimmel-base/coordinates.h>
 #include <cmath>
+#include <glm/trigonometric.hpp>
 
 namespace
 {

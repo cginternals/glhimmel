@@ -11,11 +11,11 @@ CubeMappedHimmel::CubeMappedHimmel(
     , const bool fakeSun)
     : AbstractMappedHimmel(hBand, fakeSun)
 {
-};
+}
 
 CubeMappedHimmel::~CubeMappedHimmel()
 {
-};
+}
 
 GLenum CubeMappedHimmel::textureTarget() const
 {

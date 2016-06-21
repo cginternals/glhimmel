@@ -25,7 +25,7 @@ namespace glHimmel
 ComputedHimmel *ComputedHimmel::createWithoutClouds()
 {
     // cubeMapFilePaths should contain a questionmark '?' that is replaced
-    // by cubemap extensions '_px', '_nx', '_py', etc. 
+    // by cubemap extensions '_px', '_nx', '_py', etc.
     // e.g. "resources/starmap?.png" points to "resources/milkyway_px.png" etc.
 
     return new ComputedHimmel(
@@ -43,7 +43,7 @@ ComputedHimmel *ComputedHimmel::createWithoutClouds()
 //ComputedHimmel *ComputedHimmel::createWithClouds()
 //{
 //    // cubeMapFilePaths should contain a questionmark '?' that is replaced
-//    // by cubemap extensions '_px', '_nx', '_py', etc. 
+//    // by cubemap extensions '_px', '_nx', '_py', etc.
 //    // e.g. "resources/starmap?.png" points to "resources/milkyway_px.png" etc.
 //
 //    return new ComputedHimmel(
@@ -120,13 +120,13 @@ ComputedHimmel::ComputedHimmel(
         addChild(m_dubeLayer);
         m_dubeLayer->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
     }*/
-};
+}
 
 
 
 ComputedHimmel::~ComputedHimmel()
 {
-};
+}
 
 
 void ComputedHimmel::update()
@@ -191,7 +191,7 @@ glm::vec3 ComputedHimmel::getSunPosition(const astronomicalTime &aTime) const
 float ComputedHimmel::setLatitude(const float latitude)
 {
     assert(m_astronomy);
-    
+
     dirty();
     return m_astronomy->setLatitude(latitude);
 }

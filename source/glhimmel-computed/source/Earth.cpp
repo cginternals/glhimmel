@@ -1,7 +1,7 @@
 ﻿#include <glhimmel-computed/Earth.h>
 
-#include <glhimmel-computed/sun.h>
-#include <glhimmel-computed/moon.h>
+#include <glhimmel-computed/Sun.h>
+#include <glhimmel-computed/Moon.h>
 
 #include <cassert>
 #include <cmath>
@@ -28,8 +28,7 @@ namespace glHimmel
 // http://www.greier-greiner.at/hc/ekliptik.htm
 
 // P. Bretagnon, "Théorie du mouvement de l'ensamble des planètes. Solution VSOP82", 1982
-
-const long double Earth::orbitEccentricity(const JulianDay t)
+long double Earth::orbitEccentricity(const JulianDay t)
 {
     const JulianDay T(jCenturiesSinceSE(t));
 
@@ -46,20 +45,17 @@ const long double Earth::orbitEccentricity(const JulianDay t)
     return std::fmod(E, 360.0);
 }
 
-
-const long double Earth::apparentAngularSunDiameter(const JulianDay t)
+long double Earth::apparentAngularSunDiameter(const JulianDay t)
 {
     return apparentDiameter(Sun::distance(t), Sun::meanRadius());
 }
 
-
-const long double Earth::apparentAngularMoonDiameter(const JulianDay t)
+long double Earth::apparentAngularMoonDiameter(const JulianDay t)
 {
     return apparentDiameter(Moon::distance(t), Moon::meanRadius());
 }
 
-
-const long double Earth::longitudeNutation(const JulianDay t)
+long double Earth::longitudeNutation(const JulianDay t)
 {
     const JulianDay T(jCenturiesSinceSE(t));
 
@@ -143,8 +139,7 @@ const long double Earth::longitudeNutation(const JulianDay t)
 
 
 // (AA.21)
-
-const long double Earth::obliquityNutation(const JulianDay t)
+long double Earth::obliquityNutation(const JulianDay t)
 {
     const JulianDay T(jCenturiesSinceSE(t));
 
@@ -201,8 +196,7 @@ const long double Earth::obliquityNutation(const JulianDay t)
     return timeToDecimal(0, 0, De);
 }
 
-
-const long double Earth::trueObliquity(const JulianDay t)
+long double Earth::trueObliquity(const JulianDay t)
 {
     return meanObliquity(t) + obliquityNutation(t); // e
 }
@@ -210,8 +204,7 @@ const long double Earth::trueObliquity(const JulianDay t)
 
 // Inclination of the Earth's axis of rotation. (AA.21.3)
 // By J. Laskar, "Astronomy and Astrophysics" 1986
-
-const long double Earth::meanObliquity(const JulianDay t)
+long double Earth::meanObliquity(const JulianDay t)
 {
     const JulianDay U = jCenturiesSinceSE(t) * 0.01;
 
@@ -234,8 +227,7 @@ const long double Earth::meanObliquity(const JulianDay t)
 
 
 // This is, if required, approximatelly refraction corrected...
-
-const long double Earth::viewDistanceWithinAtmosphere(
+long double Earth::viewDistanceWithinAtmosphere(
     const long double y
 ,   const bool refractionCorrected)
 {
@@ -266,8 +258,7 @@ const long double Earth::viewDistanceWithinAtmosphere(
 // Effect of refraction for true altitudes (AA.15.4).
 // G.G. Bennet, "The Calculation of the Astronomical Refraction in marine Navigation", 1982
 // and Porsteinn Saemundsson, "Sky and Telescope" 1982
-
-const long double Earth::atmosphericRefraction(const long double altitude)
+long double Earth::atmosphericRefraction(const long double altitude)
 {
     long double R = 1.02 /
         std::tan(glm::radians(altitude + 10.3 / (altitude + 5.11))) + 0.0019279;
@@ -275,16 +266,14 @@ const long double Earth::atmosphericRefraction(const long double altitude)
     return timeToDecimal(0, R, 0); // (since R is in minutes)
 }
 
-
-const long double Earth::meanRadius()
+long double Earth::meanRadius()
 {
     // http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
 
     return  6371.0; // in kilometers
 }
 
-
-const long double Earth::atmosphereThickness()
+long double Earth::atmosphereThickness()
 {
     // Thickness of atmosphere if the density were uniform.
 
@@ -293,15 +282,13 @@ const long double Earth::atmosphereThickness()
     return 7.994;
 }
 
-
-const long double Earth::atmosphereThicknessNonUniform()
+long double Earth::atmosphereThicknessNonUniform()
 {
     // Thickness of atmosphere.
     return 85.0; // ~
 }
 
-
-const long double Earth::apparentMagnitudeLimit()
+long double Earth::apparentMagnitudeLimit()
 {
     // http://www.astronomynotes.com/starprop/s4.htm
     return 6.5;

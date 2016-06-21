@@ -1,6 +1,6 @@
 ﻿#include <glhimmel-computed/Sun.h>
 
-#include <glhimmel-computed/earth.h>
+#include <glhimmel-computed/Earth.h>
 #include <glhimmel-computed/Moon.h>
 #include <glhimmel-computed/siderealtime.h>
 
@@ -12,8 +12,7 @@ namespace glHimmel
 {
 
 // Mean anomaly (AA.45.3).
-
-const long double Sun::meanAnomaly(const JulianDay t)
+long double Sun::meanAnomaly(const JulianDay t)
 {
     const JulianDay T(jCenturiesSinceSE(t));
 
@@ -41,8 +40,7 @@ const long double Sun::meanAnomaly(const JulianDay t)
     return std::fmod(M, 360.0);
 }
 
-
-const long double Sun::meanLongitude(const JulianDay t)
+long double Sun::meanLongitude(const JulianDay t)
 {
     const JulianDay T(jCenturiesSinceSE(t));
 
@@ -53,10 +51,8 @@ const long double Sun::meanLongitude(const JulianDay t)
     return std::fmod(L0, 360.0);
 }
 
-
 // (AA p152)
-
-const long double Sun::center(const JulianDay t)
+long double Sun::center(const JulianDay t)
 {
     const JulianDay T(jCenturiesSinceSE(t));
 
@@ -70,22 +66,19 @@ const long double Sun::center(const JulianDay t)
     return C;
 }
 
-
-const long double Sun::trueAnomaly(const JulianDay t)
+long double Sun::trueAnomaly(const JulianDay t)
 {
     return meanAnomaly(t) + center(t); // v = M + C
 }
 
 
 // True geometric longitude referred to the mean equinox of the date.
-
-const long double Sun::trueLongitude(const JulianDay t)
+long double Sun::trueLongitude(const JulianDay t)
 {
     return meanLongitude(t) + center(t); // Θ
 }
 
-
-const EquatorialCoords<long double> Sun::apparentPosition(const JulianDay t)
+EquatorialCoords<long double> Sun::apparentPosition(const JulianDay t)
 {
     EquatorialCoords<long double> equ;
 
@@ -101,8 +94,7 @@ const EquatorialCoords<long double> Sun::apparentPosition(const JulianDay t)
     return equ;
 }
 
-
-const HorizontalCoords<long double> Sun::horizontalPosition(
+HorizontalCoords<long double> Sun::horizontalPosition(
     const AstronomicalTime &aTime
 ,   const long double latitude
 ,   const long double longitude)
@@ -118,8 +110,7 @@ const HorizontalCoords<long double> Sun::horizontalPosition(
 
 // NOTE: This gives the distance from the center of the sun to the
 // center of the earth.
-
-const long double Sun::distance(const JulianDay t)
+long double Sun::distance(const JulianDay t)
 {
     // (AA.24.5)
     const long double e = Earth::orbitEccentricity(t);
@@ -131,8 +122,7 @@ const long double Sun::distance(const JulianDay t)
     return R * 149598000;
 }
 
-
-const long double Sun::meanRadius()
+long double Sun::meanRadius()
 {
     // http://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html
 
