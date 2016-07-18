@@ -27,8 +27,6 @@ namespace glHimmel
 
 AbstractMappedHimmel::AbstractMappedHimmel(const bool hBand, const bool fakeSun)
     : AbstractHimmel()
-    , m_screenAlignedTriangle()
-
     , m_program(nullptr)
 
     , m_changer()

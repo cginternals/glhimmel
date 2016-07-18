@@ -7,6 +7,7 @@
 
 #include <glhimmel-computed/AbstractAstronomy.h>
 #include <glhimmel-computed/AtmosphereDrawable.h>
+#include <globjects/Texture.h>
 //#include "moongeode.h"
 //#include "moonglaregeode.h"
 //#include "starsgeode.h"
@@ -14,18 +15,6 @@
 //#include "highcloudlayergeode.h"
 //#include "dubecloudlayergeode.h"
 
-
-namespace osgHimmel
-{
-    class AbstractAstronomy;
-    class AtmosphereGeode;
-    class MoonGeode;
-    class MoonGlareGeode;
-    class StarsGeode;
-    class StarMapGeode;
-    class HighCloudLayerGeode;
-    class DubeCloudLayerGeode;
-} // namespace osgHimmel
 
 namespace glHimmel
 {

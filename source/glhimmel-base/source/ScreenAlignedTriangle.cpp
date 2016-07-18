@@ -10,7 +10,7 @@
 
 #include <globjects/base/StaticStringSource.h>
 
-#include <globjects/VertexArray.h>
+
 #include <globjects/VertexAttributeBinding.h>
 #include <globjects/Buffer.h>
 #include <globjects/base/StringTemplate.h>
