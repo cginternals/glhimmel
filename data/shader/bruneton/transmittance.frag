@@ -3,7 +3,8 @@
 #include </data/shader/bruneton/include/constants.glsl>
 #include </data/shader/bruneton/include/uniforms.glsl>
 #include </data/shader/bruneton/include/limit.glsl>
-  
+
+out vec4 out_color; 
 
 void getTransmittanceRMu(out float r, out float muS) {
     r = gl_FragCoord.y / float(TRANSMITTANCE_H);
@@ -30,6 +31,6 @@ float opticalDepth(float H, float r, float mu) {
 void main() {
     float r, muS;
     getTransmittanceRMu(r, muS);
-    vec3 depth = u_betaR * opticalDepth(u_HR, r, muS) + u_betaMEx * opticalDepth(HM, r, muS);
-    gl_FragColor = vec4(exp(-depth), 0.0); // Eq (5)
+    vec3 depth = u_betaR * opticalDepth(u_HR, r, muS) + u_betaMEx * opticalDepth(u_HM, r, muS);
+    out_color = vec4(exp(-depth), 0.0); // Eq (5)
 }   

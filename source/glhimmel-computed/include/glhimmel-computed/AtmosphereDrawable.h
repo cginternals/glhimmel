@@ -50,7 +50,7 @@ public:
     void setScatteringMie(const float coefficient); 
     void setPhaseG(const float g);  // [-1;+1]
 
-    void draw();
+    void draw() const;
 
 protected:
 

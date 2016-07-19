@@ -175,7 +175,7 @@ void AtmosphereDrawable::setPhaseG(const float g)
     m_precompute.getModelConfig().mieG = g;
 }
 
-void AtmosphereDrawable::draw()
+void AtmosphereDrawable::draw() const
 {
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_DEPTH_TEST);

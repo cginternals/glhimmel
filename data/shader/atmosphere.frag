@@ -13,8 +13,6 @@
 uniform vec3 sun;
 uniform vec3 sunr;
 
-in vec4 v_ray;
-
 const float ISun = 100.0;
 
 uniform float sunScale;
@@ -25,7 +23,10 @@ uniform float lheurebleueIntensity;
 
 uniform sampler2D irradianceSampler;    // precomputed skylight irradiance (E table)
 uniform sampler3D inscatterSampler;     // precomputed inscattered light (S table)
-     
+
+in vec4 v_ray;
+
+out vec4 out_color;     
 
 vec3 HDR(vec3 L) {
     L = L * exposure;
@@ -36,11 +37,11 @@ vec3 HDR(vec3 L) {
 }
 
 vec3 transmittanceWithShadow(float r, float mu) {
-    return mu < -sqrt(1.0 - (cmn[1] / r) * (cmn[1] / r)) ? vec3(0.0) : transmittance(r, mu);
+    return mu < -sqrt(1.0 - (u_apparentAngularRadius / r) * (u_apparentAngularRadius / r)) ? vec3(0.0) : transmittance(r, mu);
 }
 
-vec3 getMie(vec4 rayMie) {\n // rayMie.rgb = C*, rayMie.w = Cm, r
-    return rayMie.rgb * rayMie.w / max(rayMie.r, 1e-4) * (betaR.r / betaR);
+vec3 getMie(vec4 rayMie) { // rayMie.rgb = C*, rayMie.w = Cm, r
+    return rayMie.rgb * rayMie.w / max(rayMie.r, 1e-4) * (u_betaR.r / u_betaR);
 }
 
 // inscattered light along ray x+tv, when sun in direction s (=S[L]-T(x,x0)S[L]|x0)
@@ -100,7 +101,7 @@ vec3 sunColor(vec3 x, float t, vec3 v, vec3 s, float r, float mu) {
 
 void main() {
     vec3 x = vec3(0.0, 0.0, u_apparentAngularRadius + u_altitude);
-    vec3 ray = normalize(m_ray.xyz);
+    vec3 ray = normalize(v_ray.xyz);
 
     float r = length(x);
     float mu = dot(x, ray) / r;
@@ -119,6 +120,6 @@ void main() {
     float hb = t > 0.0 ? 0.0 : exp(-pow(sunr.z, 2.0) * 166) + 0.03;     // the +0.03 is for a slight blueish tint at night
     vec3 bluehour = lheurebleueIntensity * lheurebleueColor * (dot(ray, sunr) + 1.5) * hb; // * mu (optional..)
 
-    gl_FragColor = vec4(HDR(bluehour + sunColor + inscatterColor), 1.0)    // Eq (16)
+    out_color = vec4(HDR(bluehour + sunColor + inscatterColor), 1.0)    // Eq (16)
         + dither(3, int(u_seed));
 }

@@ -226,7 +226,7 @@ void AtmospherePrecompute::compute()
 
     auto endTime = std::chrono::steady_clock::now();
     std::chrono::duration<double> duration = endTime - startTime;
-    std::cout << "Atmopshere Precomputed (took " << duration.count() << " s)" << std::endl;
+    //std::cout << "Atmopshere Precomputed (took " << duration.count() << " s)" << std::endl;
 }
 
 globjects::ref_ptr<globjects::Texture> AtmospherePrecompute::setupTexture2D(

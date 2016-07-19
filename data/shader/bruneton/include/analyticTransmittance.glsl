@@ -14,7 +14,7 @@ float opticalDepth(float H, float r, float mu, float d) {
 }
 
 vec3 analyticTransmittance(float r, float mu, float d) {
-    return exp(- u_betaR * opticalDepth(u_HR, r, mu, d) - u_betaMEx * opticalDepth(HM, r, mu, d));
+    return exp(- u_betaR * opticalDepth(u_HR, r, mu, d) - u_betaMEx * opticalDepth(u_HM, r, mu, d));
 }
 
 #endif // ANALYTIC_TRANSMITTANCE

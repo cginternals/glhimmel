@@ -6,6 +6,7 @@
 #include </data/shader/bruneton/include/transmittance.glsl>
 #include </data/shader/bruneton/include/texture4D.glsl>
 #include </data/shader/bruneton/include/phaseFunction.glsl>
+#include </data/shader/bruneton/include/irradiance.glsl>
 
 
 uniform sampler2D deltaESampler;
@@ -15,6 +16,8 @@ uniform float first;
 
 const float dphi = PI / float(INSCATTER_SPHERICAL_INTEGRAL_SAMPLES);
 const float dtheta = PI / float(INSCATTER_SPHERICAL_INTEGRAL_SAMPLES);
+
+out vec4 out_color; 
 
 void inscatter(float r, float mu, float muS, float nu, out vec3 raymie) {
     r = clamp(r, u_apparentAngularRadius, u_radiusUpToEndOfAtmosphere);
@@ -81,7 +84,7 @@ void inscatter(float r, float mu, float muS, float nu, out vec3 raymie) {
             // light coming from direction w and scattered in direction v
             // = light arriving at x from direction w (raymie1) * SUM(scattering coefficient * phaseFunction)
             // see Eq (7)
-            raymie += raymie1 * (u_betaR * exp(-(r - u_apparentAngularRadius) / u_HR) * pr2 + u_betaMSca * exp(-(r - u_apparentAngularRadius) / HM) * pm2) * dw;
+            raymie += raymie1 * (u_betaR * exp(-(r - u_apparentAngularRadius) / u_HR) * pr2 + u_betaMSca * exp(-(r - u_apparentAngularRadius) / u_HM) * pm2) * dw;
         }
     }
 
@@ -93,5 +96,5 @@ void main() {
     float mu, muS, nu;
     getMuMuSNu(u_r, u_dhdH, mu, muS, nu);
     inscatter(u_r, mu, muS, nu, raymie);
-    gl_FragColor.rgb = raymie;
+    out_color.rgb = raymie;
 }

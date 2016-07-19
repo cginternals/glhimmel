@@ -9,6 +9,8 @@
 
 uniform sampler3D deltaJSampler;
 
+out vec4 out_color; 
+
 vec3 integrand(float r, float mu, float muS, float nu, float t) {
     float ri = sqrt(r * r + t * t + 2.0 * r * mu * t);
     float mui = (r * mu + t) / ri;
@@ -34,5 +36,5 @@ vec3 inscatter(float r, float mu, float muS, float nu) {
 void main() {
     float mu, muS, nu;
     getMuMuSNu(u_r, u_dhdH, mu, muS, nu);
-    gl_FragColor.rgb = inscatter(r, mu, muS, nu);
+    out_color.rgb = inscatter(u_r, mu, muS, nu);
 }
