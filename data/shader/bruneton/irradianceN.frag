@@ -13,6 +13,8 @@ uniform float first;
 const float dphi = PI / float(IRRADIANCE_INTEGRAL_SAMPLES);
 const float dtheta = PI / float(IRRADIANCE_INTEGRAL_SAMPLES);
 
+out vec4 out_color;
+
 void main() {
     float r, muS;
     getIrradianceRMuS(r, muS);
@@ -41,5 +43,5 @@ void main() {
         }
     }
 
-    gl_FragColor = vec4(result, 0.0);
+    out_color = vec4(result, 0.0);
 }

@@ -143,7 +143,7 @@ int main(int, char *[])
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         g_time->update();
         g_himmel->setProjection(g_projection);
-        
+
         g_himmel->draw();
         glfwSwapBuffers(window);
     }
