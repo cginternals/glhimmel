@@ -4,8 +4,10 @@
 #include <glhimmel-computed/Earth.h>
 #include <glhimmel-base/Timef.h>
 #include <glhimmel-computed/Astronomy.h>
-#include <glhimmel-base/ScreenAlignedTriangle.h>
+
+#include <glhimmel-computed/AbstractAstronomy.h>
 #include <glhimmel-computed/AtmosphereDrawable.h>
+
 /*#include "moongeode.h"
 #include "moonglaregeode.h"
 #include "starsgeode.h"
@@ -67,6 +69,7 @@ ComputedHimmel::ComputedHimmel(
 //,   DubeCloudLayerGeode *dubeLayer
 ,   AbstractAstronomy *astronomy)
 :   AbstractHimmel()
+,   m_altitude(0.2f)
 ,   m_sunPosition(glm::vec3(0.0, 0.0, 0.0))
 ,   m_sunRefractedPosition(glm::vec3(0.0, 0.0, 0.0))
 ,   m_time(0.f)

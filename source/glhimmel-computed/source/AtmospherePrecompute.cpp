@@ -376,7 +376,7 @@ void AtmospherePrecompute::render2D(
 
     fbo->bind(gl::GL_FRAMEBUFFER);
     program->use();
-    m_triangle.draw();
+    m_screenAlignedTriangle.draw();
 
     fbo->unbind();
 }
@@ -416,7 +416,7 @@ void AtmospherePrecompute::render3D(
         for(auto & target: targets3D)
         {
             glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, target->id(), 0, layer);
-            m_triangle.draw();
+            m_screenAlignedTriangle.draw();
         }
     }
 }

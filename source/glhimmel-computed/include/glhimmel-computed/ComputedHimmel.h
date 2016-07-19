@@ -4,10 +4,8 @@
 #include <glhimmel-computed/glhimmel-computed_api.h>
 #include <glhimmel-base/AbstractHimmel.h>
 #include <glhimmel-base/AstronomicalTime.h>
+#include <glm/vec3.hpp>
 
-#include <glhimmel-computed/AbstractAstronomy.h>
-#include <glhimmel-computed/AtmosphereDrawable.h>
-#include <globjects/Texture.h>
 //#include "moongeode.h"
 //#include "moonglaregeode.h"
 //#include "starsgeode.h"
@@ -18,15 +16,16 @@
 
 namespace glHimmel
 {
+class AtmosphereDrawable;
+class AbstractAstronomy;
 
-class GLHIMMEL_BASE_API ComputedHimmel : public AbstractHimmel
+class GLHIMMEL_COMPUTED_API ComputedHimmel : public AbstractHimmel
 {
 public:
     static ComputedHimmel *createWithoutClouds();
     //static ComputedHimmel *createWithClouds();
 
 public:
-
     ComputedHimmel(
         /*StarMapGeode *milkyWay
     ,   MoonGeode *moon

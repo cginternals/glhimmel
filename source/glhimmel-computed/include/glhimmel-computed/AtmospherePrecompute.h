@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glhimmel-computed/glhimmel-computed_api.h>
 #include <globjects/base/ref_ptr.h>
 #include <glm/vec3.hpp>
 #include <glbinding/gl/gl.h>
@@ -8,6 +9,7 @@
 #include <string>
 #include <globjects/Program.h>
 #include <glhimmel-base/ScreenAlignedTriangle.h>
+#include <globjects/Texture.h>
 
 
 using namespace gl;
@@ -20,7 +22,7 @@ namespace globjects
 namespace glHimmel
 {
 
-class AtmospherePrecompute
+class GLHIMMEL_COMPUTED_API AtmospherePrecompute
 {
 public:
     
@@ -133,7 +135,7 @@ protected:
     globjects::ref_ptr<globjects::Texture> m_inscatterTexture;
     globjects::ref_ptr<globjects::Texture> m_deltaJTexture;
 
-    ScreenAlignedTriangle m_triangle;
+    ScreenAlignedTriangle m_screenAlignedTriangle;
 
     float m_altitude;
     float m_seed;

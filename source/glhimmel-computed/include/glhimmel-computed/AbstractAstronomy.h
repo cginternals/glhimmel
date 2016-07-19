@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <glhimmel-computed/glhimmel-computed_api.h>

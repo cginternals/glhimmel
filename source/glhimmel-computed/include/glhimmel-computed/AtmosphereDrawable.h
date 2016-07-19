@@ -2,7 +2,6 @@
 
 #include <glhimmel-computed/glhimmel-computed_api.h>
 #include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
 #include <string>
 #include <globjects/Program.h>
 #include <glhimmel-base/ScreenAlignedTriangle.h>
