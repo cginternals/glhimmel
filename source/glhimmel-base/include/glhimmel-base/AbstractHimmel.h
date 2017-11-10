@@ -25,8 +25,16 @@ public:
     virtual bool isDirty();
     void dirty(bool dirty = true);
 
-    void setProjection(const glm::mat4 & projection);
+    void setProjection(const glm::mat4 & projection
+        , float fov, unsigned int viewportWidth, unsigned int viewportHeight);
     void setView(const glm::mat4 & view);
+
+    const glm::mat4 & getProjection() const;
+    const glm::mat4 & getView() const;
+
+    float getCameraFovHint() const;
+    unsigned int getViewSizeWidthHint() const;
+    unsigned int getViewSizeHeightHint() const;
 
 protected:
     float timef() const;
@@ -40,6 +48,10 @@ protected:
     long double m_lastElapsed;
     glm::mat4 m_projection;
     glm::mat4 m_view;
+    float m_fov;
+    unsigned int m_viewportWidth
+        , m_viewportHeight;
+
 };
 
 } // namespace osgHimmel

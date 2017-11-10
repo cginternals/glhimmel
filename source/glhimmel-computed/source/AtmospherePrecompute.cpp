@@ -7,7 +7,6 @@
 #include <cmath>
 #include <globjects/Texture.h>
 #include <globjects/Shader.h>
-#include <globjects/Framebuffer.h>
 
 #include <chrono>
 #include <iostream>
@@ -72,17 +71,30 @@ AtmospherePrecompute::AtmospherePrecompute()
     m_modelConfig.HM = 6.f; //1.2f;
     m_modelConfig.betaMSca = glm::vec3(1.0, 1.0, 1.0) * 20e-3f, //8e-3;
     m_modelConfig.betaMEx = m_modelConfig.betaMSca / 0.9f;
-    m_modelConfig.mieG = 0.6; //0.76;
+    m_modelConfig.mieG = 0.6f; //0.76;
 
 
     // Setup Textures
-    m_transmittanceTexture = setupTexture2D(GL_RGB16F_ARB, GL_RGB, GL_FLOAT, getTextureConfig().transmittanceWidth, getTextureConfig().transmittanceHeight);
-    m_deltaETexture        = setupTexture2D(GL_RGB16F_ARB, GL_RGB, GL_FLOAT, getTextureConfig().skyWidth, getTextureConfig().skyHeight);
-    m_deltaSRTexture       = setupTexture3D(GL_RGB16F_ARB, GL_RGB, GL_FLOAT, getTextureConfig().resMuS * getTextureConfig().resNu, getTextureConfig().resMu, getTextureConfig().resR);
-    m_deltaSMTexture       = setupTexture3D(GL_RGB16F_ARB, GL_RGB, GL_FLOAT, getTextureConfig().resMuS * getTextureConfig().resNu, getTextureConfig().resMu, getTextureConfig().resR);
-    m_irradianceTexture    = setupTexture2D(GL_RGB16F_ARB, GL_RGB, GL_FLOAT, getTextureConfig().skyWidth, getTextureConfig().skyHeight);
-    m_inscatterTexture     = setupTexture3D(GL_RGBA16F_ARB, GL_RGBA, GL_FLOAT, getTextureConfig().resMuS * getTextureConfig().resNu, getTextureConfig().resMu, getTextureConfig().resR);
-    m_deltaJTexture        = setupTexture3D(GL_RGB16F_ARB, GL_RGB, GL_FLOAT, getTextureConfig().resMuS * getTextureConfig().resNu, getTextureConfig().resMu, getTextureConfig().resR);
+    m_transmittanceTexture = setupTexture2D(GL_RGB16F_ARB, GL_RGB, GL_FLOAT
+        , getTextureConfig().transmittanceWidth, getTextureConfig().transmittanceHeight);
+    m_deltaETexture        = setupTexture2D(GL_RGB16F_ARB, GL_RGB, GL_FLOAT
+        , getTextureConfig().skyWidth, getTextureConfig().skyHeight);
+    m_deltaSRTexture       = setupTexture3D(GL_RGB16F_ARB, GL_RGB, GL_FLOAT
+        , getTextureConfig().resMuS * getTextureConfig().resNu, getTextureConfig().resMu, getTextureConfig().resR);
+    m_deltaSMTexture       = setupTexture3D(GL_RGB16F_ARB, GL_RGB, GL_FLOAT
+        , getTextureConfig().resMuS * getTextureConfig().resNu, getTextureConfig().resMu, getTextureConfig().resR);
+    m_irradianceTexture    = setupTexture2D(GL_RGB16F_ARB, GL_RGB, GL_FLOAT
+        , getTextureConfig().skyWidth, getTextureConfig().skyHeight);
+    m_irradianceTextureTmp = setupTexture2D(GL_RGB16F_ARB, GL_RGB, GL_FLOAT
+        , getTextureConfig().skyWidth, getTextureConfig().skyHeight);
+    m_inscatterTexture     = setupTexture3D(GL_RGBA16F_ARB, GL_RGBA, GL_FLOAT
+        , getTextureConfig().resMuS * getTextureConfig().resNu
+        , getTextureConfig().resMu, getTextureConfig().resR);
+    m_inscatterTextureTmp = setupTexture3D(GL_RGBA16F_ARB, GL_RGBA, GL_FLOAT
+        , getTextureConfig().resMuS * getTextureConfig().resNu
+        , getTextureConfig().resMu, getTextureConfig().resR);
+    m_deltaJTexture        = setupTexture3D(GL_RGB16F_ARB, GL_RGB, GL_FLOAT
+        , getTextureConfig().resMuS * getTextureConfig().resNu, getTextureConfig().resMu, getTextureConfig().resR);
 
     fetchShaderIncludes();
 
@@ -96,6 +108,8 @@ AtmospherePrecompute::AtmospherePrecompute()
     m_irradiance1Program = setupProgram("data/shader/bruneton/irradiance1.frag");
     m_irradianceNProgram = setupProgram("data/shader/bruneton/irradianceN.frag");
     m_transmittanceProgram = setupProgram("data/shader/bruneton/transmittance.frag");
+
+    m_fbo = new globjects::Framebuffer();
 }
 
 AtmospherePrecompute::~AtmospherePrecompute()
@@ -139,21 +153,14 @@ globjects::ref_ptr<globjects::Texture> AtmospherePrecompute::getInscatterTexture
 
 void AtmospherePrecompute::compute()
 {
-    auto startTime = std::chrono::steady_clock::now();
+    //auto startTime = std::chrono::steady_clock::now();
     glClearColor(0.f, 0.f, 0.f, 0.f);
     std::vector<globjects::ref_ptr<globjects::Texture>> targets;
-
-    m_transmittanceTexture->bindActive(0);
-    m_deltaETexture->bindActive(1);
-    m_deltaSMTexture->bindActive(2);
-    m_deltaSRTexture->bindActive(3);
-    m_deltaJTexture->bindActive(4);
-    m_irradianceTexture->bindActive(5);
-    m_inscatterTexture->bindActive(6);
 
     // computes transmittance texture T (line 1 in algorithm 4.1)
     targets = { m_transmittanceTexture };
     render2D(targets, m_transmittanceProgram);
+    m_transmittanceTexture->bindActive(0);
 
     // computes irradiance texture deltaE (line 2 in algorithm 4.1)
     targets = { m_deltaETexture };
@@ -163,20 +170,23 @@ void AtmospherePrecompute::compute()
     // computes single scattering texture deltaS (line 3 in algorithm 4.1)
     targets = { m_deltaSRTexture, m_deltaSMTexture };
     m_inscatter1Program->setUniform("transmittanceSampler", 0);
-    render3D(targets, m_copyInscatter1Program);
+    render3D(targets, m_inscatter1Program);
+    m_deltaSMTexture->bindActive(2);
+    m_deltaSRTexture->bindActive(3);
 
     // copies deltaE into irradiance texture E (line 4 in algorithm 4.1)
-    // THIS PATH SEEMS UNREQUIRED - since k = 0 nothing gets copied? At least it would zero the texture...
-    targets = { m_irradianceTexture };
+    targets = { m_irradianceTextureTmp };
+    m_deltaETexture->bindActive(1);
+    m_irradianceTexture->bindActive(5);
     m_copyIrradianceProgram->setUniform("deltaESampler", 1);
     m_copyIrradianceProgram->setUniform("irradianceSampler", 5);
     m_copyIrradianceProgram->setUniform("k", 0.f);
     render2D(targets, m_copyIrradianceProgram);
 
     // copies deltaS into inscatter texture S (line 5 in algorithm 4.1)
-    targets = { m_inscatterTexture };
+    targets = { m_inscatterTextureTmp };
     m_copyInscatter1Program->setUniform("deltaSRSampler", 3);
-    m_copyInscatter1Program->setUniform("deltaSMTexture", 2);
+    m_copyInscatter1Program->setUniform("deltaSMSampler", 2);
     render3D(targets, m_copyInscatter1Program);
 
     // loop for each scattering order (line 6 in algorithm 4.1)
@@ -186,6 +196,7 @@ void AtmospherePrecompute::compute()
 
         // computes deltaJ (line 7 in algorithm 4.1)
         targets = { m_deltaJTexture };
+        m_deltaETexture->bindActive(1);
         m_inscatterSProgram->setUniform("deltaESampler", 1);
         m_inscatterSProgram->setUniform("deltaSRSampler", 3);
         m_inscatterSProgram->setUniform("deltaSMSampler", 2);
@@ -197,35 +208,59 @@ void AtmospherePrecompute::compute()
         targets = { m_deltaETexture };
         m_irradianceNProgram->setUniform("transmittanceSampler", 0);
         m_irradianceNProgram->setUniform("deltaSRSampler", 3);
-        m_irradianceNProgram->setUniform("deltaSMTexture", 2);
+        m_irradianceNProgram->setUniform("deltaSMSampler", 2);
         m_irradianceNProgram->setUniform("first", first);
         render2D(targets, m_irradianceNProgram);
 
         // computes deltaS (line 9 in algorithm 4.1)
         targets = { m_deltaSRTexture };
         m_inscatterNProgram->setUniform("transmittanceSampler", 0);
+        m_deltaJTexture->bindActive(4);
         m_inscatterNProgram->setUniform("deltaJSampler", 4);
         m_inscatterNProgram->setUniform("first", first);
         render3D(targets, m_inscatterNProgram);
+        m_deltaSRTexture->bindActive(3);
 
 
-        // NOTE: http://www.opengl.org/wiki/GLSL_:_common_mistakes#Sampling_and_Rendering_to_the_Same_Texture
         // adds deltaE into irradiance texture E (line 10 in algorithm 4.1)
-        targets = { m_irradianceTexture };
+        if (order == 3)
+        {
+            m_irradianceTexture->bindActive(5);
+            targets = { m_irradianceTextureTmp };
+        }
+        else
+        {
+            m_irradianceTextureTmp->bindActive(5);
+            targets = { m_irradianceTexture };
+        }
+
+        m_deltaETexture->bindActive(1);
         m_copyIrradianceProgram->setUniform("deltaESampler", 1);
         m_copyIrradianceProgram->setUniform("irradianceSampler", 5);
         m_copyIrradianceProgram->setUniform("k", 1.f);
         render2D(targets, m_copyIrradianceProgram);
 
         // adds deltaS into inscatter texture S (line 11 in algorithm 4.1)
-        targets = { m_inscatterTexture };
+        if (order == 3)
+        {
+            m_inscatterTexture->bindActive(6);
+            targets = { m_inscatterTextureTmp };
+        }
+        else
+        {
+            m_inscatterTextureTmp->bindActive(6);
+            targets = { m_inscatterTexture };
+        }
+
         m_copyInscatterNProgram->setUniform("inscatterSampler", 6);
         m_copyInscatterNProgram->setUniform("deltaSRSampler", 3);
         render3D(targets, m_copyInscatterNProgram);
+
+
     }
 
-    auto endTime = std::chrono::steady_clock::now();
-    std::chrono::duration<double> duration = endTime - startTime;
+    //auto endTime = std::chrono::steady_clock::now();
+    //std::chrono::duration<double> duration = endTime - startTime;
     //std::cout << "Atmopshere Precomputed (took " << duration.count() << " s)" << std::endl;
 }
 
@@ -361,24 +396,31 @@ void AtmospherePrecompute::render2D(
         assert(getTextureHeight(target) == height);
     }
 
-    globjects::ref_ptr<globjects::Framebuffer> fbo = new globjects::Framebuffer();
-
     setUniforms(program);
 
     glViewport(0, 0, width, height);
+    m_fbo->bind(gl::GL_FRAMEBUFFER);
 
     // Assign Textures and Samplers
     GLint i = 0;
     for(auto & target : targets2D)
     {
-        fbo->attachTexture(GL_COLOR_ATTACHMENT0 + i, target);
+        m_fbo->attachTexture(GL_COLOR_ATTACHMENT0 + i, target);
+        ++i;
     }
 
-    fbo->bind(gl::GL_FRAMEBUFFER);
     program->use();
+
     m_screenAlignedTriangle.draw();
 
-    fbo->unbind();
+    i = 0;
+    for (auto & target : targets2D)
+    {
+        m_fbo->detach(GL_COLOR_ATTACHMENT0 + i);
+        ++i;
+    }
+
+    m_fbo->unbind();
 }
 
 
@@ -399,11 +441,9 @@ void AtmospherePrecompute::render3D(
         assert(getTextureDepth(target)  == depth);
     }
 
-    globjects::ref_ptr<globjects::Framebuffer> fbo = new globjects::Framebuffer();
-
     setUniforms(program);
 
-    fbo->bind(gl::GL_FRAMEBUFFER);
+    m_fbo->bind(gl::GL_FRAMEBUFFER);
     program->use();
     glViewport(0, 0, width, height);
 
@@ -413,12 +453,23 @@ void AtmospherePrecompute::render3D(
 
         // Assign Textures and Samplers
 
+        int i = 0;
         for(auto & target: targets3D)
         {
-            glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, target->id(), 0, layer);
-            m_screenAlignedTriangle.draw();
+            m_fbo->attachTextureLayer(GL_COLOR_ATTACHMENT0 + i, target, 0, layer);
+            ++i;
         }
+
+        m_screenAlignedTriangle.draw();
     }
+
+    int i = 0;
+    for (auto & target : targets3D)
+    {
+        m_fbo->detach(GL_COLOR_ATTACHMENT0 + i);
+        ++i;
+    }
+    m_fbo->unbind();
 }
 
 } // namespace glHimmel

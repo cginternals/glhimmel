@@ -23,6 +23,7 @@ void main(void)
     yy *= yy;
     float m = 0.5 / sqrt(stu.x * stu.x + stu.z * stu.z + yy);
     vec2 uv = vec2(-stu.x, stu.z) * m + 0.5;
+    uv.y = 1.0 - uv.y;
 
     vec4 fc = mix(
         texture(back, uv), texture(src, uv), srcAlpha);

@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <string>
+#include <globjects/Framebuffer.h>
 #include <globjects/Program.h>
 #include <glhimmel-base/ScreenAlignedTriangle.h>
 #include <globjects/Texture.h>
@@ -75,6 +76,8 @@ public:
     globjects::ref_ptr<globjects::Texture> getIrradianceTexture() const;
     globjects::ref_ptr<globjects::Texture> getInscatterTexture() const;
 
+    void setUniforms(globjects::ref_ptr<globjects::Program> program) const;
+
     void compute();
     void fetchShaderIncludes() const;
 
@@ -103,8 +106,6 @@ protected:
     globjects::ref_ptr<globjects::Program> setupProgram(
         const std::string &fragmentShaderSource) const;
 
-    void setUniforms(globjects::ref_ptr<globjects::Program> program) const;
-
     void render2D(
         std::vector<globjects::ref_ptr<globjects::Texture>> &targets2D
     ,   globjects::ref_ptr<globjects::Program> program) const;
@@ -132,9 +133,12 @@ protected:
     globjects::ref_ptr<globjects::Texture> m_deltaSRTexture;
     globjects::ref_ptr<globjects::Texture> m_deltaSMTexture;
     globjects::ref_ptr<globjects::Texture> m_irradianceTexture;
+    globjects::ref_ptr<globjects::Texture> m_irradianceTextureTmp;
     globjects::ref_ptr<globjects::Texture> m_inscatterTexture;
+    globjects::ref_ptr<globjects::Texture> m_inscatterTextureTmp;
     globjects::ref_ptr<globjects::Texture> m_deltaJTexture;
 
+    globjects::ref_ptr<globjects::Framebuffer> m_fbo;
     ScreenAlignedTriangle m_screenAlignedTriangle;
 
     float m_altitude;

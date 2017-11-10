@@ -41,14 +41,25 @@ void AtmosphereDrawable::update(const ComputedHimmel &himmel)
 {
     auto sunScale = himmel.astronomy()->getAngularSunRadius() * m_sunScaleFactor;
 
+    m_program->setUniform("sunr", himmel.getSunRefractedPosition());
     m_program->setUniform("sunScale", sunScale);
     m_program->setUniform("lheurebleueColor", m_lheurebleueColor);
     m_program->setUniform("lheurebleueIntensity", m_lheurebleueIntensity);
     m_program->setUniform("exposure", m_exposure);
 
+    m_program->setUniform("modelView", himmel.getView());
+    m_program->setUniform("inverseProjection", glm::inverse(himmel.getProjection()));
+
+
     m_precompute.setAltitude(himmel.getAltitude());
     m_precompute.setSeed(himmel.getSeed());
-    m_precompute.compute();
+    //if (updateMarker)
+    {
+        m_precompute.compute();
+        updateMarker = false;
+    }
+
+    m_precompute.setUniforms(m_program);
 }
 
 void AtmosphereDrawable::setupTextures()
@@ -58,13 +69,8 @@ void AtmosphereDrawable::setupTextures()
     m_program->setUniform("inscatterSampler", 2);
 
     m_transmittance = m_precompute.getTransmittanceTexture();
-    m_transmittance->bindActive(0);
-
     m_irradiance = m_precompute.getIrradianceTexture();
-    m_irradiance->bindActive(1);
-
     m_inscatter = m_precompute.getInscatterTexture();
-    m_irradiance->bindActive(2);
 }
 
 void AtmosphereDrawable::setupProgram()
@@ -183,6 +189,9 @@ void AtmosphereDrawable::draw() const
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     glEnable(GL_BLEND);
 
+    m_transmittance->bindActive(0);
+    m_irradiance->bindActive(1);
+    m_inscatter->bindActive(2);
     m_program->use();
     m_screenAlignedTriangle.draw();
 
