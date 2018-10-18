@@ -24,7 +24,7 @@ JulianDay julianDay(astronomicalTime aTime)
     // TODO: from "A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.
     // "Local time is GMT with a zone correction. Terrestrial Time (TT)
     // is essentially the time kept by atomic clocks. As it is not corrected
-    // for the slowing of the Earth’s rotation, it gains on GMT by about
+    // for the slowing of the Earthâ€™s rotation, it gains on GMT by about
     // a second per year. The current difference T is about 64 sec in 2000.
     // It should be added to s in all equations for precise computation..."
 
@@ -42,7 +42,7 @@ JulianDay julianDay(astronomicalTime aTime)
         b = 2 - a + static_cast<int>(a * 0.25);
     }
     else if(i > 15821004)
-        return 0.0; // The gregorian calender follows with 15. on the 4.
+        return 0.0; // The gregorian calendar follows with 15. on the 4.
                     // julian oktober in 1582 - poor people who missed a birthday these days :P
 
     return static_cast<int>(365.25 * (aTime.year + 4716))
