@@ -77,6 +77,8 @@ protected:
 
     float m_scale;
 
+    bool updateMarker = true;
+
 };
 
 } // namespace glHimmel

@@ -10,7 +10,6 @@
 #include </data/shader/bruneton/include/texture4D.glsl>
 #include </data/shader/bruneton/include/phaseFunction.glsl>
         
-uniform vec3 sun;
 uniform vec3 sunr;
 
 const float ISun = 100.0;
@@ -117,7 +116,11 @@ void main() {
 
     // gauss between -12° and +0° sun altitude (Civil & Nautical twilight) 
     // http://en.wikipedia.org/wiki/Twilight
-    float hb = t > 0.0 ? 0.0 : exp(-pow(sunr.z, 2.0) * 166) + 0.03;     // the +0.03 is for a slight blueish tint at night
+    float hb = 0.0;
+        if (t <= 0.0)
+            // the +0.03 is for a slight blueish tint at night
+            hb = exp(-pow(sunr.z, 2.0) * 166) + 0.03;
+
     vec3 bluehour = lheurebleueIntensity * lheurebleueColor * (dot(ray, sunr) + 1.5) * hb; // * mu (optional..)
 
     out_color = vec4(HDR(bluehour + sunColor + inscatterColor), 1.0)    // Eq (16)

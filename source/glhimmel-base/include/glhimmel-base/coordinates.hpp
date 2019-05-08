@@ -7,7 +7,7 @@ namespace
 {
     float degreesToHours(long double degrees)
     {
-        return std::fmod(degrees / 15.l, 24.l);
+        return static_cast<float>(std::fmod(degrees / 15.l, 24.l));
     }
 }
 

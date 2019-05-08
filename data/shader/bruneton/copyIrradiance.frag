@@ -10,6 +10,6 @@ out vec4 out_color;
 
 void main() {
     vec2 uv = gl_FragCoord.xy / vec2(SKY_W, SKY_H);
-    out_color  = texture(irradianceSampler, uv);
-    out_color += k * texture(deltaESampler, uv); // k = 0 for line 4, k = 1 for line 10
+    out_color  = k * texture(irradianceSampler, uv); // k = 0 for line 4, k = 1 for line 10
+    out_color += texture(deltaESampler, uv);
 }

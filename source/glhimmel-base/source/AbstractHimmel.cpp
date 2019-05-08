@@ -53,7 +53,7 @@ void AbstractHimmel::draw()
 float AbstractHimmel::timef() const
 {
     if (m_timef)
-        return m_timef->getf();
+        return static_cast<float>(m_timef->getf());
 
     return 0.f;
 }
@@ -63,14 +63,43 @@ void AbstractHimmel::dirty(bool dirty)
     m_dirty = dirty;
 }
 
-void AbstractHimmel::setProjection(const glm::mat4 & projection)
+void AbstractHimmel::setProjection(const glm::mat4 & projection
+    , float fov, unsigned int viewportWidth, unsigned int viewportHeight)
 {
     m_projection = projection;
+    m_fov = fov;
+    m_viewportWidth = viewportWidth;
+    m_viewportHeight = viewportHeight;
 }
 
 void AbstractHimmel::setView(const glm::mat4 & view)
 {
     m_view = view;
+}
+
+const glm::mat4 & AbstractHimmel::getProjection() const
+{
+    return m_projection;
+}
+
+const glm::mat4 & AbstractHimmel::getView() const
+{
+    return m_view;
+}
+
+float AbstractHimmel::getCameraFovHint() const
+{
+    return m_fov;
+}
+
+unsigned int AbstractHimmel::getViewSizeWidthHint() const
+{
+    return m_viewportWidth;
+}
+
+unsigned int AbstractHimmel::getViewSizeHeightHint() const
+{
+    return m_viewportHeight;
 }
 
 bool AbstractHimmel::isDirty()
